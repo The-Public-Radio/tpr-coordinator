@@ -1,3 +1,8 @@
+#ruby=2.4.1
+#ruby-gemset=tpr-cordinator-241
+
+ruby '2.4.1'
+
 source 'https://rubygems.org'
 
 git_source(:github) do |repo_name|
@@ -21,6 +26,9 @@ gem 'httparty'
 
 # API Documentation Engine
 gem "apitome"
+
+# Use skylight for monitoring
+gem "skylight"
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
