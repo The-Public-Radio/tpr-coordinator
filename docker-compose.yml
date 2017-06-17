@@ -1,0 +1,29 @@
+web:
+  build: .
+  command: bundle exec puma -p 3000
+  links: &links
+    - db
+  env_file: .env
+  environment: &envs
+    - SKYLIGHT_AUTHENTICATION=vHIsum-cWyAEhS28QWrRZObJWd6IHS0Tj6xWjiUxHVs
+    - PORT=3000
+    - DATABASE_MASTER_URL=postgres://admin:password@db:5432
+  ports:
+    - "3000:3000"
+  volumes:
+    - .:/usr/app
+
+dbvolume:
+  image: busybox:latest
+  volumes:
+    - /var/lib/postgres
+
+db:
+  image: kiasaki/alpine-postgres
+  ports:
+    - "5432:5432"
+  environment:
+    - PGPASS=password
+    - PGUSER=admin
+  volumes_from:
+    - dbvolume
