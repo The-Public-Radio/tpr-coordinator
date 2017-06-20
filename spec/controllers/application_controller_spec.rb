@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe BaseControllerController, type: :controller do
+RSpec.describe ApplicationController, type: :controller do
     get '/' do
     explanation 'the index of the application'
     example_request 'what is this' do
