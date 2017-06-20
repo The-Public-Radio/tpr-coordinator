@@ -3,9 +3,8 @@ web:
   command: bundle exec puma -p 3000
   links: &links
     - db
-  env_file: .env
   environment: &envs
-    - SKYLIGHT_AUTHENTICATION=vHIsum-cWyAEhS28QWrRZObJWd6IHS0Tj6xWjiUxHVs
+    - SKYLIGHT_AUTHENTICATION_STAGING=
     - PORT=3000
     - DATABASE_MASTER_URL=postgres://admin:password@db:5432
   ports:
