@@ -1,4 +1,4 @@
-web:
+rweb:
   build: .
   command: bundle exec puma -p 3000
   links: &links
@@ -15,14 +15,15 @@ web:
 dbvolume:
   image: busybox:latest
   volumes:
-    - /var/lib/postgres
+    - /usr/local/var/postgres:/var/lib/postgres
 
 db:
-  image: kiasaki/alpine-postgres
+  image: postgres:9.6.3-alpine
   ports:
     - "5432:5432"
   environment:
     - PGPASS=password
     - PGUSER=admin
+    - PGDATA=/var/lib/pgsql/data
   volumes_from:
     - dbvolume
