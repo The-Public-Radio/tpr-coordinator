@@ -34,14 +34,15 @@ COPY Gemfile.lock /usr/app/
 
 # Packages are added, installed, and any non-runtime dependencies are
 # removed to save on container size. These have to be done in 1 RUN step
-RUN apk --update add $BUILD_PACKAGES $RUBY_PACKAGES $RUBY_VERSIONED_PACKAGE && \
-  gem update --system 2.6.10 --no-ri --no-rdoc && \
+RUN apk --update add $BUILD_PACKAGES $RUBY_PACKAGES $RUBY_VERSIONED_PACKAGE
+RUN gem update --system 2.6.10 --no-ri --no-rdoc
   # Nokogiri will try to download dependency packages if not, which will
   # fatten the resulting container. We remove system deps post build.
-  bundle config build.nokogiri && \
-  bundle install --clean --jobs 4 && \
+RUN bundle config build.nokogiri && \
+  bundle install --clean --jobs 4
   # Remove packages not needed at runtime to decrease image size
-  apk del $BUILD_PACKAGES && rm -rf /var/cache/apk/*
+  # commented out the below for faster container builds
+  # apk del $BUILD_PACKAGES && rm -rf /var/cache/apk/*
 
 # Copy in application code
 COPY . /usr/app

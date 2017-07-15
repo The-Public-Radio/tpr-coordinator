@@ -1,4 +1,4 @@
-rweb:
+web:
   build: .
   command: bundle exec puma -p 3000
   links: &links

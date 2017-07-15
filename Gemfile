@@ -23,6 +23,10 @@ gem 'uuidtools'
 gem 'useragent'
 gem 'active_model_serializers'
 gem 'httparty'
+gem 'json'
+
+# Because of the change in type casting in ruby 2.4.x
+gem 'bigdecimal'
 
 # API Documentation Engine
 gem "apitome"
