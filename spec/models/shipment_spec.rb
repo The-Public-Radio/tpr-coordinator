@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Shipment, type: :model do
-  let(:model) { described_class.new(tracking_number: 'Z1234093842') }
+  let(:model) { described_class.new(tracking_number: '1Z879E930346834440') }
 
   it 'valid with valid attributes' do
     expect(model).to be_valid
