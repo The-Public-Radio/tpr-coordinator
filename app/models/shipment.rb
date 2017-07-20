@@ -1,5 +1,7 @@
+require 'tracking_number'
+
 class Shipment < ApplicationRecord
   has_many :radio
-  validates_presence_of :tracking_number, with: /1Z/
-  validates_length_of :tracking_number, is: 15, allow_nil: false
+  # use tracking_number gem for validation
+  validates_presence_of :tracking_number, :tracking_number => true
 end
