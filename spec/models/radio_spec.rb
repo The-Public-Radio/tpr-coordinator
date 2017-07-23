@@ -11,4 +11,15 @@ RSpec.describe Radio, type: :model do
     model.frequency = nil
     expect(model).to_not be_valid
   end
+
+  it 'is not valid with a poorly formated frequency' do
+    # Frequencies must be:
+    #  - nuemeric
+    #  - not over 5 characters (4 and .)
+    model.frequency = '103.2356'
+    expect(model).to_not be_valid
+
+    model.frequency = '89.w2'
+    expect(model).to_not be_valid
+  end
 end
