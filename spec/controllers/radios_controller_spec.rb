@@ -91,14 +91,16 @@ RSpec.describe RadiosController, type: :controller do
   describe "PUT #update" do
     context "with valid params" do
       let(:new_attributes) {
-        skip("Add a hash of attributes valid for your model")
+        {
+          frequency: '91.5'
+        }
       }
 
       it "updates the requested radio" do
         radio = Radio.create! valid_attributes
         put :update, params: {id: radio.to_param, radio: new_attributes}, session: valid_session
         radio.reload
-        skip("Add assertions for updated state")
+        expect(radio.frequency).to eq(new_attributes[:frequency])
       end
 
       it "renders a JSON response with the radio" do
