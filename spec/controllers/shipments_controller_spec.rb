@@ -93,14 +93,16 @@ RSpec.describe ShipmentsController, type: :controller do
   describe "PUT #update" do
     context "with valid params" do
       let(:new_attributes) {
-        skip("Add a hash of attributes valid for your model")
+        {
+          status: 'shipped'
+        }
       }
 
       it "updates the requested shipment" do
         shipment = Shipment.create! valid_attributes
         put :update, params: {id: shipment.to_param, shipment: new_attributes}, session: valid_session
         shipment.reload
-        skip("Add assertions for updated state")
+        expect(shipment.status).to eq(new_attributes[:status])
       end
 
       it "renders a JSON response with the shipment" do
