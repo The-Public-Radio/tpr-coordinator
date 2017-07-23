@@ -18,7 +18,7 @@ class ShipmentsController < ApplicationController
     @shipment = Shipment.new(shipment_params)
 
     if @shipment.save
-      render :show, status: :created, location: @shipment
+      render json: :show, status: :created, location: @shipment
     else
       render json: @shipment.errors, status: :unprocessable_entity
     end
@@ -28,7 +28,7 @@ class ShipmentsController < ApplicationController
   # PATCH/PUT /shipments/1.json
   def update
     if @shipment.update(shipment_params)
-      render :show, status: :ok, location: @shipment
+      render json: :show, status: :ok, location: @shipment
     else
       render json: @shipment.errors, status: :unprocessable_entity
     end

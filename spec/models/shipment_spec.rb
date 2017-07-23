@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Shipment, type: :model do
   let(:model) { described_class.new(
-    tracking_number: '1Z879E930346834440',
+    tracking_number: '9374889691090496006367',
     status: 'shipped')
   }
 

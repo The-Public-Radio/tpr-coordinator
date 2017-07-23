@@ -29,11 +29,17 @@ RSpec.describe ShipmentsController, type: :controller do
   # Shipment. As you add validations to Shipment, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
-    skip("Add a hash of attributes valid for your model")
+    {
+      tracking_number: "9374889691090496006367",
+      status: 'created'
+    }
   }
 
   let(:invalid_attributes) {
-    skip("Add a hash of attributes invalid for your model")
+    {
+      tracking_number: "not a usps tracking number",
+      status: '93203'
+    }
   }
 
   # This should return the minimal set of values that should be in the session
