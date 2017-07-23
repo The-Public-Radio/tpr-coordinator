@@ -32,13 +32,11 @@ RSpec.describe RadiosController, type: :controller do
     {
       frequency: '90.5'
     }
-    # skip("Add a hash of attributes valid for your model")
   }
 
   let(:invalid_attributes) {
     {
       frequency: 'this is not a frequency'
-    # skip("Add a hash of attributes invalid for your model")
     }
   }
 
