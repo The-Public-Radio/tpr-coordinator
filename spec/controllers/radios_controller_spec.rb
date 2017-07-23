@@ -29,7 +29,10 @@ RSpec.describe RadiosController, type: :controller do
   # Radio. As you add validations to Radio, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
-    skip("Add a hash of attributes valid for your model")
+    {
+      frequency: '90.5'
+    }
+    # skip("Add a hash of attributes valid for your model")
   }
 
   let(:invalid_attributes) {
