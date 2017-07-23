@@ -36,7 +36,10 @@ RSpec.describe RadiosController, type: :controller do
   }
 
   let(:invalid_attributes) {
-    skip("Add a hash of attributes invalid for your model")
+    {
+      frequency: 'this is not a frequency'
+    # skip("Add a hash of attributes invalid for your model")
+    }
   }
 
   # This should return the minimal set of values that should be in the session
