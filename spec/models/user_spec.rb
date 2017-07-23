@@ -3,7 +3,8 @@ require 'rails_helper'
 RSpec.describe User, type: :model do
   let(:model) { described_class.new(
     name: 'foo',
-    email: 'foo@bar.come')
+    email: 'foo@bar.come',
+    api_key: 'somekey')
   }
 
   it 'valid with valid attributes' do
