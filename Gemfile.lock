@@ -189,6 +189,8 @@ GEM
     unf_ext (0.0.7.4)
     useragent (0.16.8)
     uuidtools (2.1.5)
+    validates_email_format_of (1.6.3)
+      i18n
     websocket-driver (0.6.5)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.2)
@@ -220,6 +222,7 @@ DEPENDENCIES
   tzinfo-data
   useragent
   uuidtools
+  validates_email_format_of
 
 RUBY VERSION
    ruby 2.4.1p111

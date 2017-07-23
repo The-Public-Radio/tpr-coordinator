@@ -22,6 +22,7 @@ gem 'useragent'
 gem 'active_model_serializers'
 gem 'httparty'
 gem 'json'
+gem 'validates_email_format_of'
 
 # Because of the change in type casting in ruby 2.4.x
 gem 'bigdecimal'
