@@ -92,6 +92,7 @@ RSpec.describe RadiosController, type: :controller do
     context "with valid params" do
       let(:new_attributes) {
         {
+
           frequency: '91.5'
         }
       }
