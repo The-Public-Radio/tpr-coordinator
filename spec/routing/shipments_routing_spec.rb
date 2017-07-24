@@ -7,11 +7,13 @@ RSpec.describe ShipmentsController, type: :routing do
       expect(:get => "/shipments").to route_to("shipments#index")
     end
 
+    it "routes to #index" do
+      expect(:get => "/shipments").to route_to("shipments#index")
+    end
 
     it "routes to #show" do
       expect(:get => "/shipments/1").to route_to("shipments#show", :id => "1")
     end
-
 
     it "routes to #create" do
       expect(:post => "/shipments").to route_to("shipments#create")

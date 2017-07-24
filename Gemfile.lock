@@ -43,6 +43,7 @@ GEM
       i18n (~> 0.7)
       minitest (~> 5.1)
       tzinfo (~> 1.1)
+    api-pagination (4.6.3)
     apitome (0.1.0)
       kramdown
       railties
@@ -194,12 +195,14 @@ GEM
     websocket-driver (0.6.5)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.2)
+    will_paginate (3.1.6)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   active_model_serializers
+  api-pagination
   apitome
   bcrypt (~> 3.1.7)
   bigdecimal
@@ -223,6 +226,7 @@ DEPENDENCIES
   useragent
   uuidtools
   validates_email_format_of
+  will_paginate
 
 RUBY VERSION
    ruby 2.4.1p111
