@@ -16,10 +16,17 @@ RSpec.describe Radio, type: :model do
     # Frequencies must be:
     #  - nuemeric
     #  - not over 5 characters (4 and .)
+    #  - between 76 and 108
     model.frequency = '103.2356'
     expect(model).to_not be_valid
 
     model.frequency = '89.w2'
+    expect(model).to_not be_valid
+
+    model.frequency = '109.3'
+    expect(model).to_not be_valid
+
+    model.frequency = '75.2'
     expect(model).to_not be_valid
   end
 end
