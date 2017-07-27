@@ -11,7 +11,7 @@ resource "Radios" do
   get "/radios/:id" do
     header('Content-Type', 'application/json')
     let(:id) { 1 }
-    example "Looking up a single radio" do
+    example "Look up a single radio" do
       do_request
       expect(status).to eq 200
       data = JSON.parse(response_body)['data']
