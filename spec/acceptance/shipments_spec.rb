@@ -3,7 +3,7 @@ require 'rspec_api_documentation/dsl'
 
 resource "Shipments" do
   before do
-    header "Authorization", "Bearer winkaccesstoken"
+    header "Authorization", "Bearer myaccesstoken"
   end
 
   fixtures :shipments

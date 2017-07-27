@@ -15,7 +15,7 @@
 
 #### Headers
 
-<pre>Authorization: Bearer winkaccesstoken</pre>
+<pre>Authorization: Bearer myaccesstoken</pre>
 
 #### Route
 
