@@ -4,16 +4,8 @@ class ShipmentsController < ApplicationController
   # GET /shipments
   # GET /shipments.json
   def index
-    if !params[:tracking_number].nil?
-      @shipments = Shipment.find_by_tracking_number(params[:tracking_number])
-      api_response(@shipments)
-    elsif !params[:id].nil?
-      @shipments = set_shipment
-      api_response(@shipments, 200)
-    else
-      @shipments = Shipment.all
-      api_response(@shipments)
-    end
+    set_shipment
+    api_response(@shipment)
   end
 
   # GET /shipments/1
@@ -50,9 +42,16 @@ class ShipmentsController < ApplicationController
   end
 
   private
+    attr_accessor :shipment
     # Use callbacks to share common setup or constraints between actions.
     def set_shipment
-      @shipment = Shipment.find(params[:id])
+      if !params[:tracking_number].nil?
+        @shipment = Shipment.find_by_tracking_number(params[:tracking_number])
+      elsif !params[:id].nil?
+        @shipment = Shipment.find(params[:id])
+      else
+        @shipment = Shipment.all
+      end
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
