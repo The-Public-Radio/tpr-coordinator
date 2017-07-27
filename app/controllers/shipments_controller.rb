@@ -32,7 +32,7 @@ class ShipmentsController < ApplicationController
     if @shipment.update(shipment_params)
       api_response(@shipment)
     else
-      api_response([], 400, ['Shipment updates are invalid'])
+      api_response([], 422, ['Shipment updates are invalid'])
     end
   end
 

@@ -31,4 +31,3 @@ RSpec.describe OrdersController, type: :routing do
 
   end
 end
-†
