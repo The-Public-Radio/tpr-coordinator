@@ -6,7 +6,7 @@ Rails, rspec, postgres.
 
 # Documentation
 
-The API documentation is located in the docs folder. [Click here for the web view](/doc/index.markdown).
+The API documentation is located in the docs folder. [Click here for the web view](doc/api/index.markdown).
 
 ## Generation
 To regenerate the documentation or add to it, create new acceptance tests in the `spec/acceptance` folder and run `rake docs:generate`
