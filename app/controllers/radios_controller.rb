@@ -10,6 +10,7 @@ class RadiosController < ApplicationController
   # GET /radios/1
   # GET /radios/1.json
   def show
+    api_response(@radio)
   end
 
   # POST /radios
