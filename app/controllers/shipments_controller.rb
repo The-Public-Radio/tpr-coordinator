@@ -4,7 +4,12 @@ class ShipmentsController < ApplicationController
   # GET /shipments
   # GET /shipments.json
   def index
-    @shipments = Shipment.all
+    unless params[:tracking_number].nil?
+      @shipments = Shipment.find_by_tracking_number(params[:tracking_number])
+    else
+      @shipments = Shipment.all
+    end
+    api_response(@shipments)
   end
 
   # GET /shipments/1

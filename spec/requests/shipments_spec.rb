@@ -22,25 +22,25 @@ RSpec.describe "Shipments", type: :request do
       expect(response.content_type).to eq "application/json"
     end
 
-    it "returns the nth number radio in a given shipment" do
-      params = {
-        tracking: '9374889691090496006367'
-      }
-      response_body = {
-        shipment: {
-          id: 1,
-          radio_number: 1,
-          radio: {
-            id: 1,
-            frequency: '90.5'
-          }
-        }
-      }
+    # it "returns the nth number radio in a given shipment" do
+    #   params = {
+    #     tracking: '9374889691090496006367'
+    #   }
+    #   response_body = {
+    #     shipment: {
+    #       id: 1,
+    #       radio_number: 1,
+    #       radio: {
+    #         id: 1,
+    #         frequency: '90.5'
+    #       }
+    #     }
+    #   }
 
-      get shipments_path, params: { :shipment => params }
-      expect(response).to have_http_status(200)
-      expect(response).to have_body(response_body)
-      expect(response.content_type).to eq "application/json"
-    end
+    #   get shipments_path, params: { :shipment => params }
+    #   expect(response).to have_http_status(200)
+    #   expect(response).to have_body(response_body)
+    #   expect(response.content_type).to eq "application/json"
+    # end
   end
 end

@@ -1,0 +1,29 @@
+s# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+# This model initially had no columns defined.  If you add columns to the
+# model remove the '{}' from the fixture names and add the columns immediately
+# below each fixture, per the syntax in the comments below
+
+one:
+  id: 1
+  frequency: 90.5
+
+two:
+  id: 2
+  frequency: 107.3
+
+three:
+  id: 3
+  frequency: 87.9
+
+four:
+  id: 4
+  frequency: 101.3
+
+five:
+  id: 5
+  frequency: 103.1
+
+six:
+  id: 6
+  frequency: 78.7

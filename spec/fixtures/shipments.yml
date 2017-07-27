@@ -1,0 +1,23 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+# This model initially had no columns defined.  If you add columns to the
+# model remove the '{}' from the fixture names and add the columns immediately
+#   below each fixture, per the syntax in the comments below
+
+one:
+  id: 1
+  tracking_number: '9374889691090496006138'
+  ship_date: '2017-07-27'
+  status: 'created'
+
+two:
+  id: 2
+  tracking_number: '9374889691090346006029'
+  ship_date: '2017-07-28'
+  status: 'fulfillment'
+
+three:
+  id: 3
+  tracking_number: '9374889691090496006739'
+  ship_date: '2017-07-29'
+  status: 'shipped'
