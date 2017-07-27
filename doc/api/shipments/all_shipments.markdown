@@ -1,6 +1,6 @@
 # Shipments API
 
-## Looking up a shipment by tacking number
+## All shipments
 
 ### GET /shipments
 

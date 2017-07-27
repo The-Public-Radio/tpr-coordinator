@@ -56,9 +56,8 @@ resource "Shipments" do
     header('Content-Type', 'application/json')
 
     example "Update a shipment's status" do
-      # do_request
+      do_request
       expect(Shipment.find(1).shipment_status).to eq('created')
-
 
       expect(status).to eq 200
       data = JSON.parse(response_body)['data']
