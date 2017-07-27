@@ -4,27 +4,35 @@ I cordinate orders.
 
 Rails, rspec, postgres.
 
-# README
+# Documentation
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+The API documentation is located in the docs folder. [Click here for the web view](/docs/index.markdown).
 
-Things you may want to cover:
+## Generation
+To regenerate the documentation or add to it, create new acceptance tests in the `spec/acceptance` folder and run `rake docs:generate`
 
-* Ruby version
+# Testing
 
-* System dependencies
+## Setup
 
-* Configuration
+Install and start postgres:
 
-* Database creation
+`brew install postgresql`
 
-* Database initialization
+`brew services start postgresql`
 
-* How to run the test suite
+Install Docker for Mac:
 
-* Services (job queues, cache servers, search engines, etc.)
+[Click here for the downloads page](https://store.docker.com/editions/community/docker-ce-desktop-mac)
 
-* Deployment instructions
+## Run
 
-* ...
+```
+docker-compose run --rm web bundle exec rspec
+```
+
+or 
+
+```
+bundle exec rspec
+```
