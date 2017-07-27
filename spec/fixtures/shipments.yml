@@ -8,16 +8,16 @@ one:
   id: 1
   tracking_number: '9374889691090496006138'
   ship_date: '2017-07-27'
-  status: 'created'
+  shipment_status: 'created'
 
 two:
   id: 2
   tracking_number: '9374889691090346006029'
   ship_date: '2017-07-28'
-  status: 'fulfillment'
+  shipment_status: 'fulfillment'
 
 three:
   id: 3
   tracking_number: '9374889691090496006739'
   ship_date: '2017-07-29'
-  status: 'shipped'
+  shipment_status: 'shipped'

@@ -31,14 +31,14 @@ RSpec.describe ShipmentsController, type: :controller do
   let(:valid_attributes) {
     {
       tracking_number: "9374889691090496006367",
-      status: 'created'
+      shipment_status: 'created'
     }
   }
 
   let(:invalid_attributes) {
     {
       tracking_number: "not a usps tracking number",
-      status: '93203'
+      shipment_status: '93203'
     }
   }
 
@@ -94,7 +94,7 @@ RSpec.describe ShipmentsController, type: :controller do
     context "with valid params" do
       let(:new_attributes) {
         {
-          status: 'shipped'
+          shipment_status: 'shipped'
         }
       }
 
@@ -102,7 +102,7 @@ RSpec.describe ShipmentsController, type: :controller do
         shipment = Shipment.create! valid_attributes
         put :update, params: {id: shipment.to_param, shipment: new_attributes}, session: valid_session
         shipment.reload
-        expect(shipment.status).to eq(new_attributes[:status])
+        expect(shipment.shipment_status).to eq(new_attributes[:shipment_status])
       end
 
       it "renders a JSON response with the shipment" do

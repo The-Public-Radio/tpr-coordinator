@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe Shipment, type: :model do
   let(:model) { described_class.new(
     tracking_number: '9374889691090496006367',
-    status: 'shipped')
+    shipment_status: 'shipped')
   }
 
   it 'valid with valid attributes' do
@@ -38,16 +38,16 @@ RSpec.describe Shipment, type: :model do
 
   context 'a shipment has a status that' do
     it 'is valid when shipped, fulfillment, or created' do
-      model.status = 'created'
+      model.shipment_status = 'created'
       expect(model).to be_valid
 
-      model.status = 'fulfillment'
+      model.shipment_status = 'fulfillment'
       expect(model).to be_valid
 
-      model.status = 'shipped'
+      model.shipment_status = 'shipped'
       expect(model).to be_valid
 
-      model.status = 'done'
+      model.shipment_status = 'done'
       expect(model).to_not be_valid
     end
   end

@@ -9,6 +9,6 @@ class Shipment < ApplicationRecord
   # use tracking_number gem for validation
   validates_presence_of :tracking_number
   validates :tracking_number, tracking_number: true
-  validates_inclusion_of :status, in: %w(created fulfillment shipped)
+  validates_inclusion_of :shipment_status, in: %w(created fulfillment shipped)
   # validates_presence_of :ship_date, allow_nil: true
 end
