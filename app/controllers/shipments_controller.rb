@@ -11,6 +11,7 @@ class ShipmentsController < ApplicationController
   # GET /shipments/1
   # GET /shipments/1.json
   def show
+    api_response(@shipment)
   end
 
   # POST /shipments
@@ -29,9 +30,9 @@ class ShipmentsController < ApplicationController
   # PATCH/PUT /shipments/1.json
   def update
     if @shipment.update(shipment_params)
-      render json: :show, status: :ok, location: @shipment
+      api_response(@shipment)
     else
-      render json: @shipment.errors, status: :unprocessable_entity
+      api_response([], 400, ['Shipment updates are invalid'])
     end
   end
 

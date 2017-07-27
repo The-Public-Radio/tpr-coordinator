@@ -15,7 +15,6 @@ resource "Shipments" do
       do_request
       expect(status).to eq 200
       data = JSON.parse(response_body)['data']
-      puts data
       expect(data['tracking_number']).to eq('9374889691090346006029')
       expect(data['ship_date']).to eq('2017-07-28')
       expect(data['shipment_status']).to eq('fulfillment')
@@ -40,7 +39,6 @@ resource "Shipments" do
       do_request
       expect(status).to eq 200
       data = JSON.parse(response_body)['data']
-      puts data
       expect(data['tracking_number']).to eq('9374889691090496006138')
       expect(data['ship_date']).to eq('2017-07-27')
       expect(data['shipment_status']).to eq('created')
@@ -56,12 +54,12 @@ resource "Shipments" do
     header('Content-Type', 'application/json')
 
     example "Update a shipment's status" do
-      do_request
       expect(Shipment.find(1).shipment_status).to eq('created')
 
+      do_request
       expect(status).to eq 200
       data = JSON.parse(response_body)['data']
-      expect(data['status']).to eq('fulfillment')
+      expect(data['shipment_status']).to eq('fulfillment')
     end
   end
 end
