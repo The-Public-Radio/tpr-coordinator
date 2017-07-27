@@ -9,9 +9,15 @@ resource "Shipments" do
   fixtures :shipments
 
   get "/shipments" do
-    let(:tracking_number) { 9374889691090496006138 }
+    example "All shipments" do
+      do_request
+      expect(status).to eq 200
+      data = JSON.parse(response_body)['data']
+      expect(data.length).to_not be nil
+    end
 
-    parameter :tracking_number, 'String, shipment tracking number', required: true
+    let(:tracking_number) { 9374889691090496006138 }
+    parameter :tracking_number, 'String, shipment tracking number', required: false
     parameter :page, 'String, page number reqested', requied: true
     header('Content-Type', 'application/json')
 
@@ -19,7 +25,10 @@ resource "Shipments" do
       do_request
       expect(status).to eq 200
       data = JSON.parse(response_body)['data']
-      expect(data.length).to_not be nil
+      puts data
+      expect(data['tracking_number']).to eq('9374889691090496006138')
+      expect(data['ship_date']).to eq('2017-07-27')
+      expect(data['status']).to eq('created')
     end
   end
 end
