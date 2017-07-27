@@ -6,6 +6,8 @@ Rails, rspec, postgres.
 
 # Documentation
 
+This API can be reached at `https://api.thepublicradio.io`.
+
 The API documentation is located in the docs folder. [Click here for the web view](doc/api/index.markdown).
 
 ## Generation
