@@ -20,6 +20,14 @@ RSpec.describe ShipmentsController, type: :routing do
     end
 
     it "routes to #update via PUT" do
+      expect(:put => "/shipments").to route_to("shipments#update")
+    end
+
+    it "routes to #update via PATCH" do
+      expect(:patch => "/shipments").to route_to("shipments#update")
+    end
+
+    it "routes to #update via PUT" do
       expect(:put => "/shipments/1").to route_to("shipments#update", :id => "1")
     end
 
