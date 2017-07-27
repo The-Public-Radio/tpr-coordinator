@@ -1,5 +1,9 @@
 # The Public Radio API Documentation
 
+## Radios
+
+* [Look up a single radio](radios/look_up_a_single_radio.markdown)
+
 ## Shipments
 
 * [All shipments](shipments/all_shipments.markdown)

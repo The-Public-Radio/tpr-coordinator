@@ -8,7 +8,6 @@
 
 | Name | Description | Required | Scope |
 |------|-------------|----------|-------|
-| page | String, page number reqested | false |  |
 | tracking_number | String, shipment tracking number | true |  |
 
 ### Request
