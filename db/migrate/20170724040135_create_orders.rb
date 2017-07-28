@@ -3,7 +3,7 @@ class CreateOrders < ActiveRecord::Migration[5.1]
     create_table :orders do |t|
       t.string :first_name
       t.string :last_name
-      t.string :adderss
+      t.string :address
       t.string :order_source
 
       t.timestamps

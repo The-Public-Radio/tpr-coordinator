@@ -1,4 +1,5 @@
 class Radio < ApplicationRecord
+	belongs_to :shipment
   validates_presence_of :frequency
   validates_length_of :frequency, maximum: 5, message: 'Frequency is not valid: too long!'
   validates_numericality_of :frequency, greater_than_or_equal_to: 76, message: 'Frequency is not valid: the station is less than 76 !'

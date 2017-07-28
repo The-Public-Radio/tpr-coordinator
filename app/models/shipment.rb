@@ -6,6 +6,7 @@ class Shipment < ApplicationRecord
   # end
 
   has_many :radio
+  belongs_to :order
   # use tracking_number gem for validation
   validates_presence_of :tracking_number
   validates :tracking_number, tracking_number: true
