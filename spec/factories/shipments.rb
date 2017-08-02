@@ -13,6 +13,7 @@ FactoryGirl.define do
 
 	  factory :shipped do
 	    shipment_status "shipped"
+      ship_date "2017-07-28"
 	  end
 
 	  # Associations
