@@ -1,6 +1,6 @@
 def random_tracking_number
-  number = "937488969109#{Random.new.rand(999999)}"
-  chars = sequence.gsub(/^420\d{5}/, '').chars.to_a
+  number = "937488969109049600#{Random.new.rand(999)}"
+  chars = number.gsub(/^420\d{5}/, '').chars.to_a
 
   total = 0
   chars.reverse.each_with_index do |c, i|
