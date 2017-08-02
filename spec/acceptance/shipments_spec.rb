@@ -24,8 +24,6 @@ resource "Shipments" do
   end
 
   get "/shipments" do
-
-
     example "All shipments" do
       shipped_shipment
       created_shipment
