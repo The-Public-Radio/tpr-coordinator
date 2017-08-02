@@ -4,9 +4,8 @@ require 'rspec_api_documentation/dsl'
 resource "Radios" do
   before do
     header "Authorization", "Bearer myaccesstoken"
+    create(:radio)
   end
-
-  fixtures :radios
 
   get "/radios/:id" do
     header('Content-Type', 'application/json')

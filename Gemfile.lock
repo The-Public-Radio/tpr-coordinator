@@ -57,6 +57,7 @@ GEM
       activesupport
     coderay (1.1.1)
     concurrent-ruby (1.0.5)
+    database_cleaner (1.6.1)
     diff-lcs (1.3)
     domain_name (0.5.20170404)
       unf (>= 0.0.5, < 1.0.0)
@@ -211,6 +212,7 @@ DEPENDENCIES
   bcrypt (~> 3.1.7)
   bigdecimal
   byebug
+  database_cleaner
   factory_girl_rails (~> 4.0)
   httparty
   json

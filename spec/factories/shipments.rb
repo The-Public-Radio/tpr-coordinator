@@ -3,22 +3,22 @@ FactoryGirl.define do
     tracking_number "9374889691090496006138"
     shipment_status nil
 
-	  factory :shipment_created do
+	  factory :created do
 	    shipment_status "created"
 	  end
 
-	  factory :shipment_fulfillment do
+	  factory :fulfillment do
 	    shipment_status "fulfillment"
 	  end
 
-	  factory :shipment_shipped do
+	  factory :shipped do
 	    shipment_status "shipped"
 	  end
 
 	  # Associations
 	  order
 
-	  factory :shipment_with_radios do
+	  factory :with_radios do
       # shipments_count is declared as a transient attribute and available in
       # attributes on the factory, as well as the callback via the evaluator
       transient do
@@ -30,7 +30,7 @@ FactoryGirl.define do
       # attributes; `create_list`'s second argument is the number of records
       # to create and we make sure the user is associated properly to the post
       after(:create) do |shipment, evaluator|
-        create_list(:post, evaluator.radios_count, shipment: shipment)
+        create_list(:radio, evaluator.radios_count, shipment: shipment)
       end
     end
 	end

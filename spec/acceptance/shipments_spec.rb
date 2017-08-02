@@ -6,11 +6,15 @@ resource "Shipments" do
     header "Authorization", "Bearer myaccesstoken"
   end
 
-  fixtures :shipments
+  before(:each) do
+    create :shipment, :created, :fulfillment, :shipped
+  end
 
   get "/shipments/:id" do
+    create :shipment, :created, :fulfillment, :shipped
+    binding.pry
     header('Content-Type', 'application/json')
-    let(:id) { 2 }
+    let(:id) { 1 }
     example "Looking up a single shipment" do
       do_request
       expect(status).to eq 200
@@ -39,7 +43,7 @@ resource "Shipments" do
       data = JSON.parse(response_body)['data']
       expect(data['tracking_number']).to eq('9374889691090496006138')
       expect(data['ship_date']).to eq('2017-07-27')
-      expect(data['shipment_status']).to eq('created')
+      expect(data['shipment_status']).to eq('shipped')
     end
   end
 

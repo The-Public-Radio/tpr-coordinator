@@ -10,7 +10,7 @@ FactoryGirl.define do
 	  frequency  '107.3'
 
     # Associations
-  	shipment_created
+  	association :shipment, factory: :created
   end
 
   factory :radio_2, class: Radio do
@@ -18,7 +18,7 @@ FactoryGirl.define do
   	shipment_id 2
 
     # Associations
-  	shipment_fulfillment
+  	association :shipment, factory: :fulfillment
   end
 
   factory :radio_3, class: Radio do
@@ -26,7 +26,7 @@ FactoryGirl.define do
   	shipment_id 3
 
   	 # Associations
-  	shipment_shipped
+  	association :shipment, factory: :shipped
 
 	  factory :radio_4, class: Radio do
 		  frequency  '103.1'

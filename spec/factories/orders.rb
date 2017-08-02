@@ -16,24 +16,18 @@ FactoryGirl.define do
       # the after(:create) yields two values; the order instance itself and the
       # evaluator, which stores all values from the factory, including transient
       # attributes; `create_list`'s second argument is the number of records
-      # to create and we make sure the user is associated properly to the post
+      # to create and we make sure the shpiment is associated properly to the order
       after(:create) do |order, evaluator|
-        create_list(:post, evaluator.shipments_count, order: order)
+        create_list(:shipment, evaluator.shipments_count, order: order)
       end
     end
-  end
 
-  factory :kickstarter, class: Order do
-    first_name "Zach"
-    last_name "Ham"
-    address "546 East West Ave., City, State, USA"
-    order_source "kickstarter"
-  end
+    factory :kickstarter, class: Order do
+      order_source "kickstarter"
+    end
 
-   factory :squarespace, class: Order do
-    first_name "Gabe"
-    last_name "Eight"
-    address "123 West 9th St., City, State, USA"
-    order_source "squarespace"
+     factory :squarespace, class: Order do
+      order_source "squarespace"
+    end
   end
 end
