@@ -46,8 +46,9 @@ resource "Shipments" do
       do_request
       expect(status).to eq 200
       data = JSON.parse(response_body)['data']
-      expect(data['tracking_number']).to eq('9374889691090496006138')
-      expect(data['ship_date']).to eq('2017-07-27')
+      binding.pry
+      expect(data[0]['tracking_number']).to eq('9374889691090496006138')
+      expect(data[0]['ship_date']).to eq('2017-07-27')
       expect(data['shipment_status']).to eq('shipped')
     end
   end

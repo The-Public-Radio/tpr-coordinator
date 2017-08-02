@@ -8,8 +8,7 @@ class Shipment < ApplicationRecord
   has_many :radio, dependent: :destroy
   belongs_to :order
   # use tracking_number gem for validation
-  validates_presence_of :tracking_number
-  validates :tracking_number, tracking_number: true
+  validates :tracking_number, tracking_number: true, uniqueness: true
   validates_inclusion_of :shipment_status, in: %w(created fulfillment shipped), allow_nil: true
   # validates_presence_of :ship_date, allow_nil: true
 end

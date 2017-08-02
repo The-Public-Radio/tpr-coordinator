@@ -1,7 +1,7 @@
 FactoryGirl.define do
   factory :shipment do
-    tracking_number "9374889691090496006138"
     shipment_status nil
+    tracking_number random_tracking_number
 
 	  factory :created do
 	    shipment_status "created"
@@ -36,3 +36,5 @@ FactoryGirl.define do
     end
 	end
 end
+
+
