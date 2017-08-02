@@ -1,11 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Radio, type: :model do
-  let(:model) { described_class.new(
-    frequency: '98.1',
-    shipment_id: 1
-    ) 
-  }
+  let(:model) { build(:radio) }
 
   it 'valid with valid attributes' do
     expect(model).to be_valid

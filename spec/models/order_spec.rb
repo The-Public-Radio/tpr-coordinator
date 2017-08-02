@@ -1,13 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Order, type: :model do
-  let(:model) { described_class.new(
-    first_name: '9374889691090496006367',
-    last_name: 'shipped',
-    address: '123 West 9th St., City, State, USA',
-    order_source: 'squarespace',
-    email: 'foo@bar.com')
-  }
+  let(:model) { build(:order) }
 
   it 'valid with valid attributes' do
     expect(model).to be_valid
