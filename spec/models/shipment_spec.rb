@@ -3,7 +3,9 @@ require 'rails_helper'
 RSpec.describe Shipment, type: :model do
   let(:model) { described_class.new(
     tracking_number: '9374889691090496006367',
-    shipment_status: 'shipped')
+    shipment_status: 'shipped',
+    order_id: 1
+    )
   }
 
   it 'valid with valid attributes' do
