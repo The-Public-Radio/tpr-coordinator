@@ -31,8 +31,8 @@ module TprCoordinator
     config.api_only = true
 
     # configure skylight monitoring
-    # config.skylight.logger = Logger.new(STDOUT)
-    # config.skylight.environments += ["staging"]
+    config.skylight.logger = Rails.logger
+    config.skylight.environments += ["test"]
   end
 end
 
