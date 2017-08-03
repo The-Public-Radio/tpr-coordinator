@@ -7,9 +7,9 @@ RSpec.describe Shipment, type: :model do
     expect(model).to be_valid
   end
 
-  it 'is not valid without a tracking_number' do
+  it 'is valid without a tracking_number' do
     model.tracking_number = nil
-    expect(model).to_not be_valid
+    expect(model).to be_valid
   end
 
   it 'is not valid with an not valid tracking number' do
