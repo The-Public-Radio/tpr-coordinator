@@ -28,12 +28,7 @@ RSpec.describe UsersController, type: :controller do
   # This should return the minimal set of attributes required to create a valid
   # User. As you add validations to User, be sure to
   # adjust the attributes here as well.
-  let(:valid_attributes) {
-    {
-      name: 'Person McPersonson',
-      email: 'person@mcpersonson.co'
-    }
-  }
+  let(:valid_attributes) { build(:user).attributes }
 
   let(:invalid_attributes) {
     {

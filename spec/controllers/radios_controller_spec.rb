@@ -28,11 +28,7 @@ RSpec.describe RadiosController, type: :controller do
   # This should return the minimal set of attributes required to create a valid
   # Radio. As you add validations to Radio, be sure to
   # adjust the attributes here as well.
-  let(:valid_attributes) {
-    {
-      frequency: '90.5'
-    }
-  }
+  let(:valid_attributes) { build(:radio).attributes }
 
   let(:invalid_attributes) {
     {

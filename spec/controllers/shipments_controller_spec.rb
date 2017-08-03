@@ -28,12 +28,7 @@ RSpec.describe ShipmentsController, type: :controller do
   # This should return the minimal set of attributes required to create a valid
   # Shipment. As you add validations to Shipment, be sure to
   # adjust the attributes here as well.
-  let(:valid_attributes) {
-    {
-      tracking_number: "9374889691090496006367",
-      shipment_status: 'created'
-    }
-  }
+  let(:valid_attributes) { build(:shipment).attributes }
 
   let(:invalid_attributes) {
     {
