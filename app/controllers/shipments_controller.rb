@@ -47,11 +47,11 @@ class ShipmentsController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_shipment
       if !params[:tracking_number].nil?
-        @shipment = Shipment.find_by_tracking_number(params[:tracking_number])
+        @shipment ||= Shipment.find_by_tracking_number(params[:tracking_number])
       elsif !params[:id].nil?
-        @shipment = Shipment.find(params[:id])
+        @shipment ||= Shipment.find(params[:id])
       else
-        @shipment = Shipment.all
+        @shipment ||= Shipment.all
       end
     end
 

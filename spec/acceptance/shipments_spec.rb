@@ -17,7 +17,7 @@ resource "Shipments" do
       do_request
       expect(status).to eq 200
       data = JSON.parse(response_body)['data']
-      expect(data['tracking_number']).to eq('9374889691090496006138')
+      expect(data['tracking_number'].length).to be 22
       expect(data['ship_date']).to eq('2017-07-28')
       expect(data['shipment_status']).to eq('shipped')
     end
@@ -37,36 +37,33 @@ resource "Shipments" do
 
     parameter :tracking_number, 'String, shipment tracking number', required: true
     header('Content-Type', 'application/json')
-
+    let(:tracking_number) { shipped_shipment.tracking_number }
     example "Looking up a shipment by tacking number" do
-      shipped_shipment
-
       do_request
       expect(status).to eq 200
       data = JSON.parse(response_body)['data']
-      binding.pry
-      expect(data[0]['tracking_number']).to eq('9374889691090496006138')
-      expect(data[0]['ship_date']).to eq('2017-07-27')
+      expect(data['tracking_number'].length).to be 22
+      expect(data['ship_date']).to eq('2017-07-28')
       expect(data['shipment_status']).to eq('shipped')
     end
   end
 
   put "/shipments" do
-    let(:tracking_number) { '9374889691090496006138' }
+    let(:tracking_number) { created_shipment.tracking_number }
     let(:shipment_status) { 'fulfillment' }
-    let(:id) { created_shipment.id }
+    let(:before_shipment_status) { created_shipment.shipment_status }
 
     parameter :tracking_number, 'String, shipment tracking number', required: true
     parameter :shipment_status, 'String, shipment tracking number', required: true
     header('Content-Type', 'application/json')
 
     example "Update a shipment's status" do
-      expect(Shipment.find(id).shipment_status).to eq('created')
+      expect(before_shipment_status).to eq('created')
 
       do_request
       expect(status).to eq 200
       data = JSON.parse(response_body)['data']
-      expect(data['shipment_status']).to eq('fulfillment')
+      expect(data['shipment_status']).to eq(shipment_status)
     end
   end
 
