@@ -1,12 +1,10 @@
 Rails.application.routes.draw do
   resources :orders
   resources :users
-  # resources :shipments
 
   resources :shipments do
     resources :radios
   end
-  resources :radios
 
   put '/shipments', to: 'shipments#update'
   patch '/shipments', to: 'shipments#update'
