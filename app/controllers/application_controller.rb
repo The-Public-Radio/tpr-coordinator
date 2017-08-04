@@ -14,10 +14,8 @@ class ApplicationController < ActionController::API
   end
 
   def paginated_api_response(data, status = :ok, errors = [])
-    binding.pry
     serializer = ActiveModel::Serializer.serializer_for(data)
     data = serializer.try(:new, data)
-    binding.pry
     paginate json: data, status: status, per_page: 1
   end
 end

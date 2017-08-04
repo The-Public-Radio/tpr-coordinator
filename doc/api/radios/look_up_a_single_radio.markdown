@@ -2,7 +2,7 @@
 
 ## Look up a single radio
 
-### GET /radios/:id
+### GET /shipments/:shipment_id/radios/:id
 ### Request
 
 #### Headers
@@ -11,7 +11,7 @@
 
 #### Route
 
-<pre>GET /radios/1</pre>
+<pre>GET /shipments/5686/radios/3145</pre>
 
 ### Response
 
@@ -27,7 +27,7 @@
 
 <pre>{
   "data": {
-    "id": 1,
+    "id": 3145,
     "frequency": "90.5"
   },
   "errors": [
