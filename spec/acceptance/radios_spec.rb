@@ -11,6 +11,7 @@ resource "Radios" do
   let(:shipment_id) { fulfillment_shipment.id }
   let(:radio) { create(:radio) }
   let(:radio_frequency) { radio.frequency }
+  let(:radio_id) { radio.id }
 
   get "/shipments/:shipment_id/radios/:id" do
     let(:id) { radio.id }
@@ -37,12 +38,14 @@ resource "Radios" do
     let(:page) { 2 }
 
     example "Look up a shipment's radios one (page) at a time " do
-      copy { 'Each page only returns 1 record. The header `X-Total` will give the total number of radios (pages)' }
+      explanation 'Each page only returns 1 record. The header `X-Total` will give the total number of radios (pages)'
       do_request
       expect(status).to eq 200
-      data = JSON.parse(response_body)['data']
-      expect(data['shipment_id']).to eq(shipment_id)
-      expect(data['radio']['frequency']).to eq('87.9')
+      data = JSON.parse(response_body)
+
+      expect(data.count).to be 1
+      expect(data[0]['frequency']).to eq(radio_frequency)
+      expect(response_headers['X-Total']).to eq('3')
     end
   end
 end

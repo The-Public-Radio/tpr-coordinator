@@ -1,5 +1,8 @@
+require 'api-pagination'
+
 class ApplicationController < ActionController::API
   include ActionController::Serialization
+  include Rails::Pagination
 
   def api_response(data, status = :ok, errors = [])
     serializer = ActiveModel::Serializer.serializer_for(data)
@@ -11,11 +14,10 @@ class ApplicationController < ActionController::API
   end
 
   def paginated_api_response(data, status = :ok, errors = [])
+    binding.pry
     serializer = ActiveModel::Serializer.serializer_for(data)
-    ret = {
-      'data' => serializer.try(:new, data),
-      'errors' => Array.wrap(errors)
-    }
-    painate json: ret, status: status, per_page: 1
+    data = serializer.try(:new, data)
+    binding.pry
+    paginate json: data, status: status, per_page: 1
   end
 end

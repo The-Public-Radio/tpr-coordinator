@@ -4,8 +4,12 @@ class RadiosController < ApplicationController
   # GET /radios
   # GET /radios.json
   def index
-    if params[:page].nil?
-      @radios = Radio.where(shipment_id: params[:shipment_id])
+    @radios = Radio.where(shipment_id: params[:shipment_id])
+    if !params[:page].nil?
+      paginate json: @radios, status: :ok, per_page: 1
+
+      # paginated_api_response(@radios)
+    else
       api_response(@radios)
     end
   end

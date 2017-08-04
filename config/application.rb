@@ -38,7 +38,7 @@ end
 
 ApiPagination.configure do |config|
   # If you have both gems included, you can choose a paginator.
-  config.paginator = :will_paginate
+  config.paginator = :kaminari
 
   # By default, this is set to 'Total'
   config.total_header = 'X-Total'
@@ -51,15 +51,7 @@ ApiPagination.configure do |config|
 
   # Optional: what parameter should be used to set the page option
   config.page_param = :page
-  # or
-  config.page_param do |params|
-    params[:page][:number]
-  end
 
   # Optional: what parameter should be used to set the per page option
   config.per_page_param = :per_page
-  # or
-  config.per_page_param do |params|
-    params[:page][:size]
-  end
 end
