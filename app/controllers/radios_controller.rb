@@ -4,7 +4,9 @@ class RadiosController < ApplicationController
   # GET /radios
   # GET /radios.json
   def index
+    binding.pry
     @radios = Radio.all
+    api_response(@radios)
   end
 
   # GET /radios/1

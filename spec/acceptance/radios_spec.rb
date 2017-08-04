@@ -4,12 +4,15 @@ require 'rspec_api_documentation/dsl'
 resource "Radios" do
   before do
     header "Authorization", "Bearer myaccesstoken"
-    create(:radio)
   end
 
-  get "/radios/:id" do
+  let(:fulfillment_shipment) { create :fulfillment }
+  let(:shipment_id) { fulfillment_shipment.id }
+  let(:radio) { create(:radio) }
+
+  get "/shipments/:shipment_id/radios/:id" do
     header('Content-Type', 'application/json')
-    let(:id) { 1 }
+    let(:id) { radio.id }
     example "Look up a single radio" do
       do_request
       expect(status).to eq 200
@@ -18,22 +21,28 @@ resource "Radios" do
     end
   end
 
-  get "/shipment/:id/radios" do
+  get "/shipments/:shipment_id/radios" do
+
     header('Content-Type', 'application/json')
 
-    let(:tracking_number) { '9374889691090496006138' }
     let(:page) { 2 }
-    parameter :tracking_number, 'String, shipment tracking number', required: true
+    parameter :page, 'String, paganation page number', required: false
 
-    example "Look up radios by a shipment's tracking number" do
+    example "Look up a shipment's radios" do
+      create(:radio_2)
+      create(:radio_3)
+      create(:radio_4)
+
       do_request
       expect(status).to eq 200
       data = JSON.parse(response_body)['data']
-      expect(data['radios'].length).to eq('2')
+      binding.pry
+      expect(data['shipment_id']).to eq(shipment_id)
+      expect(data['radio']['frequency'].length).to eq('87.9')
     end
   end
 
-  get "/shipment/:id/radios" do
+  get "/shipments/:shipment_id/radios" do
     let(:id) { created_shipment.id }
     let(:page) { '1' }
 

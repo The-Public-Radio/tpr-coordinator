@@ -6,28 +6,23 @@ FactoryGirl.define do
     order_source 'other'
     email { "#{first_name}.#{last_name}@gmail.com" }
 
-    factory :order_with_shipments do
-      # shipments_count is declared as a transient attribute and available in
-      # attributes on the factory, as well as the callback via the evaluator
-      transient do
-        shipments_count 2
-    	end
-
-      # the after(:create) yields two values; the order instance itself and the
-      # evaluator, which stores all values from the factory, including transient
-      # attributes; `create_list`'s second argument is the number of records
-      # to create and we make sure the shpiment is associated properly to the order
-      after(:create) do |order, evaluator|
-        create_list(:shipment, evaluator.shipments_count, order: order)
-      end
+    after :create do |order|
+      create_list(:shipment, 1, :order => order)
     end
-
+    
     factory :kickstarter, class: Order do
       order_source "kickstarter"
+
+      after :create do |order|
+        create_list(:shipment, 4, :order => order)
+      end
     end
 
      factory :squarespace, class: Order do
       order_source "squarespace"
+      after :create do |order|
+        create_list(:shipment, 2, :order => order)
+      end
     end
   end
 end
