@@ -4,9 +4,10 @@ class RadiosController < ApplicationController
   # GET /radios
   # GET /radios.json
   def index
-    binding.pry
-    @radios = Radio.all
-    api_response(@radios)
+    if params[:page].nil?
+      @radios = Radio.where(shipment_id: params[:shipment_id])
+      api_response(@radios)
+    end
   end
 
   # GET /radios/1
@@ -44,6 +45,10 @@ class RadiosController < ApplicationController
   end
 
   private
+    def shipment_radios
+      
+    end
+
     # Use callbacks to share common setup or constraints between actions.
     def set_radio
       @radio = Radio.find(params[:id])

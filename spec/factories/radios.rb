@@ -7,7 +7,6 @@ FactoryGirl.define do
 
     factory :radio_1, class: Radio do
   	  frequency  '90.5'
-
     end
 
     factory :radio_2, class: Radio do
