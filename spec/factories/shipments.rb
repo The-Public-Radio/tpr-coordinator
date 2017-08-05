@@ -1,38 +1,41 @@
 FactoryGirl.define do
 
   factory :shipment do
-    shipment_status nil
     tracking_number random_tracking_number
 
     # Associations
     order
 
-	  factory :created do
-	    shipment_status "created"
+    after :create do |created|
+      create_list(:radio, 1, :shipment => created)
+    end
+
+    factory :created do
+      shipment_status "created"
       association :order, factory: :kickstarter
 
       after :create do |created|
         create_list(:radio, 1, :shipment => created)
       end
-	  end
+    end
 
-	  factory :fulfillment do
-	    shipment_status "fulfillment"
+    factory :fulfillment do
+      shipment_status "fulfillment"
 
       after :create do |fulfillment|
         create_list(:radio, 3, :shipment => fulfillment)
       end
-	  end
+    end
 
-	  factory :shipped do
-	    shipment_status "shipped"
+    factory :shipped do
+      shipment_status "shipped"
       ship_date "2017-07-28"
 
       after :create do |shipped|
         create_list(:radio, 2, :shipment => shipped)
       end
-	  end
-	end
+    end
+  end
 end
 
 

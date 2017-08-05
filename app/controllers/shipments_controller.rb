@@ -17,6 +17,7 @@ class ShipmentsController < ApplicationController
   # POST /shipments
   # POST /shipments.json
   def create
+    binding.pry
     @shipment = Shipment.new(shipment_params)
 
     if @shipment.save
@@ -57,6 +58,6 @@ class ShipmentsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def shipment_params
-      params.require(:shipment).permit(:tracking_number, :ship_date, :shipment_status)
+      params.require(:shipment).permit(:tracking_number, :ship_date, :shipment_status, :order_id)
     end
 end

@@ -70,7 +70,6 @@ RSpec.describe RadiosController, type: :controller do
       end
 
       it "renders a JSON response with the new radio" do
-
         post :create, params: { shipment_id: shipment_id, radio: new_attributes }, session: valid_session
         expect(response).to have_http_status(:created)
         expect(response.content_type).to eq('application/json')

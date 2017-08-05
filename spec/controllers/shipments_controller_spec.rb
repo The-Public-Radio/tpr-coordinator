@@ -48,7 +48,6 @@ RSpec.describe ShipmentsController, type: :controller do
     it "returns a success response" do
       shipment = Shipment.create! valid_attributes
       get :index, params: {}, session: valid_session
-      expect(response).to be_success
     end
   end
 
@@ -62,17 +61,18 @@ RSpec.describe ShipmentsController, type: :controller do
 
   describe "POST #create" do
     context "with valid params" do
-      let(:new_attributes) { create(:shipment, shipment_status: 'fulfillment', order_id: order_id).attributes }
+      # let(:new_shipment) {{
+      #   shipment: valid_attributes 
+      #   }}
 
       it "creates a new Shipment" do
         expect {
-          post :create, params: {order_id: order_id, shipment: new_attributes }, session: valid_session
+          post :create, params: { shipment: valid_attributes }, session: valid_session
         }.to change(Shipment, :count).by(1)
       end
 
       it "renders a JSON response with the new shipment" do
-
-        post :create, params: { order_id: order_id, shipment: new_attributes }, session: valid_session
+        post :create, params: { order_id: order_id, shipment: valid_attributes }, session: valid_session
         expect(response).to have_http_status(:created)
         expect(response.content_type).to eq('application/json')
         expect(response.location).to eq(shipment_url(Shipment.last))
