@@ -15,23 +15,3 @@ def random_tracking_number
   # TrackingNumber.new("#{number}#{check_digit}")
   "#{number}#{check_digit}"
 end
-
-module FactoryGirl
-  class Singleton
-    @@singletons = {}
-
-    def self.execute(factory_key, attributes = {})
-
-      # form a unique key for this factory and set of attributes
-      key = [factory_key.to_s, '?', attributes.to_query].join
-
-      begin
-        @@singletons[key] = FactoryGirl.create(factory_key, attributes)
-      rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique
-        # already in DB so return nil
-      end
-
-      @@singletons[key]
-    end
-  end
-end

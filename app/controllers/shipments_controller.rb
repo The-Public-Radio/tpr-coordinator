@@ -17,7 +17,6 @@ class ShipmentsController < ApplicationController
   # POST /shipments
   # POST /shipments.json
   def create
-    binding.pry
     @shipment = Shipment.new(shipment_params)
 
     if @shipment.save

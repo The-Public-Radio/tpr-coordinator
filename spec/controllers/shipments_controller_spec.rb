@@ -41,7 +41,7 @@ RSpec.describe ShipmentsController, type: :controller do
   # in order to pass any filters (e.g. authentication) defined in
   # ShipmentsController. Be sure to keep this updated too.
   let(:valid_session) { {} }
-  let(:order) { create(:order) }
+  let(:order) { build(:order) }
   let(:order_id) { order.id }
 
   describe "GET #index" do
@@ -67,7 +67,7 @@ RSpec.describe ShipmentsController, type: :controller do
 
       it "creates a new Shipment" do
         expect {
-          post :create, params: { shipment: valid_attributes }, session: valid_session
+          post :create, params: { order_id: order_id, shipment: valid_attributes }, session: valid_session
         }.to change(Shipment, :count).by(1)
       end
 

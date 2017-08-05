@@ -6,9 +6,9 @@ FactoryGirl.define do
     # Associations
     order
 
-    after :create do |created|
-      create_list(:radio, 1, :shipment => created)
-    end
+    # after :create do |created|
+    #   create_list(:radio, 1, :shipment => created)
+    # end
 
     factory :created do
       shipment_status "created"
