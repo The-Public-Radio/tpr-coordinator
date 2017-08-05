@@ -1,15 +1,14 @@
 # Shipments API
 
-## Update a shipment&#39;s status
+## Looking up a shipment by tacking number
 
-### PUT /shipments
+### GET /shipments
 
 ### Parameters
 
 | Name | Description | Required | Scope |
 |------|-------------|----------|-------|
 | tracking_number | String, shipment tracking number | true |  |
-| shipment_status | String, shipment tracking number | true |  |
 
 ### Request
 
@@ -19,11 +18,11 @@
 
 #### Route
 
-<pre>PUT /shipments</pre>
+<pre>GET /shipments?tracking_number=9374889691090496532903</pre>
 
-#### Body
+#### Query Parameters
 
-<pre>{"tracking_number":"9374889691090496532903","shipment_status":"fulfillment"}</pre>
+<pre>tracking_number: 9374889691090496532903</pre>
 
 ### Response
 
@@ -39,11 +38,11 @@
 
 <pre>{
   "data": {
-    "id": 10320,
+    "id": 10319,
     "tracking_number": "9374889691090496532903",
-    "ship_date": null,
-    "shipment_status": "fulfillment",
-    "order_id": 7350
+    "ship_date": "2017-07-28",
+    "shipment_status": "shipped",
+    "order_id": 7349
   },
   "errors": [
 
