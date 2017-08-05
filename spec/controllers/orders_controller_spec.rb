@@ -30,9 +30,7 @@ RSpec.describe OrdersController, type: :controller do
   # adjust the attributes here as well.
   let(:valid_attributes) { build(:order).attributes  }
 
-  let(:invalid_attributes) {
-    skip("Add a hash of attributes invalid for your model")
-  }
+  let(:invalid_attributes) { build(:order, order_source: 'amazon').attributes }
 
   # This should return the minimal set of values that should be in the session
   # in order to pass any filters (e.g. authentication) defined in
@@ -84,15 +82,16 @@ RSpec.describe OrdersController, type: :controller do
 
   describe "PUT #update" do
     context "with valid params" do
+      let(:new_email) { 'new@email.com' }
       let(:new_attributes) {
-        skip("Add a hash of attributes valid for your model")
+        build(:order, email: new_email ).attributes
       }
 
       it "updates the requested order" do
         order = Order.create! valid_attributes
         put :update, params: {id: order.to_param, order: new_attributes}, session: valid_session
         order.reload
-        skip("Add assertions for updated state")
+        expect(order.email).to eq(new_email)
       end
 
       it "renders a JSON response with the order" do
