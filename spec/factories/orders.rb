@@ -5,10 +5,6 @@ FactoryGirl.define do
     address "123 West 9th St., City, State, USA"
     order_source 'other'
     email { "#{first_name}.#{last_name}@gmail.com" }
-
-    after :create do |order|
-      create_list(:shipment, 1, :order => order)
-    end
     
     factory :kickstarter, class: Order do
       order_source "kickstarter"

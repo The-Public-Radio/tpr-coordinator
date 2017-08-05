@@ -32,7 +32,7 @@ resource "Shipments" do
       do_request
       expect(status).to eq 200
       data = JSON.parse(response_body)['data']
-      expect(data.length).to be 10
+      expect(data.length).to be 3
     end
   end
 
