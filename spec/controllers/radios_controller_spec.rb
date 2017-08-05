@@ -28,7 +28,10 @@ RSpec.describe RadiosController, type: :controller do
   # This should return the minimal set of attributes required to create a valid
   # Radio. As you add validations to Radio, be sure to
   # adjust the attributes here as well.
-  let(:valid_attributes) { build(:radio, shipment_id: create(:shipment).id ).attributes }
+  let(:shipment) { create(:shipment) }
+  let(:shipment_id) { shipment.id }
+
+  let(:valid_attributes) { build(:radio, shipment_id: shipment_id ).attributes }
 
   let(:invalid_attributes) {
     {
@@ -40,8 +43,7 @@ RSpec.describe RadiosController, type: :controller do
   # in order to pass any filters (e.g. authentication) defined in
   # RadiosController. Be sure to keep this updated too.
   let(:valid_session) { {} }
-  let(:shipment) { create(:shipment) }
-  let(:shipment_id) { shipment.id }
+
 
   describe "GET #index" do
     it "returns a success response" do
@@ -61,19 +63,17 @@ RSpec.describe RadiosController, type: :controller do
 
   describe "POST #create" do
     context "with valid params" do
-      let(:new_attributes) { create(:radio, frequency: '86.5', shipment_id: shipment_id).attributes }
 
       it "creates a new Radio" do
         expect {
-          post :create, params: { shipment_id: shipment_id, radio: new_attributes }, session: valid_session
+          post :create, params: { shipment_id: shipment_id, radio: valid_attributes }, session: valid_session
         }.to change(Radio, :count).by(1)
       end
 
       it "renders a JSON response with the new radio" do
-        post :create, params: { shipment_id: shipment_id, radio: new_attributes }, session: valid_session
+        post :create, params: { shipment_id: shipment_id, radio: valid_attributes }, session: valid_session
         expect(response).to have_http_status(:created)
         expect(response.content_type).to eq('application/json')
-        expect(response.location).to eq(radio_url(Radio.last))
       end
     end
 

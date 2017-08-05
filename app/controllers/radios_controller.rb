@@ -26,7 +26,7 @@ class RadiosController < ApplicationController
     @radio = Radio.new(radio_params)
 
     if @radio.save
-      render json: :show, status: :created, location: @radio
+      render json: :show, status: :created
     else
       render json: @radio.errors, status: :unprocessable_entity
     end
@@ -36,7 +36,7 @@ class RadiosController < ApplicationController
   # PATCH/PUT /radios/1.json
   def update
     if @radio.update(radio_params)
-      render json: :show, status: :ok, location: @radio
+      render json: :show, status: :ok
     else
       render json: @radio.errors, status: :unprocessable_entity
     end
