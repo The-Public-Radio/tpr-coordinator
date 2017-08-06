@@ -114,10 +114,9 @@ RSpec.describe ShipmentsController, type: :controller do
           expect(Shipstation).to receive(:username).with('test_api_key')
 
 
-          expect(Order.find(response_body['id']).tracking_number).to eq(tracking_nubmer)
+          expect(Order.find(response.body['id']).tracking_number).to eq(tracking_nubmer)
         end
       end
-
     end
 
     context "with invalid params" do
