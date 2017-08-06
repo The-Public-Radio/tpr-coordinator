@@ -14,14 +14,12 @@ class OrdersController < ApplicationController
 
   # POST /orders
   def create
-    if !params['order']['frequencies'].nil?
-      frequencies = params['order']['frequencies']
-    end
+    frequencies = params['frequencies'] if !params['frequencies'].nil?
 
     @order = Order.new(order_params)
 
     if @order.save
-      split_frequencies_into_shipments(frequencies)
+      split_frequencies_into_shipments(frequencies) if !params['frequencies'].nil?
       render json: @order, status: :created, location: @order
     else
       render json: @order.errors, status: :unprocessable_entity
