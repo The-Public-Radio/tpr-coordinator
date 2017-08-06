@@ -77,6 +77,45 @@ RSpec.describe ShipmentsController, type: :controller do
         expect(response.content_type).to eq('application/json')
         expect(response.location).to eq(shipment_url(Shipment.last))
       end
+
+      context 'without a tracking number' do
+        valid_attributes.delete(:tracking_number)
+        tracking_nubmer = random_tracking_number
+        
+        shipstation_order_create_options = {
+          order: {
+            order_number: '', # r, user defined, TODO: test this
+            order_key: '', 
+            orderDate: '', # r
+            orderStatus: '', # r
+            customerEmail: '', # do we want this? what does this do?
+            billTo: '', # r, must be an Address object/model type
+            shipTo: '', # r, must be an Address object/model type
+            items: '' # An array of item objects. Use an array of OrderItem models.
+          }
+        }
+
+        create_label_params = {
+
+        }
+
+        create_label_response = {
+          # A base64 encoded pdf file
+        }
+
+        it 'creates a tracking number from the shipstation API' do
+          post :create, params: { order_id: order_id, shipment: valid_attributes }, session: valid_session
+
+          exect(Shipstation::Order).to receive(:create).with(shipstation_order_create_options)
+          exect(Shipstation::Order).to receive(:create_label).with(create_label_params)
+          exect(Shipstation).to receive(:password).with('test_api_secret')
+          exect(Shipstation).to receive(:username).with('test_api_key')
+
+
+          expect(Order.find(response_body['id']).tracking_number).to eq(tracking_nubmer)
+        end
+      end
+
     end
 
     context "with invalid params" do

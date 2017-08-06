@@ -42,9 +42,6 @@ resource "Orders" do
     parameter :order_source, 'String, where the order came from. Options: kickstarter, squarespace, other', required: false
 
     example 'Create a new order' do
-      # prior_shipment_count = Shipment.all.count
-      # prior_radio_count = Radio.all.count
-
       order_params = {
         order_source: 'other',
         first_name: 'Person',
@@ -61,15 +58,6 @@ resource "Orders" do
       expect(data['first_name']).to eq(order_params[:first_name])
       expect(data['last_name']).to eq(order_params[:last_name])
       expect(data['email']).to eq(order_params[:email])
-
-      # expect(data['shipments'].count).to be 4
-      # expect(data['shipments'][0]['radios'].count).to be 3
-      # expect(data['shipments'][1]['radios'].count).to be 3
-      # expect(data['shipments'][2]['radios'].count).to be 2
-      # expect(data['shipments'][3]['radios'].count).to be 2
-
-      # expect(Shipment.all.count).to be(prior_shipment_count + 4)
-      # expect(Radio.all.count).to be(prior_radio_count + 4)
     end
   end
 end

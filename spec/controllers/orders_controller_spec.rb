@@ -70,6 +70,32 @@ RSpec.describe OrdersController, type: :controller do
       end
     end
 
+    context "with a frequency list" do
+      params_with_frequency = valid_attributes
+      params_with_frequency['frequencies'] = ['98.3', '79.5', '79.5', '98.3', '79.5', '79.5', '98.3', '79.5', '79.5', '105.6']
+
+      it "creates a shipment for each set of 3 radios" do
+        expect{
+          post :create, params: { order: params_with_frequency }, session: valid_session
+        }.to change(Shipment, :count).by(3)
+
+        last_shipment = Shipment.last
+        expect(last_shipment.frequency).to eq (frequencies.last)
+        expect(last_shipment.radios.count).to be 1
+        expect(Shipment.find(last_shipment.id - 1).radios.count).to be 3
+        expect(Shipment.find(last_shipment.id - 2).radios.count).to be 3
+      end
+
+      it "creates a radio for each entry in the list"
+        expect{
+          post :create, params: { order: params_with_frequency }, session: valid_session
+        }.to change(Radio, :count).by(7)
+
+        expect(Radio.last.frequency).to eq (frequencies.last)
+        expect(Radio.last.shipment_id).to eq (Shipment.last.id)
+      end
+    end
+
     context "with invalid params" do
       it "renders a JSON response with errors for the new order" do
 
