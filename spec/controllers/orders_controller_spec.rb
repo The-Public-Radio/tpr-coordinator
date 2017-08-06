@@ -71,10 +71,11 @@ RSpec.describe OrdersController, type: :controller do
     end
 
     context "with a frequency list" do
-      params_with_frequency = valid_attributes
-      params_with_frequency['frequencies'] = ['98.3', '79.5', '79.5', '98.3', '79.5', '79.5', '98.3', '79.5', '79.5', '105.6']
 
       it "creates a shipment for each set of 3 radios" do
+       params_with_frequency = valid_attributes
+       params_with_frequency['frequencies'] = ['98.3', '79.5', '79.5', '98.3', '79.5', '79.5', '98.3', '79.5', '79.5', '105.6']
+
         expect{
           post :create, params: { order: params_with_frequency }, session: valid_session
         }.to change(Shipment, :count).by(3)
@@ -86,7 +87,10 @@ RSpec.describe OrdersController, type: :controller do
         expect(Shipment.find(last_shipment.id - 2).radios.count).to be 3
       end
 
-      it "creates a radio for each entry in the list"
+      it "creates a radio for each entry in the list" do
+        params_with_frequency = valid_attributes
+        params_with_frequency['frequencies'] = ['98.3', '79.5', '79.5', '98.3', '79.5', '79.5', '98.3', '79.5', '79.5', '105.6']
+
         expect{
           post :create, params: { order: params_with_frequency }, session: valid_session
         }.to change(Radio, :count).by(7)
@@ -148,5 +152,4 @@ RSpec.describe OrdersController, type: :controller do
       }.to change(Order, :count).by(-1)
     end
   end
-
 end

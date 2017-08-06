@@ -79,8 +79,6 @@ RSpec.describe ShipmentsController, type: :controller do
       end
 
       context 'without a tracking number' do
-        valid_attributes.delete(:tracking_number)
-        tracking_nubmer = random_tracking_number
         
         shipstation_order_create_options = {
           order: {
@@ -104,12 +102,16 @@ RSpec.describe ShipmentsController, type: :controller do
         }
 
         it 'creates a tracking number from the shipstation API' do
+          valid_attributes.delete(:tracking_number)
+          tracking_nubmer = random_tracking_number
+
+
           post :create, params: { order_id: order_id, shipment: valid_attributes }, session: valid_session
 
-          exect(Shipstation::Order).to receive(:create).with(shipstation_order_create_options)
-          exect(Shipstation::Order).to receive(:create_label).with(create_label_params)
-          exect(Shipstation).to receive(:password).with('test_api_secret')
-          exect(Shipstation).to receive(:username).with('test_api_key')
+          expect(Shipstation::Order).to receive(:create).with(shipstation_order_create_options)
+          expect(Shipstation::Order).to receive(:create_label).with(create_label_params)
+          expect(Shipstation).to receive(:password).with('test_api_secret')
+          expect(Shipstation).to receive(:username).with('test_api_key')
 
 
           expect(Order.find(response_body['id']).tracking_number).to eq(tracking_nubmer)
