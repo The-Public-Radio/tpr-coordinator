@@ -1,7 +1,7 @@
 {
   "carrierCode": "usps",
   "serviceCode": "fedex_ground",
-  "packageCode": "package",
+  "packageCode": "packgage",
   "confirmation": "delivery",
   "shipDate": "2014-04-03",
   "weight": {
