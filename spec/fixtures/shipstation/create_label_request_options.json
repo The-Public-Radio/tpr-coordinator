@@ -1,0 +1,47 @@
+{
+  "carrierCode": "usps",
+  "serviceCode": "fedex_ground",
+  "packageCode": "package",
+  "confirmation": "delivery",
+  "shipDate": "2014-04-03",
+  "weight": {
+    "value": 3,
+    "units": "ounces"
+  },
+  "dimensions": {
+    "units": "inches",
+    "length": 7,
+    "width": 5,
+    "height": 6
+  },
+  "shipFrom": {
+    "name": "Jason Hodges",
+    "company": "ShipStation",
+    "street1": "2815 Exposition Blvd",
+    "street2": "Ste 2353242",
+    "street3": null,
+    "city": "Austin",
+    "state": "TX",
+    "postalCode": "78703",
+    "country": "US",
+    "phone": null,
+    "residential": false
+  },
+  "shipTo": {
+    "name": "The President",
+    "company": "US Govt",
+    "street1": "1600 Pennsylvania Ave",
+    "street2": "Oval Office",
+    "street3": null,
+    "city": "Washington",
+    "state": "DC",
+    "postalCode": "20500",
+    "country": "US",
+    "phone": null,
+    "residential": false
+  },
+  "insuranceOptions": null,
+  "internationalOptions": null,
+  "advancedOptions": null,
+  "testLabel": false
+}
