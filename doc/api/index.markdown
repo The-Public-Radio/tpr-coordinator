@@ -3,6 +3,8 @@
 ## Orders
 
 * [All orders](orders/all_orders.markdown)
+* [Create a new order](orders/create_a_new_order.markdown)
+* [Looking up a single order](orders/looking_up_a_single_order.markdown)
 
 ## Radios
 
