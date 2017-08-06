@@ -7,16 +7,17 @@ resource "Orders" do
     header 'Content-Type', 'application/json' 
   end
 
-  let(:kickstarter_order) { create :order, factory: :kickstarter }
-  let(:squarespace_order) { create :order, factory: :squarespace }
+  let(:kickstarter_order) { create :kickstarter }
+  let(:squarespace_order) { create :squarespace }
 
   get "/orders" do
     example "All orders" do
+      kickstarter_order
+      squarespace_order
       do_request
       expect(status).to eq 200
-      binding.pry
       data = JSON.parse(response_body)['data']
-      expect(data.length).to be 3
+      expect(data.length).to be 2
     end
   end
 

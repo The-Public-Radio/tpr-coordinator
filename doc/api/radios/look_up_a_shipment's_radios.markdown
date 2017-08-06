@@ -11,7 +11,7 @@
 
 #### Route
 
-<pre>GET /shipments/10311/radios</pre>
+<pre>GET /shipments/10826/radios</pre>
 
 ### Response
 
@@ -28,15 +28,15 @@
 <pre>{
   "data": [
     {
-      "id": 6349,
+      "id": 6752,
       "frequency": "90.5"
     },
     {
-      "id": 6350,
+      "id": 6753,
       "frequency": "90.5"
     },
     {
-      "id": 6351,
+      "id": 6754,
       "frequency": "90.5"
     }
   ],

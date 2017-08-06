@@ -20,7 +20,7 @@ Each page only returns 1 record. The header `X-Total` will give the total number
 
 #### Route
 
-<pre>GET /shipments/10313/radios?page=2</pre>
+<pre>GET /shipments/10828/radios?page=2</pre>
 
 #### Query Parameters
 
@@ -40,7 +40,7 @@ Each page only returns 1 record. The header `X-Total` will give the total number
 
 <pre>[
   {
-    "id": 6354,
+    "id": 6757,
     "frequency": "90.5"
   }
 ]</pre>
