@@ -21,12 +21,12 @@ resource "Orders" do
     end
   end
 
-  get "/order/:id" do
+  get "/orders/:id" do
     let(:id) { kickstarter_order.id }
     example "Looking up a single order" do
       do_request
       expect(status).to eq 200
-      data = JSON.parse(response_body)['data']
+      data = JSON.parse(response_body)
       expect(data['order_source']).to eq(kickstarter_order.order_source)
       expect(data['first_name']).to eq(kickstarter_order.first_name)
       expect(data['last_name']).to eq(kickstarter_order.last_name)
