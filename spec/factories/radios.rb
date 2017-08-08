@@ -1,6 +1,10 @@
 FactoryGirl.define do
   factory :radio do
-    frequency "90.5"
+    frequency '90.5'
+    pcb_version '1'
+    serial_number 'TPRv2.0_1_12345'
+    assembly_date Time.new
+    operator 'some_operator_name'
 
     # Associations
     shipment

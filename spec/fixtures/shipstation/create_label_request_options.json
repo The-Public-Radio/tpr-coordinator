@@ -1,47 +1,32 @@
 {
-  "carrierCode": "usps",
-  "serviceCode": "fedex_ground",
-  "packageCode": "packgage",
-  "confirmation": "delivery",
-  "shipDate": "2014-04-03",
+  "carrierCode": "stamps_com",
+  "serviceCode": "usps_first_class_mail",
+  "packageCode": "1",
+  "shipDate": "2017-08-06",
   "weight": {
-    "value": 3,
+    "value": 15,
     "units": "ounces"
   },
-  "dimensions": {
-    "units": "inches",
-    "length": 7,
-    "width": 5,
-    "height": 6
-  },
   "shipFrom": {
-    "name": "Jason Hodges",
-    "company": "ShipStation",
-    "street1": "2815 Exposition Blvd",
-    "street2": "Ste 2353242",
-    "street3": null,
-    "city": "Austin",
-    "state": "TX",
-    "postalCode": "78703",
+    "name": "Gabe Ochoa",
+    "company": "TPR",
+    "street1": "355 Jefferson Ave",
+    "street2": "Apt 4",
+    "city": "Brooklyn",
+    "state": "NY",
+    "postalCode": "11221",
     "country": "US",
-    "phone": null,
-    "residential": false
+    "residential": true
   },
   "shipTo": {
     "name": "The President",
     "company": "US Govt",
     "street1": "1600 Pennsylvania Ave",
     "street2": "Oval Office",
-    "street3": null,
     "city": "Washington",
     "state": "DC",
     "postalCode": "20500",
     "country": "US",
-    "phone": null,
     "residential": false
-  },
-  "insuranceOptions": null,
-  "internationalOptions": null,
-  "advancedOptions": null,
-  "testLabel": false
+  }
 }

@@ -79,41 +79,20 @@ RSpec.describe ShipmentsController, type: :controller do
       end
 
       context 'without a tracking number' do
-        
-        shipstation_order_create_options = {
-          order: {
-            order_number: '', # r, user defined, TODO: test this
-            order_key: '', 
-            orderDate: '', # r
-            orderStatus: '', # r
-            customerEmail: '', # do we want this? what does this do?
-            billTo: '', # r, must be an Address object/model type
-            shipTo: '', # r, must be an Address object/model type
-            items: '' # An array of item objects. Use an array of OrderItem models.
-          }
-        }
-
-        create_label_params = {
-
-        }
-
-        create_label_response = {
-          # A base64 encoded pdf file
-        }
+        create_label_params = load_json_fixture('./spec/fixtures/shipstation/create_label_request_options.json')
+        create_label_response = load_fixture('./spec/fixtures/shipstation/create_label_response.json')
+        response_params = JSON.parse(create_label_response)
 
         it 'creates a tracking number from the shipstation API' do
           valid_attributes.delete(:tracking_number)
           tracking_nubmer = random_tracking_number
 
-
           post :create, params: { order_id: order_id, shipment: valid_attributes }, session: valid_session
 
-          expect(Shipstation::Order).to receive(:create).with(shipstation_order_create_options)
-          expect(Shipstation::Order).to receive(:create_label).with(create_label_params)
-          expect(Shipstation).to receive(:password).with('test_api_secret')
-          expect(Shipstation).to receive(:username).with('test_api_key')
+          expect(HTTParty).to receive(:post).with(create_label_params)
+            .and_return(object_double('response', status: 200, body: create_label_response))
 
-          # expect(Order.find(response.body['id']).tracking_number).to eq(tracking_nubmer)
+          expect(Order.find(response.body['id']).tracking_number).to eq(response_params['tracking_number'])
         end
       end
     end

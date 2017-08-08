@@ -1,3 +1,5 @@
+require 'json'
+
 def random_tracking_number
   number = "9374889691090496#{Random.new.rand(99999)}"
   chars = number.gsub(/^420\d{5}/, '').chars.to_a
@@ -14,4 +16,12 @@ def random_tracking_number
   check_digit = 10 - check_digit unless (check_digit.zero?)
   # TrackingNumber.new("#{number}#{check_digit}")
   "#{number}#{check_digit}"
+end
+
+def load_fixture(path)
+  File.read(path)
+end
+
+def load_json_fixture(path)
+  JSON.parse(load_fixture(path))
 end

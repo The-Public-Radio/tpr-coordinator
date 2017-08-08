@@ -60,6 +60,6 @@ class RadiosController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def radio_params
-      params.require(:radio).permit(:frequency, :shipment_id)
+      params.require(:radio).permit(:frequency, :shipment_id, :pcb_version, :serial_number, :assembly_date, :operator)
     end
 end
