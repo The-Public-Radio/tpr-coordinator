@@ -26,7 +26,7 @@ class RadiosController < ApplicationController
     @radio = Radio.new(radio_params)
 
     if @radio.save
-      render json: :show, status: :created
+      api_response(@radio, :created)
     else
       render json: @radio.errors, status: :unprocessable_entity
     end

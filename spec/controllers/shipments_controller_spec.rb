@@ -75,7 +75,6 @@ RSpec.describe ShipmentsController, type: :controller do
         post :create, params: { order_id: order_id, shipment: valid_attributes }, session: valid_session
         expect(response).to have_http_status(:created)
         expect(response.content_type).to eq('application/json')
-        expect(response.location).to eq(shipment_url(Shipment.last))
       end
 
       context 'without a tracking number' do

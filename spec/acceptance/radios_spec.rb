@@ -61,12 +61,12 @@ resource "Radios" do
 
     example "Create a radio" do
       do_request
-      expect(status).to eq 200
-      data = JSON.parse(response_body)
+      expect(status).to eq 201
+      data = JSON.parse(response_body)['data']
 
-      expect(data.count).to be 1
-      expect(data[0]['frequency']).to eq(radio_frequency)
-      expect(response_headers['X-Total']).to eq('3')
+      expect(data['pcb_version']).to eq(pcb_version)
+      expect(data['serial_number']).to eq(serial_number)
+      expect(data['operator']).to eq(operator)
     end
   end
 end
