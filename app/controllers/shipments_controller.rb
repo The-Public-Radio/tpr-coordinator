@@ -20,7 +20,7 @@ class ShipmentsController < ApplicationController
     @shipment = Shipment.new(shipment_params)
 
     if @shipment.save
-      render json: :show, status: :created, location: @shipment
+      api_response(@shipment)
     else
       render json: @shipment.errors, status: :unprocessable_entity
     end

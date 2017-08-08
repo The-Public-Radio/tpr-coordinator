@@ -84,15 +84,15 @@ RSpec.describe ShipmentsController, type: :controller do
         response_params = JSON.parse(create_label_response)
 
         it 'creates a tracking number from the shipstation API' do
-          valid_attributes.delete(:tracking_number)
-          tracking_nubmer = random_tracking_number
+          valid_attributes.delete('tracking_number')
 
           post :create, params: { order_id: order_id, shipment: valid_attributes }, session: valid_session
 
           expect(HTTParty).to receive(:post).with(create_label_params)
             .and_return(object_double('response', status: 200, body: create_label_response))
 
-          expect(Order.find(response.body['id']).tracking_number).to eq(response_params['tracking_number'])
+          body = JSON.parse(response.body)['data']
+          expect(Shipment.find(body['id']).tracking_number).to eq(response_params['trackingNumber'])
         end
       end
     end
