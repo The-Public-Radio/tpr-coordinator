@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   put '/shipments', to: 'shipments#update'
   patch '/shipments', to: 'shipments#update'
   get '/health', to: 'monitoring#health'
+  get '/', to: 'monitoring#health'
   post '/radios', to: 'radios#create'
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
