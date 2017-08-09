@@ -6,7 +6,7 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
-Radio.create([
+radios = [
 	{
 		frequency: '98.1',
 		pcb_version: '1',
@@ -62,10 +62,9 @@ Radio.create([
 		assembly_date: Time.now,
 		operator: 'Person McPersonson',
 		shipment_id: nil
-	}
-	])
+	}]
 
-Shipment.create([
+shipments = [
 	{
 		tracking_number: '9374889691090496850816',
 		shipment_status: 'created',
@@ -84,9 +83,9 @@ Shipment.create([
 		ship_date: Time.now,
 		order_id: 23
 	}
-	])
+	]
 
-Order.create([
+orders = [
 	{
 		first_name: 'Person',
 		last_name: 'McPersonson',
@@ -107,5 +106,8 @@ Order.create([
 		order_source: 'other',
 		address: '132 N 5th St, Brooklyn, NY 11221',
 		email: 'Person.McPersonson@gmail.com'
-	}
-	])
+	}]
+
+orders.each{ |order| Order.create(order) }
+shipments.each{ |order| Shipment.create(order) }
+radios.each{ |order| Radio.create(order) }
