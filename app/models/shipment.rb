@@ -5,7 +5,7 @@ class Shipment < ApplicationRecord
   #   errors.add(:ship_date, "Must be a Date object!") unless ship_date.valid_date?
   # end
 
-  has_many :radio, dependent: :destroy
+  has_many :radio, dependent: :destroy, optional: true
   belongs_to :order
   # use tracking_number gem for validation
   validates :tracking_number, tracking_number: true, allow_nil: true  #, uniqueness: true
