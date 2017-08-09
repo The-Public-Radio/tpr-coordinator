@@ -4,7 +4,7 @@ class MonitoringController < ApplicationController
     # TODO make a basic DB call
     # ActiveRecord::Base.connection.execute('SELECT 'Pong' as message')
 
-    head :ok
+    api_response('TPR Coordinator API')
   rescue => e
     Rails.logger.fatal "health check failed: #{e.inspect}"
     render status: :internal_server_error,
