@@ -50,6 +50,10 @@ class ShipmentsController < ApplicationController
     attr_accessor :shipment
 
     def shipstation_tracking_number
+      @shipstation_tracking_number ||= create_shipstation_label['tracking_number']
+    end
+
+    def create_shipstation_label      
       url = 'https://ssapi.shipstation.com/shipments/createlabel'
 
       headers = { 
@@ -78,8 +82,8 @@ class ShipmentsController < ApplicationController
         "testLabel": false
       }
 
-      response = HTTParty.post(url, headers: headers, body: create_label_options)
-      response['body']['tracking_number']
+      HTTParty.post(url, headers: headers, body: create_label_options)
+      JSON.parse(response.body)
     end
 
     def shipstation_basic_auth_key

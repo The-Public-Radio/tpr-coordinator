@@ -69,4 +69,32 @@ resource "Radios" do
       expect(data['operator']).to eq(operator)
     end
   end
+
+  put "/radios" do
+    parameter :boxed, 'Boolean, is this radio boxed?', required: true
+    parameter :serial_number, 'String, radio (speaker) serial number', required: true
+    parameter :shipment_id, 'String, shipment_id that the radio was boxed for', required: true
+
+    let(:boxed) { true }
+    let(:serial_number) { 'TPRv2.0_1_67890' }
+    let(:shipment_id) { shipment_id }
+
+    example "Update a radio to be boxed and attached to a shipment" do
+      radio =  Radio.find_by_serial_number(serial_number)
+
+      do_request
+      expect(status).to eq 200
+      data = JSON.parse(response_body)['data']
+      errors = JSON.parse(response_body)['errors']
+
+
+      expect(data['boxed']).to be true
+      expect(data['serial_number']).to eq(operator)
+      expect(data['shipment_id']).to eq(shipment_id)
+
+      expect(radio.reload).to change(radio.serial_number).from(nil).to(serial_number)
+
+      expect(errors.empty?).to be true
+    end
+  end
 end

@@ -52,21 +52,38 @@ resource "Shipments" do
     end
   end
 
-  put "/shipments" do
+  put "/shipments/:id" do
     let(:tracking_number) { created_shipment.tracking_number }
     let(:shipment_status) { 'fulfillment' }
     let(:before_shipment_status) { created_shipment.shipment_status }
 
-    parameter :tracking_number, 'String, shipment tracking number', required: true
+    parameter :tracking_number, 'String, shipment tracking number', required: false
     parameter :shipment_status, 'String, shipment tracking number', required: true
 
     example "Update a shipment's status" do
+
       expect(before_shipment_status).to eq('created')
 
       do_request
       expect(status).to eq 200
       data = JSON.parse(response_body)['data']
       expect(data['shipment_status']).to eq(shipment_status)
+
+      expect(created_shipment.reload).to change(created_shipment.shipment_status)
+        .from(before_shipment_status).to(shipment_status)
+    end
+  end
+
+  get "/shipments/:id/next_radio" do
+    parameter :tracking_number, 'String, shipment tracking number', required: true
+
+    let(:tracking_number) { ship.tracking_number }
+
+    example "Looking the next unboxed radio in a shipment" do
+      do_request
+      expect(status).to eq 200
+      data = JSON.parse(response_body)['data']
+      expect(data['frequency']).to eq('98.1')
     end
   end
 end
