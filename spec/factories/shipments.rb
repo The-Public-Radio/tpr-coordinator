@@ -22,6 +22,15 @@ FactoryGirl.define do
       end
     end
 
+    factory :boxed do
+      shipment_status "boxed"
+      ship_date "2017-07-28"
+
+      after :create do |boxed|
+        create_list(:radio, 2, :shipment => boxed)
+      end
+    end
+
     factory :shipped do
       shipment_status "shipped"
       ship_date "2017-07-28"

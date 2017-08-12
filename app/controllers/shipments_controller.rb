@@ -1,3 +1,6 @@
+require 'httparty'
+require 'date'
+
 class ShipmentsController < ApplicationController
   before_action :set_shipment, only: [:show, :update, :destroy]
 
@@ -20,6 +23,7 @@ class ShipmentsController < ApplicationController
     @shipment = Shipment.new(shipment_params)
 
     if @shipment.save
+      shipstation_tracking_number if @shipment.tracking_number.nil?
       api_response(@shipment, :created)
     else
       render json: @shipment.errors, status: :unprocessable_entity
@@ -44,6 +48,44 @@ class ShipmentsController < ApplicationController
 
   private
     attr_accessor :shipment
+
+    def shipstation_tracking_number
+      url = 'https://ssapi.shipstation.com/shipments/createlabel'
+
+      headers = { 
+        "Authorization" => "Basic #{shipstation_basic_auth_key}"
+      }
+
+      create_label_options = {
+        "carrierCode": "usps",
+        "serviceCode": "usps_first_class_mail",
+        "packageCode": "package",
+        "confirmation": "none",
+        "shipDate": Date.today.to_s,
+        "weight": {
+          "value": 15,
+          "units": "ounces"
+        },
+        "dimensions": {  
+          "units": "inches",
+          "length": 5.0,
+          "width": 4.0,
+          "height": 3.0
+        },
+        "insuranceOptions": nil,
+        "internationalOptions": nil,
+        "advancedOptions": nil,
+        "testLabel": false
+      }
+
+      response = HTTParty.post(url, headers: headers, body: create_label_options)
+      response['body']['tracking_number']
+    end
+
+    def shipstation_basic_auth_key
+      Base64.strict_encode64("#{ENV['SHIPSTATION_API_KEY']}:#{ENV['SHIPSTATION_API_SECRET']}")
+    end
+
     # Use callbacks to share common setup or constraints between actions.
     def set_shipment
       if !params[:tracking_number].nil?

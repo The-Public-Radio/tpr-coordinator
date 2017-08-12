@@ -11,22 +11,27 @@ FactoryGirl.define do
 
     factory :radio_1, class: Radio do
   	  frequency  '90.5'
+      boxed true
     end
 
     factory :radio_2, class: Radio do
   	  frequency  '87.9'
+      boxed true
     end
 
     factory :radio_3, class: Radio do
       frequency  '103.1'
+      boxed true
     end
 
     factory :radio_4, class: Radio do
       frequency  '103.1'
+      boxed false
     end
 
     factory :radio_5, class: Radio do
   	  frequency  '101.3'
+      boxed false
   	end
   end
 end
