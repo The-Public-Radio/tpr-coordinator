@@ -77,7 +77,6 @@ resource "Radios" do
 
     let(:boxed) { true }
     let(:serial_number) { 'TPRv2.0_1_67890' }
-    let(:shipment_id) { shipment_id }
 
     example "Update a radio to be boxed and attached to a shipment" do
       radio =  Radio.find_by_serial_number(serial_number)

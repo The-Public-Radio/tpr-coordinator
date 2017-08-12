@@ -1,5 +1,5 @@
 class Order < ApplicationRecord
-	has_many :shipments, dependent: :destroy
+	has_many :shipments
 
 	validates_presence_of :first_name
 	validates_presence_of :last_name
