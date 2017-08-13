@@ -36,9 +36,9 @@ class RadiosController < ApplicationController
   # PATCH/PUT /radios/1.json
   def update
     if @radio.update(radio_params)
-      render json: :show, status: :ok
+      api_response(@radio)
     else
-      render json: @radio.errors, status: :unprocessable_entity
+      api_response([], :unprocessable_entity, @radio.errors)
     end
   end
 
@@ -49,13 +49,14 @@ class RadiosController < ApplicationController
   end
 
   private
-    def shipment_radios
-      
-    end
 
     # Use callbacks to share common setup or constraints between actions.
     def set_radio
-      @radio = Radio.find(params[:id])
+      if !params[:serial_number].nil?
+        @radio = Radio.find_by_serial_number(params[:serial_number])
+      else
+        @radio = Radio.find(params[:id])
+      end
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

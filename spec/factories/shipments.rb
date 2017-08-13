@@ -12,7 +12,7 @@ FactoryGirl.define do
       after :create do |created|
         create_list(:radio_2, 1, :shipment => created)
         create_list(:radio_3, 1, :shipment => created)
-        create_list(:radio, 1, :shipment => created)
+        create_list(:radio_4, 1, :shipment => created)
       end
     end
 
@@ -20,7 +20,7 @@ FactoryGirl.define do
       shipment_status "fulfillment"
 
       after :create do |fulfillment|
-        create_list(:radio, 3, :shipment => fulfillment)
+        create_list(:radio_2, 3, :shipment => fulfillment)
       end
     end
 
@@ -29,7 +29,9 @@ FactoryGirl.define do
       ship_date "2017-07-28"
 
       after :create do |boxed|
-        create_list(:radio, 2, :shipment => boxed)
+        create_list(:radio_3, 2, :shipment => boxed)
+        create_list(:radio_2, 1, :shipment => boxed)
+        create_list(:radio_1, 1, :shipment => boxed)
       end
     end
 
@@ -38,7 +40,7 @@ FactoryGirl.define do
       ship_date "2017-07-28"
 
       after :create do |shipped|
-        create_list(:radio, 2, :shipment => shipped)
+        create_list(:radio_1, 2, :shipment => shipped)
       end
     end
   end

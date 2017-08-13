@@ -12,6 +12,7 @@ resource "Radios" do
   let(:radio) { create(:radio) }
   let(:frequency) { radio.frequency }
   let(:radio_id) { radio.id }
+  let(:radio_serial_number) { radio.serial_number }
 
   get "/shipments/:shipment_id/radios/:id" do
     let(:id) { radio.id }
@@ -56,7 +57,7 @@ resource "Radios" do
     parameter :operator, 'String, paganation page number', required: false
 
     let(:pcb_version) { '1' }
-    let(:serial_number) { 'TPRv2.0_1_12345' }
+    let(:serial_number) { radio_serial_number }
     let(:operator) { 'Operator McOperatorson' }
 
     example "Create a radio" do
@@ -65,7 +66,7 @@ resource "Radios" do
       data = JSON.parse(response_body)['data']
 
       expect(data['pcb_version']).to eq(pcb_version)
-      expect(data['serial_number']).to eq(serial_number)
+      expect(data['serial_number']).to eq(radio_serial_number)
       expect(data['operator']).to eq(operator)
     end
   end
@@ -76,7 +77,7 @@ resource "Radios" do
     parameter :shipment_id, 'String, shipment_id that the radio was boxed for', required: true
 
     let(:boxed) { true }
-    let(:serial_number) { 'TPRv2.0_1_67890' }
+    let(:serial_number) { radio_serial_number }
 
     example "Update a radio to be boxed and attached to a shipment" do
       radio =  Radio.find_by_serial_number(serial_number)
@@ -86,13 +87,11 @@ resource "Radios" do
       data = JSON.parse(response_body)['data']
       errors = JSON.parse(response_body)['errors']
 
-
       expect(data['boxed']).to be true
-      expect(data['serial_number']).to eq(operator)
+      expect(data['serial_number']).to eq(serial_number)
       expect(data['shipment_id']).to eq(shipment_id)
 
-      expect(radio.reload).to change(radio.serial_number).from(nil).to(serial_number)
-
+      expect{ radio.reload }.to change{ radio.boxed }.from(false).to(true)
       expect(errors.empty?).to be true
     end
   end
