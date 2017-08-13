@@ -61,10 +61,6 @@ RSpec.describe ShipmentsController, type: :controller do
 
   describe "POST #create" do
     context "with valid params" do
-      # let(:new_shipment) {{
-      #   shipment: valid_attributes 
-      #   }}
-
       it "creates a new Shipment" do
         expect {
           post :create, params: { order_id: order_id, shipment: valid_attributes }, session: valid_session
@@ -84,11 +80,15 @@ RSpec.describe ShipmentsController, type: :controller do
 
         it 'creates a tracking number from the shipstation API' do
           valid_attributes.delete('tracking_number')
+          ENV['SHIPSTATION_API_SECRET'] = 'test_api_secret'
+          ENV['SHIPSTATION_API_KEY'] = 'test_api_key'
+
+          stub_request(:post, "https://ssapi.shipstation.com/shipments/createlabel")
+           .with(body: "carrierCode=usps&serviceCode=usps_first_class_mail&packageCode=package&confirmation=none&shipDate=2017-08-12&weight[value]=15&weight[units]=ounces&dimensions[units]=inches&dimensions[length]=5.0&dimensions[width]=4.0&dimensions[height]=3.0&insuranceOptions=&internationalOptions=&advancedOptions=&testLabel=false",
+                headers: {'Authorization'=>'Basic dGVzdF9hcGlfa2V5OnRlc3RfYXBpX3NlY3JldA=='})
+           .to_return(status: 200, body: create_label_response, headers: {})
 
           post :create, params: { order_id: order_id, shipment: valid_attributes }, session: valid_session
-
-          expect(HTTParty).to receive(:post).with(create_label_params)
-            .and_return(object_double('response', status: 200, body: create_label_response))
 
           body = JSON.parse(response.body)['data']
           expect(Shipment.find(body['id']).tracking_number).to eq(response_params['trackingNumber'])

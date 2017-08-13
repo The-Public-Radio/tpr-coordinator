@@ -77,7 +77,7 @@ resource "Shipments" do
   get "/shipments/:id/next_radio" do
     parameter :tracking_number, 'String, shipment tracking number', required: true
 
-    let(:tracking_number) { ship.tracking_number }
+    let(:tracking_number) { fulfillment_shipment.tracking_number }
 
     example "Looking the next unboxed radio in a shipment" do
       do_request

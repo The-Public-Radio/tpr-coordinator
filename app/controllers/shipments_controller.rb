@@ -21,9 +21,9 @@ class ShipmentsController < ApplicationController
   # POST /shipments.json
   def create
     @shipment = Shipment.new(shipment_params)
+    @shipment.tracking_number = shipstation_tracking_number if @shipment.tracking_number.nil?
 
     if @shipment.save
-      shipstation_tracking_number if @shipment.tracking_number.nil?
       api_response(@shipment, :created)
     else
       render json: @shipment.errors, status: :unprocessable_entity
@@ -50,7 +50,7 @@ class ShipmentsController < ApplicationController
     attr_accessor :shipment
 
     def shipstation_tracking_number
-      @shipstation_tracking_number ||= create_shipstation_label['tracking_number']
+      @shipstation_tracking_number = create_shipstation_label['trackingNumber']
     end
 
     def create_shipstation_label      
@@ -82,12 +82,12 @@ class ShipmentsController < ApplicationController
         "testLabel": false
       }
 
-      HTTParty.post(url, headers: headers, body: create_label_options)
+      response = HTTParty.post(url, headers: headers, body: create_label_options)
       JSON.parse(response.body)
     end
 
     def shipstation_basic_auth_key
-      Base64.strict_encode64("#{ENV['SHIPSTATION_API_KEY']}:#{ENV['SHIPSTATION_API_SECRET']}")
+      Base64.encode64("#{ENV['SHIPSTATION_API_KEY']}:#{ENV['SHIPSTATION_API_SECRET']}")
     end
 
     # Use callbacks to share common setup or constraints between actions.
