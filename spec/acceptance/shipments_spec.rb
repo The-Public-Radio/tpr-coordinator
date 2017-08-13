@@ -69,7 +69,7 @@ resource "Shipments" do
       data = JSON.parse(response_body)['data']
       expect(data['shipment_status']).to eq(shipment_status)
 
-      expect(created_shipment.reload).to change(created_shipment.shipment_status)
+      expect{ created_shipment.reload }.to change { created_shipment.shipment_status }
         .from(before_shipment_status).to(shipment_status)
     end
   end
