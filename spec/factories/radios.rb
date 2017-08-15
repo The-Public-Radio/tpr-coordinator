@@ -1,36 +1,17 @@
 FactoryGirl.define do
-  factory :radio do
-    frequency '90.5'
-    pcb_version '1'
-    serial_number 'TPRv2.0_1_12345'
+  factory :radio_assembled, class: Radio do
+    serial_number random_tpr_serial_number
+    operator random_operator_name
     assembly_date Time.new
-    operator 'some_operator_name'
+    pcb_version '1'
     boxed false
 
-    # Associations
-    shipment
-
-    factory :radio_1, class: Radio do
-  	  frequency  '90.5'
+    factory :radio_boxed, class: Radio do
+      frequency random_frequency
       boxed true
-    end
 
-    factory :radio_2, class: Radio do
-  	  frequency  '87.9'
-      boxed true
+      # Associations
+      shipment
     end
-
-    factory :radio_3, class: Radio do
-      frequency  '103.1'
-      boxed true
-    end
-
-    factory :radio_4, class: Radio do
-      frequency  '103.1'
-    end
-
-    factory :radio_5, class: Radio do
-  	  frequency  '101.3'
-  	end
   end
 end

@@ -25,6 +25,10 @@ class RadiosController < ApplicationController
   def create
     @radio = Radio.new(radio_params)
 
+    # Default to unboxed radios
+    @radio.boxed = @radio.boxed.nil? ? false : @radio.boxed
+
+
     if @radio.save
       api_response(@radio, :created)
     else

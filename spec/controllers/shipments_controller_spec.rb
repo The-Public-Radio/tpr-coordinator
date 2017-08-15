@@ -149,5 +149,4 @@ RSpec.describe ShipmentsController, type: :controller do
       }.to change(Shipment, :count).by(-1)
     end
   end
-
 end
