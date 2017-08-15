@@ -31,7 +31,7 @@ RSpec.describe RadiosController, type: :controller do
   let(:shipment) { create(:shipment) }
   let(:shipment_id) { shipment.id }
 
-  let(:valid_attributes) { build(:radio).attributes }
+  let(:valid_attributes) { build(:radio_boxed).attributes }
 
   let(:invalid_attributes) {
     {

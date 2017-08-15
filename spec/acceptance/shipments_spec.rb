@@ -8,7 +8,7 @@ resource "Shipments" do
   end
 
   let(:created_shipment) { create :created }
-  let(:fulfillment_shipment) { create :fulfillment }
+  let(:label_created_shipment) { create :label_created }
   let(:shipped_shipment) { create :shipped }
 
   get "/shipments/:id" do
@@ -27,7 +27,7 @@ resource "Shipments" do
     example "All shipments" do
       shipped_shipment
       created_shipment
-      fulfillment_shipment
+      label_created_shipment
 
       do_request
       expect(status).to eq 200
@@ -54,7 +54,7 @@ resource "Shipments" do
 
   put "/shipments/:id" do
     let(:tracking_number) { created_shipment.tracking_number }
-    let(:shipment_status) { 'fulfillment' }
+    let(:shipment_status) { 'label_created' }
     let(:before_shipment_status) { created_shipment.shipment_status }
 
     parameter :tracking_number, 'String, shipment tracking number', required: false
@@ -77,7 +77,7 @@ resource "Shipments" do
   get "/shipments/:id/next_radio" do
     parameter :tracking_number, 'String, shipment tracking number', required: true
 
-    let(:tracking_number) { fulfillment_shipment.tracking_number }
+    let(:tracking_number) { label_created_shipment.tracking_number }
 
     example "Looking the next unboxed radio in a shipment" do
       do_request

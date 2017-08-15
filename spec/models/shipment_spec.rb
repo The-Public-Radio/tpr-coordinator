@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Shipment, type: :model do
-  let(:model) { build(:shipment) }
+  let(:model) { build(:shipped) }
 
   it 'valid with valid attributes' do
     expect(model).to be_valid
@@ -34,14 +34,17 @@ RSpec.describe Shipment, type: :model do
   # end
 
   context 'a shipment has a status that' do
-    it 'is valid when shipped, fulfillment, or created' do
+    it 'is valid when boxed, shipped, label_created, or created' do
       model.shipment_status = 'created'
       expect(model).to be_valid
 
-      model.shipment_status = 'fulfillment'
+      model.shipment_status = 'label_created'
       expect(model).to be_valid
 
       model.shipment_status = 'shipped'
+      expect(model).to be_valid
+
+      model.shipment_status = 'boxed'
       expect(model).to be_valid
 
       model.shipment_status = 'done'
