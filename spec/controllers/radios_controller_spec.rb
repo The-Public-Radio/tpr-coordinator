@@ -70,11 +70,28 @@ RSpec.describe RadiosController, type: :controller do
       end
 
       it "that defaults to boxed: false" do
+        radio = build(:base_radio)
+        radio.shipment_id = shipment_id
+        attributes = radio.attributes.except('frequency', 'boxed')
+
         expect {
-          post :create, params: { shipment_id: shipment_id, radio: valid_attributes }, session: valid_session
+          post :create, params: { radio: attributes }, session: valid_session
         }.to change(Radio, :count).by(1)
 
         expect(Radio.last.boxed).to be false
+      end
+
+      it "that records an assembly_date" do
+        radio = build(:base_radio)
+        radio.shipment_id = shipment_id
+        attributes = radio.attributes.except('frequency', 'boxed')
+        Timecop.freeze(Time.now)
+
+        expect {
+          post :create, params: { radio: attributes }, session: valid_session
+        }.to change(Radio, :count).by(1)
+
+        expect(Radio.last.assembly_date).to eq Date.today.to_s
       end
 
       it "renders a JSON response with the new radio" do
@@ -119,19 +136,22 @@ RSpec.describe RadiosController, type: :controller do
     end
 
     context "with a shipment_id" do
+      let(:radio) { create(:radio_assembled) }
+      let(:shipped_shipment) { create(:label_created) }
+
       let(:new_attributes) {
         {
-          shipment_id: shipment_id,
+          shipment_id: shipped_shipment.id,
           boxed: true
         }
       }
 
       it "merges the radio with next unboxed radio in the shipment" do
-        Shipment.find(shipment_id)
+        shipment = Shipment.find(shipped_shipment.id)
+        next_unboxed_radio = shipment.next_unboxed_radio
         put :update, params: { id: radio.to_param, radio: new_attributes}, session: valid_session
 
-        radio.reload
-        expect(radio.frequency).to eq(new_attributes[:frequency])
+        expect(radio.reload).to change{ shipment.radio.where(frequency: next_unboxed_radio.serial_number) }.from(nil).to(radio.serial_number)
       end
     end
 

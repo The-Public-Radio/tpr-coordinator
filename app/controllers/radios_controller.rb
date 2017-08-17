@@ -28,6 +28,10 @@ class RadiosController < ApplicationController
     # Default to unboxed radios
     @radio.boxed = @radio.boxed.nil? ? false : @radio.boxed
 
+    # Recording assembly date. When the radio is attached to a shipment later 
+    # the assemble_date will differ from the objects creation date so we must
+    # record it separately
+    @radio.assembly_date = @radio.assembly_date.nil? ? Date.today.to_s : @radio.assembly_date
 
     if @radio.save
       api_response(@radio, :created)

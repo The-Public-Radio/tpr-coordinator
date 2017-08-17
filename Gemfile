@@ -53,6 +53,7 @@ group :development, :test do
   gem 'database_cleaner'
   gem 'webmock'
   gem 'namey'
+  gem 'timecop'
 end
 
 group :development do
