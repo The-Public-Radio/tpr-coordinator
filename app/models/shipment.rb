@@ -11,7 +11,7 @@ class Shipment < ApplicationRecord
   validates :tracking_number, tracking_number: true, allow_nil: true  #, uniqueness: true
   validates_inclusion_of :shipment_status, in: %w(created label_created shipped boxed), allow_nil: true, allow_blank: true
 
-  def next_unboxed_radio(id)
-		Shipment.find(id).radio.sort_by(&:created_at).select{ |s| s.boxed == false }[0]
+  def next_unboxed_radio
+		self.radio.sort_by(&:created_at).select{ |s| s.boxed == false }[0]
   end
 end
