@@ -137,21 +137,20 @@ RSpec.describe RadiosController, type: :controller do
 
     context "with a shipment_id" do
       let(:radio) { create(:radio_assembled) }
-      let(:shipped_shipment) { create(:label_created) }
+      let(:label_created_shipment) { create(:label_created) }
 
       let(:new_attributes) {
         {
-          shipment_id: shipped_shipment.id,
+          shipment_id: label_created_shipment.id,
           boxed: true
         }
       }
 
       it "merges the radio with next unboxed radio in the shipment" do
-        shipment = Shipment.find(shipped_shipment.id)
-        next_unboxed_radio = shipment.next_unboxed_radio
-        put :update, params: { id: radio.to_param, radio: new_attributes}, session: valid_session
+        next_radio = label_created_shipment.next_unboxed_radio
+        put :update, params: { id: radio.id, radio: new_attributes}, session: valid_session
 
-        expect{ radio.reload }.to change{ shipment.radio.where(frequency: next_unboxed_radio.serial_number) }.from(nil).to(radio.serial_number)
+        expect{ next_radio.reload }.to change{ next_radio.serial_number }.from(nil).to(radio.serial_number)
       end
     end
 
