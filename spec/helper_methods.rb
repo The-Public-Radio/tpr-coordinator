@@ -36,5 +36,5 @@ def load_fixture(path)
 end
 
 def load_json_fixture(path)
-  JSON.parse(load_fixture(path))
+  JSON.parse(load_fixture(path), symbolize_names: true)
 end

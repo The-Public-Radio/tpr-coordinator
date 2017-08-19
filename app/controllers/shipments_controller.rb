@@ -61,10 +61,9 @@ class ShipmentsController < ApplicationController
       }
 
       create_label_options = {
-        "carrierCode": "usps",
+        "carrierCode": "stamps_com",
         "serviceCode": "usps_first_class_mail",
-        "packageCode": "package",
-        "confirmation": "none",
+        "packageCode": "1",
         "shipDate": Date.today.to_s,
         "weight": {
           "value": 15,
@@ -76,10 +75,28 @@ class ShipmentsController < ApplicationController
           "width": 4.0,
           "height": 3.0
         },
-        "insuranceOptions": nil,
-        "internationalOptions": nil,
-        "advancedOptions": nil,
-        "testLabel": false
+        "shipFrom": {
+          "name": "The Public Radio",
+          "company": "TPR",
+          "street1": "355 Jefferson Ave",
+          "street2": "Apt 4",
+          "city": "Brooklyn",
+          "state": "NY",
+          "postalCode": "11221",
+          "country": "US",
+          "residential": true
+        },
+        "shipTo": {
+          "name": "The President",
+          "company": "US Govt",
+          "street1": "1600 Pennsylvania Ave",
+          "street2": "Oval Office",
+          "city": "Washington",
+          "state": "DC",
+          "postalCode": "20500",
+          "country": "US",
+          "residential": false
+        }
       }
 
       response = HTTParty.post(url, headers: headers, body: create_label_options)
@@ -87,7 +104,7 @@ class ShipmentsController < ApplicationController
     end
 
     def shipstation_basic_auth_key
-      Base64.encode64("#{ENV['SHIPSTATION_API_KEY']}:#{ENV['SHIPSTATION_API_SECRET']}")
+      Base64.strict_encode64("#{ENV['SHIPSTATION_API_KEY']}:#{ENV['SHIPSTATION_API_SECRET']}")
     end
 
     # Use callbacks to share common setup or constraints between actions.
