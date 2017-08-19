@@ -8,12 +8,15 @@ FactoryGirl.define do
       assembly_date Time.new
       boxed false
 
-      factory :radio_boxed, class: Radio do
+      factory :radio_inital_order, class: Radio do
         frequency random_frequency
-        boxed true
 
         # Associations
         shipment
+
+        factory :radio_boxed, class: Radio do
+          boxed true
+        end
       end
     end
   end

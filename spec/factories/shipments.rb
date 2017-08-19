@@ -10,7 +10,7 @@ FactoryGirl.define do
       shipment_status "created"
 
       after :create do |created|
-        create_list(:radio_assembled, 1, :shipment => created)
+        create_list(:radio_inital_order, 1, :shipment => created)
       end
     end
 
@@ -18,7 +18,8 @@ FactoryGirl.define do
       shipment_status "label_created"
 
       after :create do |label_created|
-        create_list(:radio_assembled, 3, :shipment => label_created)
+        create_list(:radio_boxed, 1, shipment: label_created)
+        create_list(:radio_inital_order, 2, shipment: label_created)
       end
     end
 
