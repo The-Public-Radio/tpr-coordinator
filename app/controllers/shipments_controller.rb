@@ -72,7 +72,7 @@ class ShipmentsController < ApplicationController
         "packageCode": "1",
         "shipDate": Date.today.to_s,
         "weight": {
-          "value": 15,
+          "value": 12,
           "units": "ounces"
         },
         "dimensions": {  
@@ -82,15 +82,13 @@ class ShipmentsController < ApplicationController
           "height": 3.0
         },
         "shipFrom": {
-          "name": "The Public Radio",
-          "company": "TPR",
-          "street1": "355 Jefferson Ave",
-          "street2": "Apt 4",
-          "city": "Brooklyn",
-          "state": "NY",
-          "postalCode": "11221",
+          "name": "Centerline Labs c/o Accelerated Assemblies",
+          "street1": "725 Nicholas Blvd",
+          "city": "Elk Grove Village",
+          "state": "IL",
+          "postalCode": "60007",
           "country": "US",
-          "residential": true
+          "residential": false
         },
         "shipTo": {
           "name": "The President",
