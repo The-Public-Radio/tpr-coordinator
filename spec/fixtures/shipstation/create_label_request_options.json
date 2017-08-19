@@ -4,7 +4,7 @@
   "packageCode": "1",
   "shipDate": "2017-08-05",
   "weight": {
-    "value": 15,
+    "value": 12,
     "units": "ounces"
   },
   "dimensions": {
@@ -14,15 +14,14 @@
     "height": 3.0
   },
   "shipFrom": {
-    "name": "The Public Radio",
+    "name": "Centerline Labs c/o Accelerated Assemblies",
     "company": "TPR",
-    "street1": "355 Jefferson Ave",
-    "street2": "Apt 4",
-    "city": "Brooklyn",
-    "state": "NY",
-    "postalCode": "11221",
+    "street1": "725 Nicholas Blvd",
+    "city": "Elk Grove Village",
+    "state": "IL",
+    "postalCode": "60007",
     "country": "US",
-    "residential": true
+    "residential": false
   },
   "shipTo": {
     "name": "The President",
