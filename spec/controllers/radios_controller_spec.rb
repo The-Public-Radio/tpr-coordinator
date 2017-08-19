@@ -148,10 +148,10 @@ RSpec.describe RadiosController, type: :controller do
 
       it "merges the radio with next unboxed radio in the shipment" do
         shipment = Shipment.find(shipped_shipment.id)
-        next_unboxed_radio = shipment.next_unboxed_radio
+        next_unboxed_radio = shipment.next_unboxed_radio(shipped_shipment.id)
         put :update, params: { id: radio.to_param, radio: new_attributes}, session: valid_session
 
-        expect(radio.reload).to change{ shipment.radio.where(frequency: next_unboxed_radio.serial_number) }.from(nil).to(radio.serial_number)
+        expect{ radio.reload }.to change{ shipment.radio.where(frequency: next_unboxed_radio.serial_number) }.from(nil).to(radio.serial_number)
       end
     end
 

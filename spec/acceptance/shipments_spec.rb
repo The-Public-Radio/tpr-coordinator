@@ -85,7 +85,6 @@ resource "Shipments" do
       do_request
       expect(status).to eq 200
       data = JSON.parse(response_body)['data']
-      binding.pry
       expect(data['frequency']).to eq('98.1')
     end
   end
