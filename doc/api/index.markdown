@@ -8,13 +8,16 @@
 
 ## Radios
 
+* [Create a radio](radios/create_a_radio.markdown)
 * [Look up a shipment&#39;s radios](radios/look_up_a_shipment&#39;s_radios.markdown)
 * [Look up a shipment&#39;s radios one (page) at a time ](radios/look_up_a_shipment&#39;s_radios_one_(page)_at_a_time_.markdown)
 * [Look up a single radio](radios/look_up_a_single_radio.markdown)
+* [Update a radio to be boxed and attached to a shipment](radios/update_a_radio_to_be_boxed_and_attached_to_a_shipment.markdown)
 
 ## Shipments
 
 * [All shipments](shipments/all_shipments.markdown)
+* [Looking the next unboxed radio in a shipment](shipments/looking_the_next_unboxed_radio_in_a_shipment.markdown)
 * [Looking up a shipment by tacking number](shipments/looking_up_a_shipment_by_tacking_number.markdown)
 * [Looking up a single shipment](shipments/looking_up_a_single_shipment.markdown)
 * [Update a shipment&#39;s status](shipments/update_a_shipment&#39;s_status.markdown)

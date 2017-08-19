@@ -2,13 +2,13 @@
 
 ## Update a shipment&#39;s status
 
-### PUT /shipments
+### PUT /shipments/:id
 
 ### Parameters
 
 | Name | Description | Required | Scope |
 |------|-------------|----------|-------|
-| tracking_number | String, shipment tracking number | true |  |
+| tracking_number | String, shipment tracking number | false |  |
 | shipment_status | String, shipment tracking number | true |  |
 
 ### Request
@@ -19,11 +19,11 @@
 
 #### Route
 
-<pre>PUT /shipments</pre>
+<pre>PUT /shipments/%3Aid</pre>
 
 #### Body
 
-<pre>{"tracking_number":"9374889691090496901877","shipment_status":"fulfillment"}</pre>
+<pre>{"tracking_number":"9374889691090496840435","shipment_status":"label_created"}</pre>
 
 ### Response
 
@@ -39,11 +39,11 @@
 
 <pre>{
   "data": {
-    "id": 11295,
-    "tracking_number": "9374889691090496901877",
+    "id": 6739,
+    "tracking_number": "9374889691090496840435",
     "ship_date": null,
-    "shipment_status": "fulfillment",
-    "order_id": 8293
+    "shipment_status": "label_created",
+    "order_id": 6125
   },
   "errors": [
 

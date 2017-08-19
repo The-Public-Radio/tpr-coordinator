@@ -11,7 +11,7 @@
 
 #### Route
 
-<pre>GET /shipments/11284/radios/7070</pre>
+<pre>GET /shipments/6728/radios/6641</pre>
 
 ### Response
 
@@ -27,8 +27,14 @@
 
 <pre>{
   "data": {
-    "id": 7070,
-    "frequency": "90.5"
+    "id": 6641,
+    "frequency": "79.2",
+    "pcb_version": "1",
+    "serial_number": "TPRv2.0_1_37787",
+    "assembly_date": "2017-08-19 17:04:31 -0400",
+    "operator": "Michelle Lewis",
+    "shipment_id": 6729,
+    "boxed": true
   },
   "errors": [
 
