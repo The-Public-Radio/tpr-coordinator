@@ -82,11 +82,10 @@ resource "Shipments" do
     let(:tracking_number) { label_created_shipment.tracking_number }
 
     example "Looking the next unboxed radio in a shipment" do
-      binding.pry
       do_request
       expect(status).to eq 200
       data = JSON.parse(response_body)['data']
-      expect(data['frequency']).to eq('98.1')
+      expect(data['frequency']).to eq(label_created_shipment.radio[1].frequency)
     end
   end
 end
