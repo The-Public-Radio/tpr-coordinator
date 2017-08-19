@@ -75,6 +75,8 @@ resource "Shipments" do
   end
 
   get "/shipments/:id/next_radio" do
+    let(:id) { label_created_shipment.id }
+
     parameter :tracking_number, 'String, shipment tracking number', required: true
 
     let(:tracking_number) { label_created_shipment.tracking_number }
@@ -83,6 +85,7 @@ resource "Shipments" do
       do_request
       expect(status).to eq 200
       data = JSON.parse(response_body)['data']
+      binding.pry
       expect(data['frequency']).to eq('98.1')
     end
   end

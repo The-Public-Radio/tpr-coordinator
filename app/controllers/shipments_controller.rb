@@ -2,7 +2,7 @@ require 'httparty'
 require 'date'
 
 class ShipmentsController < ApplicationController
-  before_action :set_shipment, only: [:show, :update, :destroy]
+  before_action :set_shipment, only: [:show, :update, :destroy, :next_unboxed_radio]
 
   # GET /shipments
   # GET /shipments.json
@@ -44,6 +44,14 @@ class ShipmentsController < ApplicationController
   # DELETE /shipments/1.json
   def destroy
     @shipment.destroy
+  end
+
+  # Next unboxed radio in the shipment
+  def next_unboxed_radio
+    # sort by object creation time to always get the same order
+    next_radio = @shipment.radio.sort_by(&:created_at).select{ |s| s.boxed == false }[0]
+
+    api_response(next_radio)
   end
 
   private
