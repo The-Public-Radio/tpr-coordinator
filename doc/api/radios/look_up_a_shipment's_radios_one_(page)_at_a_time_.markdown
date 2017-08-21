@@ -20,7 +20,7 @@ Each page only returns 1 record. The header `X-Total` will give the total number
 
 #### Route
 
-<pre>GET /shipments/6731/radios?page=2</pre>
+<pre>GET /shipments/724/radios?page=2</pre>
 
 #### Query Parameters
 
@@ -40,13 +40,13 @@ Each page only returns 1 record. The header `X-Total` will give the total number
 
 <pre>[
   {
-    "id": 6646,
-    "frequency": "78.8",
+    "id": 869,
+    "frequency": "100.9",
     "pcb_version": null,
     "serial_number": null,
     "assembly_date": null,
     "operator": null,
-    "shipment_id": 6731,
+    "shipment_id": 724,
     "boxed": false
   }
 ]</pre>

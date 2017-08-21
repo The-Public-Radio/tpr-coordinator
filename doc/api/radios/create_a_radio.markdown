@@ -25,7 +25,7 @@
 
 #### Body
 
-<pre>{"pcb_version":"1","serial_number":"TPRv2.0_1_37787","operator":"Michelle Lewis"}</pre>
+<pre>{"pcb_version":"1","serial_number":"TPRv2.0_1_83382","operator":"James Cook"}</pre>
 
 ### Response
 
@@ -41,12 +41,12 @@
 
 <pre>{
   "data": {
-    "id": 6649,
+    "id": 872,
     "frequency": null,
     "pcb_version": "1",
-    "serial_number": "TPRv2.0_1_37787",
-    "assembly_date": "2017-08-19",
-    "operator": "Michelle Lewis",
+    "serial_number": "TPRv2.0_1_83382",
+    "assembly_date": "2017-08-20",
+    "operator": "James Cook",
     "shipment_id": null,
     "boxed": false
   },
