@@ -56,6 +56,22 @@ class RadiosController < ApplicationController
     @radio.destroy
   end
 
+  def update_radio_to_boxed
+    @radio_assembled = Radio.find_by_serial_number radio_params[:serial_number]
+    @radio = Shipment.find(params[:id]).next_unboxed_radio
+
+    updated_attributes = @radio_assembled.attributes.select do |attribute|
+      %w{pcb_version serial_number assembly_date operator boxed}.include?(attribute)
+    end
+    updated_attributes['boxed'] = true
+    
+    if @radio.update(updated_attributes)
+      api_response(@radio)
+    else
+      api_response([], :unprocessable_entity, @radio.errors)
+    end
+  end
+
   private
 
     # Use callbacks to share common setup or constraints between actions.

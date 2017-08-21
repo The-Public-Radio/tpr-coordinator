@@ -69,18 +69,16 @@ resource "Radios" do
     end
   end
 
-  put "/radios" do
+  put "/shipments/:shipment_id/radios" do
     parameter :boxed, 'Boolean, is this radio boxed?', required: true
     parameter :serial_number, 'String, radio (speaker) serial number', required: true
-    parameter :shipment_id, 'String, shipment_id that the radio was boxed for', required: true
-    parameter :frequency, 'String, the frequency the that the radio was programed to', required: true
 
     let(:boxed) { true }
     let(:serial_number) { radio_assembled.serial_number }
     let(:frequency) { radio_boxed.frequency }
 
     example "Update a radio to be boxed and attached to a shipment" do
-      radio =  Radio.find_by_serial_number(serial_number)
+      radio =  Shipment.find(shipment_id).next_unboxed_radio
 
       do_request
       expect(status).to eq 200
