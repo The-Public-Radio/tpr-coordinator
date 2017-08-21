@@ -43,6 +43,7 @@ class RadiosController < ApplicationController
   # PATCH/PUT /radios/1
   # PATCH/PUT /radios/1.json
   def update
+
     if @radio.update(radio_params)
       api_response(@radio)
     else
@@ -64,7 +65,7 @@ class RadiosController < ApplicationController
       %w{pcb_version serial_number assembly_date operator boxed}.include?(attribute)
     end
     updated_attributes['boxed'] = true
-    
+
     if @radio.update(updated_attributes)
       api_response(@radio)
     else

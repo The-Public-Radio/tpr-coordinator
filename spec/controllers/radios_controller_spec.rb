@@ -135,25 +135,6 @@ RSpec.describe RadiosController, type: :controller do
       end
     end
 
-    context "with a shipment_id" do
-      let(:radio) { create(:radio_assembled) }
-      let(:label_created_shipment) { create(:label_created) }
-
-      let(:new_attributes) {
-        {
-          shipment_id: label_created_shipment.id,
-          boxed: true
-        }
-      }
-
-      it "merges the radio with next unboxed radio in the shipment" do
-        next_radio = label_created_shipment.next_unboxed_radio
-        put :update, params: { id: radio.id, radio: new_attributes}, session: valid_session
-
-        expect{ next_radio.reload }.to change{ next_radio.serial_number }.from(nil).to(radio.serial_number)
-      end
-    end
-
     context "with invalid params" do
       it "renders a JSON response with errors for the radio" do
         radio = Radio.create! valid_attributes
