@@ -86,6 +86,7 @@ class RadiosController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def radio_params
+      Rails.logger.debug("Request params: #{params}")
       params.require(:radio).permit(:frequency, :shipment_id, :pcb_version, :serial_number, :operator, :boxed)
     end
 end
