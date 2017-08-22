@@ -54,12 +54,12 @@ resource "Radios" do
     parameter :serial_number, 'String, radio (speaker) serial number', required: false
     parameter :operator, 'String, paganation page number', required: false
 
-    let(:pcb_version) { radio_assembled.pcb_version }
-    let(:serial_number) { radio_assembled.serial_number }
-    let(:operator) { radio_assembled.operator }
+    let(:pcb_version) { '1' }
+    let(:serial_number) { random_tpr_serial_number }
+    let(:operator) { random_operator_name }
 
     example "Create a radio" do
-      do_request
+      expect{ do_request }.to change( Radio, :count ).by(1)
       expect(status).to eq 201
       data = JSON.parse(response_body)['data']
 
