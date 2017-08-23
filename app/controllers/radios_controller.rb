@@ -61,10 +61,15 @@ class RadiosController < ApplicationController
     @radio_assembled = Radio.find_by_serial_number radio_params[:serial_number]
     @radio = Shipment.find(params[:id]).next_unboxed_radio
 
+    Rails.logger.debug{ "Assembled Radio: #{@radio_assembled}" }
+    Rails.logger.debug{ "Shipment Radio: #{@@radio}" }
+
     updated_attributes = @radio_assembled.attributes.select do |attribute|
       %w{pcb_version serial_number assembly_date operator boxed}.include?(attribute)
     end
     updated_attributes['boxed'] = true
+
+    Rails.logger.debug{ updated_attributes }
 
     if @radio.update(updated_attributes)
       api_response(@radio)
