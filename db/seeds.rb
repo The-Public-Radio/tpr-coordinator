@@ -5,6 +5,9 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+if Rails.env.production?
+  raise 'DO NOT DO THIS IN PRODUCTION'
+end
 
 radios = [
 	{
@@ -62,6 +65,33 @@ radios = [
 		assembly_date: Time.now,
 		operator: 'Person McPersonson',
 		shipment_id: nil
+	},
+	{
+		frequency: '101.1',
+		pcb_version: '1',
+		serial_number: 'TPRv2.0_1_92007',
+		assembly_date: Time.now,
+		operator: 'Person McPersonson',
+		shipment_id: 25,
+		boxed: false
+	},
+	{
+		frequency: '97.1',
+		pcb_version: '1',
+		serial_number: 'TPRv2.0_1_49079',
+		assembly_date: Time.now,
+		operator: 'Person McPersonson',
+		shipment_id: 25,
+		boxed: false
+	},
+	{
+		frequency: '93.9',
+		pcb_version: '1',
+		serial_number: 'TPRv2.0_1_53012',
+		assembly_date: Time.now,
+		operator: 'Person McPersonson',
+		shipment_id: 25,
+		boxed: false
 	}]
 
 shipments = [
@@ -82,8 +112,13 @@ shipments = [
 		shipment_status: 'shipped',
 		ship_date: Time.now,
 		order_id: 23
-	}
-	]
+	},
+	{
+		tracking_number: '9400111298370828166024',
+		shipment_status: 'shipped',
+		ship_date: Time.now,
+		order_id: 23
+	}]
 
 orders = [
 	{

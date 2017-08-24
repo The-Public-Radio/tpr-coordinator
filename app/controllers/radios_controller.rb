@@ -43,12 +43,17 @@ class RadiosController < ApplicationController
   # PATCH/PUT /radios/1
   # PATCH/PUT /radios/1.json
   def update
-
-    if @radio.update(radio_params)
-      api_response(@radio)
-    else
-      api_response([], :unprocessable_entity, @radio.errors)
-    end
+    # if radio_params[:boxed]
+    #   update_radio_to_boxed
+    # elsif !radio_params[:boxed]
+    #   update_radio_to_unboxed
+    # else
+      if @radio.update(radio_params)
+        api_response(@radio)
+      else
+        api_response([], :unprocessable_entity, @radio.errors)
+      end
+    # end
   end
 
   # DELETE /radios/1
