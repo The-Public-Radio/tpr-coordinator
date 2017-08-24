@@ -7,6 +7,15 @@ RSpec.describe Radio, type: :model do
     expect(model).to be_valid
   end
 
+  it 'has a unique serial_number' do
+    radio_1 = create(:radio_assembled)
+    model.serial_number = radio_1.serial_number
+    expect(model).to_not be_valid
+
+    model.serial_number = random_tpr_serial_number
+    expect(model).to be_valid
+  end
+
   it 'is not valid with a poorly formated frequency' do
     # Frequencies must be:
     #  - nuemeric

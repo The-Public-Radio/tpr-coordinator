@@ -5,10 +5,12 @@ FactoryGirl.define do
     pcb_version '1'
 
     factory :radio_assembled, class: Radio do
+      serial_number random_tpr_serial_number
       assembly_date Time.new
       boxed false
 
       factory :radio_boxed, class: Radio do
+        serial_number random_tpr_serial_number
         frequency random_frequency
         boxed true
 
@@ -19,6 +21,7 @@ FactoryGirl.define do
   end
 
   factory :radio_inital_order, class: Radio do
+    serial_number random_tpr_serial_number
     frequency random_frequency
     boxed false
 

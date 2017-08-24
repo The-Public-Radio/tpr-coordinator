@@ -10,7 +10,7 @@ FactoryGirl.define do
       shipment_status "created"
 
       after :create do |created|
-        create_list(:radio_inital_order, 1, :shipment => created)
+        create(:radio_inital_order, :shipment => created, serial_number: random_tpr_serial_number)
       end
     end
 
@@ -18,8 +18,9 @@ FactoryGirl.define do
       shipment_status "label_created"
 
       after :create do |label_created|
-        create_list(:radio_boxed, 1, shipment: label_created)
-        create_list(:radio_inital_order, 2, shipment: label_created)
+        create(:radio_boxed, shipment: label_created, serial_number: random_tpr_serial_number)
+        create(:radio_inital_order, shipment: label_created, serial_number: random_tpr_serial_number)
+        create(:radio_inital_order, shipment: label_created, serial_number: random_tpr_serial_number)
       end
     end
 
@@ -28,7 +29,9 @@ FactoryGirl.define do
       ship_date "2017-07-28"
 
       after :create do |boxed|
-        create_list(:radio_boxed, 4, :shipment => boxed)
+        create(:radio_boxed, :shipment => boxed, serial_number: random_tpr_serial_number)
+        create(:radio_boxed, :shipment => boxed, serial_number: random_tpr_serial_number)
+        create(:radio_boxed, :shipment => boxed, serial_number: random_tpr_serial_number)
       end
     end
 
@@ -37,7 +40,8 @@ FactoryGirl.define do
       ship_date "2017-07-28"
 
       after :create do |shipped|
-        create_list(:radio_boxed, 2, :shipment => shipped)
+        create(:radio_boxed, :shipment => shipped, serial_number: random_tpr_serial_number)
+        create(:radio_boxed, :shipment => shipped, serial_number: random_tpr_serial_number)
       end
     end
   end
