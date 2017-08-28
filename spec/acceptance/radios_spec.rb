@@ -53,10 +53,12 @@ resource "Radios" do
     parameter :pcb_version, 'String, PCB revision', required: false
     parameter :serial_number, 'String, radio (speaker) serial number', required: false
     parameter :operator, 'String, paganation page number', required: false
+    parameter :country_code, 'String, country code for the radio. One of us, jp, eu', required: false
 
     let(:pcb_version) { '1' }
     let(:serial_number) { random_tpr_serial_number }
     let(:operator) { random_operator_name }
+    let(:country_code) { 'us' }
 
     example "Create a radio" do
       expect{ do_request }.to change( Radio, :count ).by(1)
@@ -72,10 +74,12 @@ resource "Radios" do
   put "/shipments/:shipment_id/radios" do
     parameter :boxed, 'Boolean, is this radio boxed?', required: true
     parameter :serial_number, 'String, radio (speaker) serial number', required: true
+    parameter :country_code, 'String, country code for the radio. One of us, jp, eu', required: false
 
     let(:boxed) { true }
     let(:serial_number) { radio_assembled.serial_number }
     let(:frequency) { radio_boxed.frequency }
+    let(:country_code) { 'us' }
 
     example "Update a radio to be boxed and attached to a shipment" do
       radio =  Radio.find_by_serial_number(serial_number)

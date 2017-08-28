@@ -12,6 +12,8 @@ FactoryGirl.define do
       factory :radio_boxed, class: Radio do
         serial_number random_tpr_serial_number
         frequency random_frequency
+        country_code 'us'
+
         boxed true
 
         # Associations
@@ -24,6 +26,7 @@ FactoryGirl.define do
     serial_number random_tpr_serial_number
     frequency random_frequency
     boxed false
+    country_code 'us'
 
     # Associations
     shipment

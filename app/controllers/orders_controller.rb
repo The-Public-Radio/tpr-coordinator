@@ -14,12 +14,12 @@ class OrdersController < ApplicationController
 
   # POST /orders
   def create
-    frequencies = params['frequencies'] if !params['frequencies'].nil?
+    frequency_hash = params['frequencies'] if !params['frequencies'].nil?
 
     @order = Order.new(order_params)
 
     if @order.save
-      split_frequencies_into_shipments(frequencies) if !params['frequencies'].nil?
+      make_shipments_for_order(frequency_hash) unless frequency_hash.nil?
       render json: @order, status: :created, location: @order
     else
       render json: @order.errors, status: :unprocessable_entity
@@ -42,21 +42,31 @@ class OrdersController < ApplicationController
 
   private
 
-    def split_frequencies_into_shipments(frequencies)
+    def make_shipments_for_order(frequency_hash)
+      frequency_hash.each do |country_code,frequencies|
+        split_frequencies_into_shipments(country_code,frequencies) if !params['frequencies'].nil?
+      end
+    end
+
+    def split_frequencies_into_shipments(country_code,frequencies)
       frequencies_by_shipment = []
 
-      num_radios_in_last_shipment = frequencies.count % 3
-      frequencies_by_shipment << frequencies.pop(num_radios_in_last_shipment)
+      if frequencies.count > 3
+        num_radios_in_last_shipment = frequencies.count % 3
+        frequencies_by_shipment << frequencies.pop(num_radios_in_last_shipment) 
 
-      (frequencies.count / 3 ).times do
-        frequencies_by_shipment << frequencies.pop(3)
+        (frequencies.count / 3 ).times do
+          frequencies_by_shipment << frequencies.pop(3)
+        end
+      else
+        frequencies_by_shipment << frequencies
       end
 
       frequencies_by_shipment.each do |frequencies|
         shipment = Shipment.new(order_id: @order.id)
         shipment.save
         frequencies.each do |frequency|
-          Radio.new(frequency: frequency, shipment_id: shipment.id).save
+          Radio.new(frequency: frequency, shipment_id: shipment.id, country_code: country_code).save
         end
       end
     end

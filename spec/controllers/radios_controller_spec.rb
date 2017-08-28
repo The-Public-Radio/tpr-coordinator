@@ -72,7 +72,7 @@ RSpec.describe RadiosController, type: :controller do
       it "that defaults to boxed: false" do
         radio = build(:base_radio)
         radio.shipment_id = shipment_id
-        attributes = radio.attributes.except('frequency', 'boxed')
+        attributes = radio.attributes.except('frequency', 'boxed', 'country_code')
 
         expect {
           post :create, params: { radio: attributes }, session: valid_session
@@ -84,7 +84,7 @@ RSpec.describe RadiosController, type: :controller do
       it "that records an assembly_date" do
         radio = build(:base_radio)
         radio.shipment_id = shipment_id
-        attributes = radio.attributes.except('frequency', 'boxed')
+        attributes = radio.attributes.except('frequency', 'boxed', 'country_code')
         Timecop.freeze(Time.now)
 
         expect {

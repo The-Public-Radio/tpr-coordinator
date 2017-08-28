@@ -7,5 +7,6 @@ class Radio < ApplicationRecord
   	allow_nil: true
   validates :frequency, length: { maximum: 5 }
   validates_inclusion_of :boxed, in: [true, false], allow_nil: true
-  validates :serial_number, uniqueness: true
+  validates :serial_number, uniqueness: true, allow_nil: true
+  validates_inclusion_of :country_code, in: %w{us jp eu}, allow_nil: true
 end
