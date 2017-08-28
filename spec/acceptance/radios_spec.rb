@@ -78,7 +78,9 @@ resource "Radios" do
     let(:frequency) { radio_boxed.frequency }
 
     example "Update a radio to be boxed and attached to a shipment" do
-      radio =  Shipment.find(shipment_id).next_unboxed_radio
+      radio =  Radio.find_by_serial_number(serial_number)
+
+      expect(radio.boxed).to be false
 
       do_request
       expect(status).to eq 200
@@ -88,8 +90,10 @@ resource "Radios" do
       expect(data['boxed']).to be true
       expect(data['serial_number']).to eq(serial_number)
       expect(data['shipment_id']).to eq(shipment_id)
-
-      expect{ radio.reload }.to change{ radio.boxed }.from(false).to(true)
+      
+      expect(Shipment.find(shipment_id).radio.select{ |r| r.serial_number.include?(serial_number)}).not_to be_empty
+      expect{ radio.reload }.to change{ radio.shipment_id }.from(nil).to(shipment_id)
+      expect(radio.boxed).to be true
       expect(errors.empty?).to be true
     end
   end

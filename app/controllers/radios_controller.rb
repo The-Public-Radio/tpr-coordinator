@@ -63,23 +63,27 @@ class RadiosController < ApplicationController
   end
 
   def update_radio_to_boxed
-    @radio_assembled = Radio.find_by_serial_number radio_params[:serial_number]
-    @radio = Shipment.find(params[:id]).next_unboxed_radio
+    shipment = Shipment.find(params[:id])
+    next_unboxed_radio = shipment.next_unboxed_radio
+    Rails.logger.debug{ "Shipment: #{shipment}" }
 
-    Rails.logger.debug{ "Assembled Radio: #{@radio_assembled}" }
-    Rails.logger.debug{ "Shipment Radio: #{@@radio}" }
+    # Find radio_assembed record w/ serial number
+    radio_assembled = Radio.find_by_serial_number radio_params[:serial_number]
+    # Get the next_unboxed_radio frequency in shipment
+    radio_assembled.frequency = next_unboxed_radio.frequency
+    # Update radio_assembed with shipment_id and to be boxed
+    radio_assembled.shipment_id = shipment.id
+    radio_assembled.boxed = true
+    # Save radio_assembed
+    Rails.logger.debug{ "Assembled Radio: #{radio_assembled}" }
 
-    updated_attributes = @radio_assembled.attributes.select do |attribute|
-      %w{pcb_version serial_number assembly_date operator boxed}.include?(attribute)
-    end
-    updated_attributes['boxed'] = true
-
-    Rails.logger.debug{ updated_attributes }
-
-    if @radio.update(updated_attributes)
-      api_response(@radio)
+    if radio_assembled.save!
+      api_response(radio_assembled)
+      # Destroy stub radio / next_unboxed_radio
+      Rails.logger.debug{ "Next_unboxed_radio: #{next_unboxed_radio}" }
+      next_unboxed_radio.destroy
     else
-      api_response([], :unprocessable_entity, @radio.errors)
+      api_response([], :unprocessable_entity, radio_assembled.errors)
     end
   end
 
