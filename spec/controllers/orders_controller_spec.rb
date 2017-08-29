@@ -74,9 +74,9 @@ RSpec.describe OrdersController, type: :controller do
 
       it "creates a shipment for each set of 3 radios" do
         frequencies = { 
-          'us': ['98.3', '79.5', '79.5', '98.3'],
-          'jp': ['79.5', '98.3'],
-          'eu': ['79.5', '79.5', '105.6']
+          'US': ['98.3', '79.5', '79.5', '98.3'],
+          'FR': ['79.5', '98.3'],
+          'AZ': ['79.5', '79.5', '105.6']
         }
 
         expect{
@@ -91,8 +91,8 @@ RSpec.describe OrdersController, type: :controller do
 
       it "creates a radio for each entry in the list" do
         frequencies = {
-          'eu': ['98.3', '79.5', '79.5', '98.3', '79.5', '79.5', '98.3', '79.5'],
-          'us': ['79.5', '105.6']
+          'FR': ['98.3', '79.5', '79.5', '98.3', '79.5', '79.5', '98.3', '79.5'],
+          'US': ['79.5', '105.6']
         }
 
         expect{

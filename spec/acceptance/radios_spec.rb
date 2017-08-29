@@ -58,7 +58,7 @@ resource "Radios" do
     let(:pcb_version) { '1' }
     let(:serial_number) { random_tpr_serial_number }
     let(:operator) { random_operator_name }
-    let(:country_code) { 'us' }
+    let(:country_code) { 'US' }
 
     example "Create a radio" do
       expect{ do_request }.to change( Radio, :count ).by(1)
@@ -79,7 +79,7 @@ resource "Radios" do
     let(:boxed) { true }
     let(:serial_number) { radio_assembled.serial_number }
     let(:frequency) { radio_boxed.frequency }
-    let(:country_code) { 'us' }
+    let(:country_code) { 'US' }
 
     example "Update a radio to be boxed and attached to a shipment" do
       radio =  Radio.find_by_serial_number(serial_number)
