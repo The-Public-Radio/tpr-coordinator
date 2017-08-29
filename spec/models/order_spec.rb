@@ -32,11 +32,6 @@ RSpec.describe Order, type: :model do
     expect(model).to_not be_valid
   end
 
-  it 'is not valid without an address' do
-  	model.address = nil
-  	expect(model).to_not be_valid
-  end
-
   it 'is not valid without an email' do
   	model.email = nil
   	expect(model).to_not be_valid
