@@ -152,9 +152,11 @@ radios_params = [
 
 
 	# Assembled Radios
+	# 
+	# First assembled radio has a known serial nubmer for testing
 	{
 		pcb_version: '1',
-		serial_number: random_tpr_serial_number,
+		serial_number: 'TPRv2.0_1_63297',
 		assembly_date: Time.now,
 		operator: 'Person McPersonson'
 	},
