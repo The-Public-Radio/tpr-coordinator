@@ -1,5 +1,7 @@
 # TPR Coordinator
 
+[ ![Codeship Status for gabe-ochoa/WhoAmI](https://app.codeship.com/projects/43ec8010-dec2-0134-f6d9-669b3eb0e523/status?branch=master)](https://app.codeship.com/projects/242476)
+
 I cordinate orders.
 
 Rails, rspec, postgres.
