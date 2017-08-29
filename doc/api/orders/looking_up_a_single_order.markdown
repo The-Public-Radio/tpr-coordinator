@@ -11,7 +11,7 @@
 
 #### Route
 
-<pre>GET /orders/649</pre>
+<pre>GET /orders/65</pre>
 
 ### Response
 
@@ -26,7 +26,7 @@
 #### Body
 
 <pre>{
-  "id": 649,
+  "id": 65,
   "first_name": "Spencer",
   "last_name": "Right",
   "address": "123 West 9th St., City, State, USA",

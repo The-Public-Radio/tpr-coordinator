@@ -12,6 +12,7 @@
 | pcb_version | String, PCB revision | false |  |
 | serial_number | String, radio (speaker) serial number | false |  |
 | operator | String, paganation page number | false |  |
+| country_code | String, country code for the radio. One of us, jp, eu | false |  |
 
 ### Request
 
@@ -25,7 +26,7 @@
 
 #### Body
 
-<pre>{"pcb_version":"1","serial_number":"TPRv2.0_1_83382","operator":"James Cook"}</pre>
+<pre>{"pcb_version":"1","serial_number":"TPRv2.0_1_37203","operator":"William Murphy","country_code":"US"}</pre>
 
 ### Response
 
@@ -41,14 +42,15 @@
 
 <pre>{
   "data": {
-    "id": 872,
+    "id": 108,
     "frequency": null,
     "pcb_version": "1",
-    "serial_number": "TPRv2.0_1_83382",
-    "assembly_date": "2017-08-20",
-    "operator": "James Cook",
+    "serial_number": "TPRv2.0_1_37203",
+    "assembly_date": "2017-08-29",
+    "operator": "William Murphy",
     "shipment_id": null,
-    "boxed": false
+    "boxed": false,
+    "country_code": "US"
   },
   "errors": [
 

@@ -26,7 +26,7 @@
 
 #### Body
 
-<pre>{"order_source":"other","first_name":"Person","last_name":"McPersonson","address":"345 West Way, Brooklyn, NY, 11221","frequencies":["98.3","79.5","79.5","98.3","79.5","79.5","98.3","79.5","79.5","105.6"],"email":"person.mcpersonson@gmail.com"}</pre>
+<pre>{"order_source":"other","first_name":"Person","last_name":"McPersonson","address":"345 West Way, Brooklyn, NY, 11221","frequencies":{"us":["98.3","79.5","79.5","98.3","79.5","79.5","98.3","79.5","79.5","105.6"]},"email":"person.mcpersonson@gmail.com"}</pre>
 
 ### Response
 
@@ -41,7 +41,7 @@
 #### Body
 
 <pre>{
-  "id": 650,
+  "id": 66,
   "first_name": "Person",
   "last_name": "McPersonson",
   "address": "345 West Way, Brooklyn, NY, 11221",

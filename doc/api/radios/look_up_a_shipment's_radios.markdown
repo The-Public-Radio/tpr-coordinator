@@ -11,7 +11,7 @@
 
 #### Route
 
-<pre>GET /shipments/723/radios</pre>
+<pre>GET /shipments/108/radios</pre>
 
 ### Response
 
@@ -28,34 +28,37 @@
 <pre>{
   "data": [
     {
-      "id": 865,
-      "frequency": "97.3",
+      "id": 102,
+      "frequency": "94.0",
       "pcb_version": "1",
-      "serial_number": "TPRv2.0_1_83382",
-      "assembly_date": "2017-08-20 23:23:04 -0400",
-      "operator": "James Cook",
-      "shipment_id": 723,
-      "boxed": true
+      "serial_number": "TPRv2.0_1_68834",
+      "assembly_date": "2017-08-29 14:45:05 -0400",
+      "operator": "David Collins",
+      "shipment_id": 108,
+      "boxed": true,
+      "country_code": "US"
     },
     {
-      "id": 866,
-      "frequency": "100.9",
+      "id": 103,
+      "frequency": "84.3",
       "pcb_version": null,
-      "serial_number": null,
+      "serial_number": "TPRv2.0_1_41230",
       "assembly_date": null,
       "operator": null,
-      "shipment_id": 723,
-      "boxed": false
+      "shipment_id": 108,
+      "boxed": false,
+      "country_code": "US"
     },
     {
-      "id": 867,
-      "frequency": "100.9",
+      "id": 104,
+      "frequency": "84.3",
       "pcb_version": null,
-      "serial_number": null,
+      "serial_number": "TPRv2.0_1_49898",
       "assembly_date": null,
       "operator": null,
-      "shipment_id": 723,
-      "boxed": false
+      "shipment_id": 108,
+      "boxed": false,
+      "country_code": "US"
     }
   ],
   "errors": [
