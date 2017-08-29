@@ -104,42 +104,50 @@ radios_params = [
   {
 		frequency: '93.9',
 		shipment_id: created_shipments[2].id,
-		country_code: 'us'
+		country_code: 'us',
+		boxed: false
 	},
 	{
 		frequency: '97.1',
 		shipment_id: created_shipments[2].id,
-		country_code: 'us'
+		country_code: 'us',
+		boxed: false
 	},	
 	{
 		frequency: '101.1',
 		shipment_id: created_shipments[2].id,
-		country_code: 'us'
+		country_code: 'us',
+		boxed: false
 	},
 	{
 		frequency: random_frequency,
 		shipment_id: created_shipments[3].id,
-		country_code: 'us'
+		country_code: 'us',
+		boxed: false
 	},
 	{
 		frequency: random_frequency,
 		shipment_id: created_shipments[3].id,
-		country_code: 'us'
+		country_code: 'us',
+		boxed: false
 	},
 	{
 		frequency: random_frequency,
 		shipment_id: created_shipments[1].id,
-		country_code: 'us'
+		country_code: 'us',
+		boxed: false
 	},
 	{
 		frequency: random_frequency,
 		shipment_id: created_shipments[0].id,
-		country_code: 'us'
+		country_code: 'us',
+		boxed: false
 	},
 	{
 		frequency: random_frequency,
 		shipment_id: created_shipments[0].id,
-		country_code: 'us'
+		country_code: 'us',
+		boxed: false
 	},
 
 
@@ -148,43 +156,43 @@ radios_params = [
 		pcb_version: '1',
 		serial_number: random_tpr_serial_number,
 		assembly_date: Time.now,
-		operator: 'Person McPersonson',
+		operator: 'Person McPersonson'
 	},
 	{
 		pcb_version: '1',
 		serial_number: random_tpr_serial_number,
 		assembly_date: Time.now,
-		operator: 'Person McPersonson',
+		operator: 'Person McPersonson'
 	},	
 	{
 		pcb_version: '1',
 		serial_number: random_tpr_serial_number,
 		assembly_date: Time.now,
-		operator: 'Person McPersonson',
+		operator: 'Person McPersonson'
 	},
 	{
 		pcb_version: '1',
 		serial_number: random_tpr_serial_number,
 		assembly_date: Time.now,
-		operator: 'Person McPersonson',
+		operator: 'Person McPersonson'
 	},
 	{
 		pcb_version: '1',
 		serial_number: random_tpr_serial_number,
 		assembly_date: Time.now,
-		operator: 'Person McPersonson',
+		operator: 'Person McPersonson'
 	},
 	{
 		pcb_version: '1',
 		serial_number: random_tpr_serial_number,
 		assembly_date: Time.now,
-		operator: 'Person McPersonson',
+		operator: 'Person McPersonson'
 	},
 	{
 		pcb_version: '1',
 		serial_number: random_tpr_serial_number,
 		assembly_date: Time.now,
-		operator: 'Person McPersonson',
+		operator: 'Person McPersonson'
 	},
 
 
