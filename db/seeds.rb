@@ -40,21 +40,38 @@ orders_params = [
 		first_name: 'Person',
 		last_name: 'McPersonson',
 		order_source: 'kickstarter',
-		address: '132 N 5th St, Brooklyn, NY 11221',
+		street_address_1: "123 West 9th St.",
+    street_address_2: 'Apt 4',
+    city: 'Brooklyn',
+    state: 'NY',
+    postal_code: '11221',
+    country: 'US',
+    phone: '123-321-1231',
 		email: 'Person.McPersonson@gmail.com'
 	},
 	{
 		first_name: 'Person',
 		last_name: 'McPersonson',
 		order_source: 'squarespace',
-		address: '132 N 5th St, Brooklyn, NY 11221',
+		street_address_1: "123 West 9th St.",
+    street_address_2: 'Apt 4',
+    city: 'Brooklyn',
+    state: 'NY',
+    postal_code: '11221',
+    country: 'US',
 		email: 'Person.McPersonson@gmail.com'
 	},	
 	{
 		first_name: 'Person',
 		last_name: 'McPersonson',
 		order_source: 'other',
-		address: '132 N 5th St, Brooklyn, NY 11221',
+		street_address_1: "123 West 9th St.",
+    street_address_2: 'Apt 4',
+    city: 'Brooklyn',
+    state: 'NY',
+    postal_code: '11221',
+    country: 'US',
+    phone: '123-321-1231',
 		email: 'Person.McPersonson@gmail.com'
 	}]
 
