@@ -60,7 +60,8 @@ class ShipmentsController < ApplicationController
     end
 
     def create_shipstation_label  
-      order = Order.find(@shipment.order_id)    
+      order = Order.find(@shipment.order_id)
+      Rails.logger.debug("Order: #{order}")
       url = 'https://ssapi.shipstation.com/shipments/createlabel'
 
       headers = { 
@@ -103,8 +104,10 @@ class ShipmentsController < ApplicationController
           "residential": true
         }
       }
+      Rails.logger.debug("HTTP params: url: #{url}, headers: #{headers}, body: #{create_label_options}")
 
       response = HTTParty.post(url, headers: headers, body: create_label_options)
+      Rails.logger.debug(response)
       JSON.parse(response.body)
     end
 
