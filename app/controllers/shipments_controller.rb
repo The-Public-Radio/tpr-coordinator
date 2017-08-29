@@ -108,6 +108,7 @@ class ShipmentsController < ApplicationController
 
       response = HTTParty.post(url, headers: headers, body: create_label_options)
       Rails.logger.debug(response)
+      # handle_shipstation_response(response)
       JSON.parse(response.body)
     end
 

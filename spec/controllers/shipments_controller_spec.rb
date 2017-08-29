@@ -77,13 +77,12 @@ RSpec.describe ShipmentsController, type: :controller do
       context 'without a tracking number' do
         create_label_params = load_json_fixture('./spec/fixtures/shipstation/create_label_request_options.json')
         create_label_response = load_fixture('./spec/fixtures/shipstation/create_label_response.json')
+        create_label_error_response = load_fixture('./spec/fixtures/shipstation/create_label_error_response.json')
 
         it 'creates a tracking number from the shipstation API' do
           shipstation_response_object = object_double('response', status: 200, body: create_label_response )
 
           valid_attributes.delete('tracking_number')
-          ENV['SHIPSTATION_API_SECRET'] = 'test_api_secret'
-          ENV['SHIPSTATION_API_KEY'] = 'test_api_key'
 
           url = 'https://ssapi.shipstation.com/shipments/createlabel'
           headers = { 
@@ -94,6 +93,22 @@ RSpec.describe ShipmentsController, type: :controller do
 
           expect(HTTParty).to receive(:post).with(url, headers: headers, body: create_label_params).and_return(shipstation_response_object)
           post :create, params: { order_id: order_id, shipment: valid_attributes }, session: valid_session
+
+          body = JSON.parse(response.body)['data']
+          expect(Shipment.find(body['id']).tracking_number).to eq(JSON.parse(create_label_response)['trackingNumber'])
+        end
+
+        it 'handles errors from shipstation and raises an exception' do
+          shipstation_response_object = object_double('response', status: 500, body: create_label_error_response)
+
+          valid_attributes.delete('tracking_number')
+
+          Timecop.freeze('2017-08-06')
+
+          expect(HTTParty).to receive(:post).and_return(shipstation_response_object)
+          expect{ 
+            post :create, params: { order_id: order_id, shipment: valid_attributes }, session: valid_session
+            }.to raise_error(RuntimeError, 'error')
 
           body = JSON.parse(response.body)['data']
           expect(Shipment.find(body['id']).tracking_number).to eq(JSON.parse(create_label_response)['trackingNumber'])
