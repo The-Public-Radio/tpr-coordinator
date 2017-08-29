@@ -23,14 +23,14 @@
     "residential": false
   },
   "shipTo": {
-    "name": "The President",
-    "company": "US Govt",
-    "street1": "1600 Pennsylvania Ave",
-    "street2": "Oval Office",
-    "city": "Washington",
-    "state": "DC",
-    "postalCode": "20500",
+    "name": "Spencer Right",
+    "company": "",
+    "street1": "123 West 9th St.",
+    "street2": "Apt 4",
+    "city": "Brooklyn",
+    "state": "NY",
+    "postalCode": "11221",
     "country": "US",
-    "residential": false
+    "residential": true
   }
 }

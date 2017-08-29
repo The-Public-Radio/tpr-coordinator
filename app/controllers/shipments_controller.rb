@@ -59,7 +59,8 @@ class ShipmentsController < ApplicationController
       @shipstation_tracking_number = create_shipstation_label['trackingNumber']
     end
 
-    def create_shipstation_label      
+    def create_shipstation_label  
+      order = Order.find(@shipment.order_id)    
       url = 'https://ssapi.shipstation.com/shipments/createlabel'
 
       headers = { 
@@ -91,15 +92,15 @@ class ShipmentsController < ApplicationController
           "residential": false
         },
         "shipTo": {
-          "name": "The President",
-          "company": "US Govt",
-          "street1": "1600 Pennsylvania Ave",
-          "street2": "Oval Office",
-          "city": "Washington",
-          "state": "DC",
-          "postalCode": "20500",
-          "country": "US",
-          "residential": false
+          "name": "#{order.first_name} #{order.last_name.nil? ? '' : order.last_name}",
+          "company": '',
+          "street1": order.street_address_1,
+          "street2": order.street_address_2,
+          "city": order.city,
+          "state": order.state,
+          "postalCode": order.postal_code,
+          "country": order.country,
+          "residential": true
         }
       }
 
