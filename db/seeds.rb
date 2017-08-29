@@ -195,7 +195,7 @@ radios_params = [
 		serial_number: random_tpr_serial_number,
 		assembly_date: Time.now,
 		operator: 'Person McPersonson',
-		shipment_id: shipments[4].id,
+		shipment_id: created_shipments[4].id,
 		country_code: 'us',
 		boxed: true
 	},
@@ -205,7 +205,7 @@ radios_params = [
 		serial_number: random_tpr_serial_number,
 		assembly_date: Time.now,
 		operator: 'Person McPersonson',
-		shipment_id: shipments[4].id,
+		shipment_id: created_shipments[4].id,
 		country_code: 'us',
 		boxed: true
 	},
@@ -215,7 +215,7 @@ radios_params = [
 		serial_number: random_tpr_serial_number,
 		assembly_date: Time.now,
 		operator: 'Person McPersonson',
-		shipment_id: shipments[4].id,
+		shipment_id: created_shipments[4].id,
 		country_code: 'us',
 		boxed: true
 	}
