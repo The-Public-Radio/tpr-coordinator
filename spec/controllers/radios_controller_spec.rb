@@ -154,5 +154,4 @@ RSpec.describe RadiosController, type: :controller do
       }.to change(Radio, :count).by(-1)
     end
   end
-
 end

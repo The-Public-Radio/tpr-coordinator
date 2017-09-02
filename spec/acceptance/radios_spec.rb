@@ -74,19 +74,19 @@ resource "Radios" do
   put "/shipments/:shipment_id/radios" do
     parameter :boxed, 'Boolean, is this radio boxed?', required: true
     parameter :serial_number, 'String, radio (speaker) serial number', required: true
-    parameter :country_code, 'String, country code for the radio. One of us, jp, eu', required: false
 
     let(:boxed) { true }
     let(:serial_number) { radio_assembled.serial_number }
     let(:frequency) { radio_boxed.frequency }
-    let(:country_code) { 'US' }
 
     example "Update a radio to be boxed and attached to a shipment" do
-      radio =  Radio.find_by_serial_number(serial_number)
+      assembled_radio =  Radio.find_by_serial_number(serial_number)
+      next_unboxed_radio = Shipment.find(shipment_id).next_unboxed_radio
 
-      expect(radio.boxed).to be false
-
+      expect(next_unboxed_radio.boxed).to be false
+     
       do_request
+
       expect(status).to eq 200
       data = JSON.parse(response_body)['data']
       errors = JSON.parse(response_body)['errors']
@@ -95,10 +95,13 @@ resource "Radios" do
       expect(data['serial_number']).to eq(serial_number)
       expect(data['shipment_id']).to eq(shipment_id)
       
-      expect(Shipment.find(shipment_id).radio.select{ |r| r.serial_number.include?(serial_number)}).not_to be_empty
-      expect{ radio.reload }.to change{ radio.shipment_id }.from(nil).to(shipment_id)
-      expect(radio.boxed).to be true
-      expect(errors.empty?).to be true
+      next_unboxed_radio.reload 
+
+      expect(next_unboxed_radio.serial_number).to be assembled_radio.serial_number
+      expect(next_unboxed_radio.operator).to be assembled_radio.operator
+      expect(next_unboxed_radio.assembly_date).to be assembled_radio.assembly_date
+      expect(next_unboxed_radio.boxed).to be true
+      expect(assembled_radio.reload).to be nil
     end
   end
 end
