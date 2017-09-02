@@ -1,6 +1,9 @@
 require 'httparty'
 require 'date'
 
+class ShipstationError < StandardError
+end
+
 class ShipmentsController < ApplicationController
   before_action :set_shipment, only: [:show, :update, :destroy, :next_unboxed_radio]
 
@@ -107,8 +110,13 @@ class ShipmentsController < ApplicationController
       Rails.logger.debug("HTTP params: url: #{url}, headers: #{headers}, body: #{create_label_options}")
 
       response = HTTParty.post(url, headers: headers, body: create_label_options)
+      
       Rails.logger.debug(response)
-      # handle_shipstation_response(response)
+      if !(200..299).include?(response.status)
+        Rails.logger.error(response.body)
+        raise ShipstationError
+      end
+
       JSON.parse(response.body)
     end
 
