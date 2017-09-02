@@ -84,6 +84,7 @@ resource "Radios" do
       next_unboxed_radio = Shipment.find(shipment_id).next_unboxed_radio
 
       expect(next_unboxed_radio.boxed).to be false
+      expect(next_unboxed_radio.serial_number).to be nil
      
       do_request
 
@@ -93,15 +94,14 @@ resource "Radios" do
 
       expect(data['boxed']).to be true
       expect(data['serial_number']).to eq(serial_number)
-      expect(data['shipment_id']).to eq(shipment_id)
       
       next_unboxed_radio.reload 
 
-      expect(next_unboxed_radio.serial_number).to be assembled_radio.serial_number
-      expect(next_unboxed_radio.operator).to be assembled_radio.operator
-      expect(next_unboxed_radio.assembly_date).to be assembled_radio.assembly_date
+      expect(next_unboxed_radio.serial_number).to eq assembled_radio.serial_number
+      expect(next_unboxed_radio.operator).to eq assembled_radio.operator
+      expect(next_unboxed_radio.assembly_date).to eq assembled_radio.assembly_date
       expect(next_unboxed_radio.boxed).to be true
-      expect(assembled_radio.reload).to be nil
+      expect{ assembled_radio.reload }.to raise_error(ActiveRecord::RecordNotFound)
     end
   end
 end

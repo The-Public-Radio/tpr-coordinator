@@ -71,10 +71,10 @@ class RadiosController < ApplicationController
     Rails.logger.debug{ "Next unboxed radio: #{next_unboxed_radio}" }
     # Merge assembled_radio into next_unboxed_radio
     # There's a more ruby way to do this but we'll just brute force it for now
-    assembled_radio.each do |k,v|
+    assembled_radio.attributes.each do |k,v|
       next if v.nil?
-      next if %w(created_at updated_at id)
-      next_unboxed_radio.instance_variable_set("@#{k}".to_sym, v)
+      next if %w(created_at updated_at id).include?(k)
+      next_unboxed_radio.update_attributes({"#{k}": v})
     end
     # Update next_unboxed_radio to be boxed
     next_unboxed_radio.boxed = true

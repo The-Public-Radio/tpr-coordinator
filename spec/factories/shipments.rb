@@ -19,8 +19,8 @@ FactoryGirl.define do
 
       after :create do |label_created|
         create(:radio_boxed, shipment: label_created, serial_number: random_tpr_serial_number)
-        create(:radio_inital_order, shipment: label_created, serial_number: random_tpr_serial_number)
-        create(:radio_inital_order, shipment: label_created, serial_number: random_tpr_serial_number)
+        create(:radio_inital_order, shipment: label_created)
+        create(:radio_inital_order, shipment: label_created)
       end
     end
 
