@@ -65,26 +65,28 @@ class RadiosController < ApplicationController
   def update_radio_to_boxed
     # Find radio w/ serial number
     assembled_radio = Radio.find_by_serial_number radio_params[:serial_number]
-    Rails.logger.debug{ "Assembled Radio: #{assembled_radio}" }
     # Get the next_unboxed_radio radio in shipment
     next_unboxed_radio = Shipment.find(params[:id]).next_unboxed_radio
-    Rails.logger.debug{ "Next unboxed radio: #{next_unboxed_radio}" }
     # Merge assembled_radio into next_unboxed_radio
     # There's a more ruby way to do this but we'll just brute force it for now
+    updated_attributes = {}
     assembled_radio.attributes.each do |k,v|
       next if v.nil?
       next if %w(created_at updated_at id).include?(k)
-      next_unboxed_radio.update_attributes({"#{k}": v})
+      updated_attributes[k] = v
     end
     # Update next_unboxed_radio to be boxed
-    next_unboxed_radio.boxed = true
-    Rails.logger.debug{ "Updated next unboxed radio: #{next_unboxed_radio}" }
+    Rails.logger.debug{ "Updating radio #{next_unboxed_radio.id} to be boxed" }
+    updated_attributes['boxed'] = true
     # Destroy assembled_radio so we don't have two radios with the same serial_number
+    Rails.logger.debug{ "Destroying radio #{assembled_radio.id}" }
     assembled_radio.destroy
     # Save next_unboxed_radio
-    if next_unboxed_radio.save!
+    Rails.logger.debug{ "Updating radio: #{next_unboxed_radio.attributes} to: #{updated_attributes}" }
+    if next_unboxed_radio.update!(updated_attributes)
       api_response(next_unboxed_radio)
     else
+      Rails.logger.debug{ "Radio was not able to be saved!" }
       api_response([], :unprocessable_entity, radio_assembled.errors)
     end
   end

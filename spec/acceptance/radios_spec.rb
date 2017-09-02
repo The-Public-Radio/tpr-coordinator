@@ -80,8 +80,10 @@ resource "Radios" do
     let(:frequency) { radio_boxed.frequency }
 
     example "Update a radio to be boxed and attached to a shipment" do
+      shipment =  Shipment.find(shipment_id)
       assembled_radio =  Radio.find_by_serial_number(serial_number)
-      next_unboxed_radio = Shipment.find(shipment_id).next_unboxed_radio
+      next_unboxed_radio = shipment.next_unboxed_radio
+      radios_in_shipment = shipment.radio.count
 
       expect(next_unboxed_radio.boxed).to be false
       expect(next_unboxed_radio.serial_number).to be nil
@@ -97,6 +99,8 @@ resource "Radios" do
       
       next_unboxed_radio.reload 
 
+      expect(shipment.reload.radio.count).to be radios_in_shipment
+      expect(next_unboxed_radio.shipment_id).to eq shipment_id
       expect(next_unboxed_radio.serial_number).to eq assembled_radio.serial_number
       expect(next_unboxed_radio.operator).to eq assembled_radio.operator
       expect(next_unboxed_radio.assembly_date).to eq assembled_radio.assembly_date
