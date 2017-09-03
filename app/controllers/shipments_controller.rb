@@ -148,10 +148,12 @@ class ShipmentsController < ApplicationController
       if !params[:tracking_number].nil?
         tracking_number = params[:tracking_number].length == 30 ? params[:tracking_number][8..-1] : params[:tracking_number]
         @shipment ||= Shipment.find_by_tracking_number tracking_number
+        Rails.logger.debug(@shipment.attributes)
       elsif !params[:shipment_status].nil?
         @shipment ||= Shipment.where(shipment_status: params[:shipment_status])
       elsif !params[:id].nil?
         @shipment ||= Shipment.find(params[:id])
+        Rails.logger.debug(@shipment.attributes)
       else
         @shipment ||= Shipment.all
       end
