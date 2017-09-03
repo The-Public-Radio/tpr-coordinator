@@ -73,22 +73,21 @@ RSpec.describe ShipmentsController, type: :controller do
         expect(response.content_type).to eq('application/json')
       end
 
-      context 'without a tracking number' do
+      context 'without a tracking number' do        
         create_label_params = load_json_fixture('./spec/fixtures/shipstation/create_label_request_options.json')
         create_label_response = load_fixture('./spec/fixtures/shipstation/create_label_response.json')
         create_label_error_response = load_fixture('./spec/fixtures/shipstation/create_label_error_response.json')
 
+        headers = { 
+          "Authorization" => "Basic #{Base64.strict_encode64('test_api_key:test_api_secret')}"
+        }
+
+        url = 'https://ssapi.shipstation.com/shipments/createlabel'
+
         it 'creates a tracking number from the shipstation API' do
-          shipstation_response_object = object_double('response', code: 200, body: create_label_response )
-
-          valid_attributes.delete('tracking_number')
-
-          url = 'https://ssapi.shipstation.com/shipments/createlabel'
-          headers = { 
-            "Authorization" => "Basic #{Base64.strict_encode64('test_api_key:test_api_secret')}"
-          }
-
           Timecop.freeze('2017-08-06')
+          valid_attributes.delete('tracking_number')
+          shipstation_response_object = object_double('response', code: 200, body: create_label_response )
 
           expect(HTTParty).to receive(:post).with(url, headers: headers, body: create_label_params).and_return(shipstation_response_object)
           post :create, params: { order_id: order_id, shipment: valid_attributes }, session: valid_session
@@ -97,12 +96,22 @@ RSpec.describe ShipmentsController, type: :controller do
           expect(Shipment.find(body['id']).tracking_number).to eq(JSON.parse(create_label_response)['trackingNumber'])
         end
 
-        it 'handles errors from shipstation and raises an exception' do
-          shipstation_response_object = object_double('response', code: 500, body: create_label_error_response)
-
+        it 'stores the label_data from the Shipstation api response' do
           valid_attributes.delete('tracking_number')
+          shipstation_response_object = object_double('response', code: 200, body: create_label_response )
 
-          Timecop.freeze('2017-08-06')
+          expect(HTTParty).to receive(:post).and_return(shipstation_response_object)
+           
+          post :create, params: { order_id: order_id, shipment: valid_attributes }, session: valid_session 
+
+          expect(Shipment.last.label_data).to eq(JSON.parse(create_label_response)['labelData'])
+
+          body = JSON.parse(response.body)['label_data']
+        end
+
+        it 'handles errors from shipstation and raises an exception' do
+          valid_attributes.delete('tracking_number')
+          shipstation_response_object = object_double('response', code: 500, body: create_label_error_response)
 
           expect(HTTParty).to receive(:post).and_return(shipstation_response_object)
           expect{ 
