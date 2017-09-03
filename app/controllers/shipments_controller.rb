@@ -142,6 +142,8 @@ class ShipmentsController < ApplicationController
     def set_shipment
       if !params[:tracking_number].nil?
         @shipment ||= Shipment.find_by_tracking_number(params[:tracking_number])
+      elsif !params[:shipment_status].nil?
+        @shipment ||= Shipment.where(shipment_status: params[:shipment_status])
       elsif !params[:id].nil?
         @shipment ||= Shipment.find(params[:id])
       else

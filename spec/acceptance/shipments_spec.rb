@@ -57,12 +57,14 @@ resource "Shipments" do
     let(:shipment_status) { 'label_created' } 
 
     example "Look up all shipments that have unprinted labels" do
+      shipments = create_list(:label_created, 2)
+
       do_request
       expect(status).to eq 200
       data = JSON.parse(response_body)['data']
       expect(data.length).to be 2
-      expect(data[0].id).to eq(ship_date)
-      expect(data[0].label_data).to eq(File.read('spec/fixtures/shipstation/label_data.pdf'))
+      expect(data[0]['id']).to eq(shipments[0].id)
+      expect(data[0]['label_data']).to eq(shipments[0].label_data)
     end
   end
 
