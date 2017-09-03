@@ -42,7 +42,12 @@ class ShipmentsController < ApplicationController
   # PATCH/PUT /shipments/1
   # PATCH/PUT /shipments/1.json
   def update
-    if @shipment.update(shipment_params)
+    mutable_params = shipment_params
+    if mutable_params['shipment_status'] == 'shipped'
+      mutable_params['ship_date'] = Date.today.to_s
+    end
+    
+    if @shipment.update(mutable_params)
       api_response(@shipment)
     else
       api_response([], 422, ['Shipment updates are invalid'])
