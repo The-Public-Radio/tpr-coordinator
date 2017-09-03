@@ -99,6 +99,10 @@ RSpec.describe RadiosController, type: :controller do
         expect(response).to have_http_status(:created)
         expect(response.content_type).to eq('application/json')
       end
+
+      it 'make country codes from shipping country' do
+        skip('Write this test!')
+      end
     end
 
     context "with invalid params" do

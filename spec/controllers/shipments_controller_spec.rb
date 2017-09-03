@@ -130,6 +130,10 @@ RSpec.describe ShipmentsController, type: :controller do
             post :create, params: { order_id: order_id, shipment: valid_attributes }, session: valid_session
             }.to raise_error(ShipstationError)
         end
+
+        it 'creates international orders' do
+          skip('Write this test!')
+        end
       end
     end
 
