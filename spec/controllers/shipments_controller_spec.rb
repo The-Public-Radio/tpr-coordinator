@@ -165,6 +165,19 @@ RSpec.describe ShipmentsController, type: :controller do
         expect(response).to have_http_status(:ok)
         expect(response.content_type).to eq('application/json')
       end
+
+      it 'updates the ship_date when the status changes to shipped' do
+        expected_date = '2017-09-03'
+        Timecop.freeze(expected_date)
+
+        shipment = Shipment.create! valid_attributes
+
+        put :update, params: {id: shipment.to_param, shipment: { shipment_status: 'shipped' }}, session: valid_session
+        expect(response).to have_http_status(:ok)
+        data = JSON.parse(response.body)['data']
+        expect(data['ship_date']).to eq(expected_date)
+        expect(Shipment.find(shipment.id).ship_data).to eq(expected_date)
+      end
     end
 
     context "with invalid params" do
