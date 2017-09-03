@@ -68,7 +68,7 @@ class RadiosController < ApplicationController
     unless assembled_radio.try(:shipment_id).nil?
       Rails.logger.info{ "User trying to update radio that is already attached to a shipment" }
       api_response([], :unprocessable_entity, 'Radio given already attached to shipment')
-      raise TprError
+      raise TprError::UserError.new('Can not add shipment_id to radio already attached to shipment')
     end
     Rails.logger.debug{ "Assembled radio #{assembled_radio.attributes}" }
     # Get the next_unboxed_radio radio in shipment
@@ -117,5 +117,7 @@ class RadiosController < ApplicationController
     end
 end
 
-class TprError < StandardError
+module TprError
+  class UserError < StandardError
+  end
 end

@@ -165,7 +165,7 @@ RSpec.describe RadiosController, type: :controller do
           }
 
         expect{ put :update_radio_to_boxed, params: { id: shipment.id, radio: new_attributes }, 
-          session: valid_session}.to raise_error(TprError)
+          session: valid_session}.to raise_error(TprError::UserError, "Can not add shipment_id to radio already attached to shipment")
       end
     end
   end
