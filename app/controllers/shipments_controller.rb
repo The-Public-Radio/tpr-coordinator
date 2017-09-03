@@ -46,7 +46,7 @@ class ShipmentsController < ApplicationController
     if mutable_params['shipment_status'] == 'shipped'
       mutable_params['ship_date'] = Date.today.to_s
     end
-    
+
     if @shipment.update(mutable_params)
       api_response(@shipment)
     else
@@ -146,7 +146,8 @@ class ShipmentsController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_shipment
       if !params[:tracking_number].nil?
-        @shipment ||= Shipment.find_by_tracking_number(params[:tracking_number])
+        tracking_number = params[:tracking_number].length == 30 ? params[:tracking_number][8..-1] : params[:tracking_number]
+        @shipment ||= Shipment.find_by_tracking_number tracking_number
       elsif !params[:shipment_status].nil?
         @shipment ||= Shipment.where(shipment_status: params[:shipment_status])
       elsif !params[:id].nil?
