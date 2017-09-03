@@ -10,6 +10,8 @@ class ApplicationController < ActionController::API
       'data' => serializer.try(:new, data),
       'errors' => Array.wrap(errors)
     }
+    Rails.logger.debug("Status: #{status}")
+    Rails.logger.debug("Body: #{ret}")
     render json: ret, status: status
   end
 end
