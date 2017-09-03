@@ -12,6 +12,6 @@ class Shipment < ApplicationRecord
   validates_inclusion_of :shipment_status, in: %w(created label_created shipped boxed), allow_nil: true, allow_blank: true
 
   def next_unboxed_radio
-		self.radio.sort_by(&:created_at).select{ |s| s.boxed == false }[0]
+		self.radio.sort_by(&:created_at).select{ |r|  r.boxed? }[0]
   end
 end

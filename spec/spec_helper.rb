@@ -78,6 +78,10 @@ RSpec.configure do |config|
       DatabaseCleaner.clean
     end
   end
+
+  config.after do
+    Timecop.return
+  end
 end
 
 RspecApiDocumentation.configure do |config|

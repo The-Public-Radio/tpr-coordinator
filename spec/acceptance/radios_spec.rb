@@ -92,7 +92,6 @@ resource "Radios" do
 
       expect(status).to eq 200
       data = JSON.parse(response_body)['data']
-      errors = JSON.parse(response_body)['errors']
 
       expect(data['boxed']).to be true
       expect(data['serial_number']).to eq(serial_number)
