@@ -26,7 +26,7 @@
 
 #### Body
 
-<pre>{"pcb_version":"1","serial_number":"TPRv2.0_1_37203","operator":"William Murphy","country_code":"US"}</pre>
+<pre>{"pcb_version":"1","serial_number":"TPRv2.0_1_34952","operator":"Michael Jordan","country_code":"US"}</pre>
 
 ### Response
 
@@ -42,12 +42,12 @@
 
 <pre>{
   "data": {
-    "id": 108,
+    "id": 661,
     "frequency": null,
     "pcb_version": "1",
-    "serial_number": "TPRv2.0_1_37203",
-    "assembly_date": "2017-08-29",
-    "operator": "William Murphy",
+    "serial_number": "TPRv2.0_1_34952",
+    "assembly_date": "2017-09-03",
+    "operator": "Michael Jordan",
     "shipment_id": null,
     "boxed": false,
     "country_code": "US"

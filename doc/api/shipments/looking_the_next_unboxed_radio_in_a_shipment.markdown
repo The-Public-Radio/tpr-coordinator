@@ -18,11 +18,11 @@
 
 #### Route
 
-<pre>GET /shipments/117/next_radio?tracking_number=9374889691090496622758</pre>
+<pre>GET /shipments/715/next_radio?tracking_number=9374889691090496601517</pre>
 
 #### Query Parameters
 
-<pre>tracking_number: 9374889691090496622758</pre>
+<pre>tracking_number: 9374889691090496601517</pre>
 
 ### Response
 
@@ -38,13 +38,13 @@
 
 <pre>{
   "data": {
-    "id": 125,
-    "frequency": "84.3",
+    "id": 678,
+    "frequency": "94.3",
     "pcb_version": null,
-    "serial_number": "TPRv2.0_1_476",
+    "serial_number": null,
     "assembly_date": null,
     "operator": null,
-    "shipment_id": 117,
+    "shipment_id": 715,
     "boxed": false,
     "country_code": "US"
   },

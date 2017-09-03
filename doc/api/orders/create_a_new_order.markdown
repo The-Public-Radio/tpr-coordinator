@@ -41,10 +41,16 @@
 #### Body
 
 <pre>{
-  "id": 66,
+  "id": 660,
   "first_name": "Person",
   "last_name": "McPersonson",
-  "address": "345 West Way, Brooklyn, NY, 11221",
   "order_source": "other",
-  "email": "person.mcpersonson@gmail.com"
+  "email": "person.mcpersonson@gmail.com",
+  "street_address_1": null,
+  "street_address_2": null,
+  "city": null,
+  "state": null,
+  "postal_code": null,
+  "country": null,
+  "phone": null
 }</pre>

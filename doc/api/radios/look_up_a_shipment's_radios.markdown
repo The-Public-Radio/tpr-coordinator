@@ -11,7 +11,7 @@
 
 #### Route
 
-<pre>GET /shipments/108/radios</pre>
+<pre>GET /shipments/706/radios</pre>
 
 ### Response
 
@@ -28,35 +28,35 @@
 <pre>{
   "data": [
     {
-      "id": 102,
-      "frequency": "94.0",
+      "id": 655,
+      "frequency": "85.2",
       "pcb_version": "1",
-      "serial_number": "TPRv2.0_1_68834",
-      "assembly_date": "2017-08-29 14:45:05 -0400",
-      "operator": "David Collins",
-      "shipment_id": 108,
+      "serial_number": "TPRv2.0_1_38286",
+      "assembly_date": "2017-09-03 12:41:55 -0400",
+      "operator": "Elizabeth Perez",
+      "shipment_id": 706,
       "boxed": true,
       "country_code": "US"
     },
     {
-      "id": 103,
-      "frequency": "84.3",
+      "id": 656,
+      "frequency": "94.3",
       "pcb_version": null,
-      "serial_number": "TPRv2.0_1_41230",
+      "serial_number": null,
       "assembly_date": null,
       "operator": null,
-      "shipment_id": 108,
+      "shipment_id": 706,
       "boxed": false,
       "country_code": "US"
     },
     {
-      "id": 104,
-      "frequency": "84.3",
+      "id": 657,
+      "frequency": "94.3",
       "pcb_version": null,
-      "serial_number": "TPRv2.0_1_49898",
+      "serial_number": null,
       "assembly_date": null,
       "operator": null,
-      "shipment_id": 108,
+      "shipment_id": 706,
       "boxed": false,
       "country_code": "US"
     }

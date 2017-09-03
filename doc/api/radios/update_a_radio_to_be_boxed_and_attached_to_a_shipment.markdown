@@ -10,7 +10,6 @@
 |------|-------------|----------|-------|
 | boxed | Boolean, is this radio boxed? | true |  |
 | serial_number | String, radio (speaker) serial number | true |  |
-| country_code | String, country code for the radio. One of us, jp, eu | false |  |
 
 ### Request
 
@@ -20,11 +19,11 @@
 
 #### Route
 
-<pre>PUT /shipments/110/radios</pre>
+<pre>PUT /shipments/708/radios</pre>
 
 #### Body
 
-<pre>{"boxed":true,"serial_number":"TPRv2.0_1_17647","country_code":"US"}</pre>
+<pre>{"boxed":true,"serial_number":"TPRv2.0_1_40172"}</pre>
 
 ### Response
 
@@ -40,15 +39,15 @@
 
 <pre>{
   "data": {
-    "id": 109,
-    "frequency": "84.3",
+    "id": 663,
+    "frequency": "94.3",
     "pcb_version": "1",
-    "serial_number": "TPRv2.0_1_17647",
-    "assembly_date": "2017-08-29 14:45:05 -0400",
-    "operator": "David Collins",
-    "shipment_id": 110,
+    "serial_number": "TPRv2.0_1_40172",
+    "assembly_date": "2017-09-03 12:41:55 -0400",
+    "operator": "Elizabeth Perez",
+    "shipment_id": 708,
     "boxed": true,
-    "country_code": null
+    "country_code": "US"
   },
   "errors": [
 
