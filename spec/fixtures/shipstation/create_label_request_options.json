@@ -1,7 +1,7 @@
 {
   "carrierCode": "stamps_com",
   "serviceCode": "usps_first_class_mail",
-  "packageCode": "1",
+  "packageCode": "package",
   "shipDate": "2017-08-05",
   "weight": {
     "value": 12,

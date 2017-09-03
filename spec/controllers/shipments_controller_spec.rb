@@ -79,7 +79,7 @@ RSpec.describe ShipmentsController, type: :controller do
         create_label_error_response = load_fixture('./spec/fixtures/shipstation/create_label_error_response.json')
 
         it 'creates a tracking number from the shipstation API' do
-          shipstation_response_object = object_double('response', status: 200, body: create_label_response )
+          shipstation_response_object = object_double('response', code: 200, body: create_label_response )
 
           valid_attributes.delete('tracking_number')
 
@@ -98,7 +98,7 @@ RSpec.describe ShipmentsController, type: :controller do
         end
 
         it 'handles errors from shipstation and raises an exception' do
-          shipstation_response_object = object_double('response', status: 500, body: create_label_error_response)
+          shipstation_response_object = object_double('response', code: 500, body: create_label_error_response)
 
           valid_attributes.delete('tracking_number')
 

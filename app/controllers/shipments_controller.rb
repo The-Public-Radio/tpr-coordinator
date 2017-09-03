@@ -74,7 +74,7 @@ class ShipmentsController < ApplicationController
       create_label_options = {
         "carrierCode": "stamps_com",
         "serviceCode": "usps_first_class_mail",
-        "packageCode": "1",
+        "packageCode": "package",
         "shipDate": Date.today.to_s,
         "weight": {
           "value": 12,
@@ -112,7 +112,7 @@ class ShipmentsController < ApplicationController
       response = HTTParty.post(url, headers: headers, body: create_label_options)
       
       Rails.logger.debug(response)
-      if !(200..299).include?(response.status)
+      if !(200..299).include?(response.code)
         Rails.logger.error(response.body)
         raise ShipstationError
       end
