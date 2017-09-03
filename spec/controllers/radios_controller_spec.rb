@@ -173,4 +173,8 @@ RSpec.describe RadiosController, type: :controller do
       end
     end
   end
+
+  it 'handle radio not assembled and in DB when scanned' do
+    skip('do this')
+  end
 end

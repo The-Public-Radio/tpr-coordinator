@@ -66,13 +66,11 @@ class RadiosController < ApplicationController
     assembled_radio = Radio.find_by_serial_number radio_params[:serial_number]
     unless assembled_radio.try(:shipment_id).nil?
       Rails.logger.info{ "User trying to update radio that is already attached to a shipment" }
-      api_response([], :unprocessable_entity, 'Radio given already attached to shipment')
+      api_response({'serial_number': 'terrible'}, :unprocessable_entity, 'Radio given already attached to shipment')
       raise TprError::UserError.new('Can not add shipment_id to radio already attached to shipment')
     end
-    Rails.logger.debug{ "Assembled radio #{assembled_radio.attributes}" }
     # Get the next_unboxed_radio radio in shipment
     next_unboxed_radio = Shipment.find(params[:id]).next_unboxed_radio
-    Rails.logger.debug{ "Next unblocked radio #{next_unboxed_radio.attributes}" }
     # Merge assembled_radio into next_unboxed_radio
     # There's a more ruby way to do this but we'll just brute force it for now
     updated_attributes = {}
