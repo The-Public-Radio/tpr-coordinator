@@ -87,6 +87,8 @@ resource "Radios" do
 
       expect(next_unboxed_radio.boxed).to be false
       expect(next_unboxed_radio.serial_number).to be nil
+      expect(next_unboxed_radio.shipment_id).to be nil
+
      
       do_request
 

@@ -72,7 +72,8 @@ class RadiosController < ApplicationController
     updated_attributes = {}
     assembled_radio.attributes.each do |k,v|
       next if v.nil?
-      next if %w(created_at updated_at id).include?(k)
+      next if %w(created_at updated_at id ).include?(k)
+      Rails.logger.warn("OH NO, THERE A CHANGE RICK: #{k}")
       updated_attributes[k] = v
     end
     # Update next_unboxed_radio to be boxed
@@ -83,7 +84,7 @@ class RadiosController < ApplicationController
     assembled_radio.destroy
     # Save next_unboxed_radio
     Rails.logger.debug{ "Updating radio: #{next_unboxed_radio.attributes} to: #{updated_attributes}" }
-    if next_unboxed_radio.update!(updated_attributes)
+    if next_unboxed_radio.save!(updated_attributes)
       api_response(next_unboxed_radio)
     else
       Rails.logger.debug{ "Radio was not able to be saved!" }
