@@ -96,6 +96,18 @@ RSpec.describe ShipmentsController, type: :controller do
           expect(Shipment.find(body['id']).tracking_number).to eq(JSON.parse(create_label_response)['trackingNumber'])
         end
 
+        it 'updates the shipment_status to label_created on successful storage of tracking_number' do
+          Timecop.freeze('2017-08-06')
+          valid_attributes.delete('tracking_number')
+          shipstation_response_object = object_double('response', code: 200, body: create_label_response )
+
+          expect(HTTParty).to receive(:post).with(url, headers: headers, body: create_label_params).and_return(shipstation_response_object)
+          post :create, params: { order_id: order_id, shipment: valid_attributes }, session: valid_session
+
+          body = JSON.parse(response.body)['data']
+          expect(Shipment.find(body['id']).shipment_status).to eq 'label_created'
+        end
+
         it 'stores the label_data from the Shipstation api response' do
           valid_attributes.delete('tracking_number')
           shipstation_response_object = object_double('response', code: 200, body: create_label_response )
