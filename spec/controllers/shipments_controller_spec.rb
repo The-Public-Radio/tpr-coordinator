@@ -49,6 +49,18 @@ RSpec.describe ShipmentsController, type: :controller do
       shipment = Shipment.create! valid_attributes
       get :index, params: {}, session: valid_session
     end
+
+    # USPS Tracking numbers are 20,22, or 30 digits. The norm is 22.
+    # 30 digit tracking numbers are an application code + zip code + 22 digit tracking number
+    it "shortens a 30 digit USPS tracking number to a 22 digit one" do
+      shipment = create(:label_created)
+
+      get :index, params: { tracking_number: "42010001#{shipment.tracking_number}"}, session: valid_session
+
+      expect(response).to have_http_status(:ok)
+      data = JSON.parse(response.body)['data']
+      expect(data['tracking_number']).to eq(shipment.tracking_number)
+    end
   end
 
   describe "GET #show" do
