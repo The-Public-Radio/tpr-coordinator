@@ -1,5 +1,4 @@
 FactoryGirl.define do
-
   factory :shipment do
     tracking_number random_tracking_number
 
@@ -16,6 +15,7 @@ FactoryGirl.define do
 
     factory :label_created do
       shipment_status "label_created"
+      label_data "label_data_fixture"
 
       after :create do |label_created|
         create(:radio_boxed, shipment: label_created, serial_number: random_tpr_serial_number)
@@ -27,6 +27,7 @@ FactoryGirl.define do
     factory :boxed do
       shipment_status "boxed"
       ship_date "2017-07-28"
+      label_data "label_data_fixture"
 
       after :create do |boxed|
         create(:radio_boxed, :shipment => boxed, serial_number: random_tpr_serial_number)
@@ -38,6 +39,7 @@ FactoryGirl.define do
     factory :shipped do
       shipment_status "shipped"
       ship_date "2017-07-28"
+      label_data "label_data_fixture"
 
       after :create do |shipped|
         create(:radio_boxed, :shipment => shipped, serial_number: random_tpr_serial_number)
@@ -46,5 +48,3 @@ FactoryGirl.define do
     end
   end
 end
-
-

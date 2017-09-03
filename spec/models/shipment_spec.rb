@@ -22,17 +22,6 @@ RSpec.describe Shipment, type: :model do
     expect(model).to be_valid
   end
 
-  # it 'is valid only when date is a date object or nil' do
-  #   model.ship_date = Date.new
-  #   expect(model).to be_valid
-
-  #   model.ship_date = nil
-  #   expect(model).to be_valid
-
-  #   model.ship_date = 'this is not a date'
-  #   expect(model).to_not be_valid
-  # end
-
   context 'a shipment has a status that' do
     it 'is valid when boxed, shipped, label_created, or created' do
       model.shipment_status = 'created'
@@ -48,6 +37,21 @@ RSpec.describe Shipment, type: :model do
       expect(model).to be_valid
 
       model.shipment_status = 'done'
+      expect(model).to_not be_valid
+    end
+  end
+
+  context 'a shipment can have a shipping label which' do
+    it 'can be nil' do
+      model.label_data = nil
+      expect(model).to be_valid
+    end
+
+    it 'is valid when a base64 encoded' do
+      model.label_data = Base64.strict_encode64('some test string')
+      expect(model).to be_valid
+
+      model.label_data = 'some test string'
       expect(model).to_not be_valid
     end
   end
