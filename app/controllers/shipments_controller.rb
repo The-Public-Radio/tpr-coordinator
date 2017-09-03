@@ -28,10 +28,12 @@ class ShipmentsController < ApplicationController
     # Create tracking number and store base64 encoded label pdf data
     if @shipment.tracking_number.nil?
       @shipment.tracking_number = shipstation_tracking_number 
+      @shipment.shipment_status = 'label_created'
       @shipment.label_data = shipstation_label_data
     end
 
     if @shipment.save
+
       api_response(@shipment, :created)
     else
       render json: @shipment.errors, status: :unprocessable_entity
