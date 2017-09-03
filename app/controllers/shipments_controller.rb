@@ -24,7 +24,12 @@ class ShipmentsController < ApplicationController
   # POST /shipments.json
   def create
     @shipment = Shipment.new(shipment_params)
-    @shipment.tracking_number = shipstation_tracking_number if @shipment.tracking_number.nil?
+
+    # Create tracking number and store base64 encoded label pdf data
+    if @shipment.tracking_number.nil?
+      @shipment.tracking_number = shipstation_tracking_number 
+      @shipment.label_data = shipstation_label_data
+    end
 
     if @shipment.save
       api_response(@shipment, :created)
@@ -59,7 +64,15 @@ class ShipmentsController < ApplicationController
     attr_accessor :shipment
 
     def shipstation_tracking_number
-      @shipstation_tracking_number = create_shipstation_label['trackingNumber']
+      @shipstation_tracking_number = shipstation_create_label_response_body['trackingNumber']
+    end
+
+    def shipstation_label_data
+      @shipstation_tracking_number = shipstation_create_label_response_body['labelData']
+    end
+
+    def shipstation_create_label_response_body
+      @shipstation_label ||= JSON.parse(create_shipstation_label.body)
     end
 
     def create_shipstation_label  
@@ -117,7 +130,7 @@ class ShipmentsController < ApplicationController
         raise ShipstationError
       end
 
-      JSON.parse(response.body)
+      response
     end
 
     def shipstation_basic_auth_key
