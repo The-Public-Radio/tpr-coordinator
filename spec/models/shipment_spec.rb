@@ -23,11 +23,14 @@ RSpec.describe Shipment, type: :model do
   end
 
   context 'a shipment has a status that' do
-    it 'is valid when boxed, shipped, label_created, or created' do
+    it 'is valid when boxed, shipped, label_created, label_printed or created' do
       model.shipment_status = 'created'
       expect(model).to be_valid
 
       model.shipment_status = 'label_created'
+      expect(model).to be_valid
+
+      model.shipment_status = 'label_printed'
       expect(model).to be_valid
 
       model.shipment_status = 'shipped'

@@ -13,14 +13,18 @@ FactoryGirl.define do
       end
     end
 
-    factory :label_created do
-      shipment_status "label_created"
-      label_data "label_data_fixture"
+    factory :label_printed do
+      shipment_status "label_printed"
+      
+      factory :label_created do
+        shipment_status "label_created"
+        label_data "label_data_fixture"
 
-      after :create do |label_created|
-        create(:radio_boxed, shipment: label_created, serial_number: random_tpr_serial_number)
-        create(:radio_inital_order, shipment: label_created)
-        create(:radio_inital_order, shipment: label_created)
+        after :create do |label_created|
+          create(:radio_boxed, shipment: label_created, serial_number: random_tpr_serial_number)
+          create(:radio_inital_order, shipment: label_created)
+          create(:radio_inital_order, shipment: label_created)
+        end
       end
     end
 
