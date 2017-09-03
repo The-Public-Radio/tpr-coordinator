@@ -34,7 +34,7 @@ class RadiosController < ApplicationController
     if @radio.save
       api_response(@radio, :created)
     else
-      api_response('terrible', :unprocessable_entity, @radio.errors)
+      api_response({"serial_number": "terrible"}, :unprocessable_entity, @radio.errors)
       # render json: @radio.errors, status: :unprocessable_entity
     end
   end
