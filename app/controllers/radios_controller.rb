@@ -65,8 +65,15 @@ class RadiosController < ApplicationController
   def update_radio_to_boxed
     # Find radio w/ serial number
     assembled_radio = Radio.find_by_serial_number radio_params[:serial_number]
+    unless assembled_radio.try(:shipment_id).nil?
+      Rails.logger.info{ "User trying to update radio that is already attached to a shipment" }
+      api_response([], :unprocessable_entity, 'Radio given already attached to shipment')
+      raise TprError
+    end
+    Rails.logger.debug{ "Assembled radio #{assembled_radio.attributes}" }
     # Get the next_unboxed_radio radio in shipment
     next_unboxed_radio = Shipment.find(params[:id]).next_unboxed_radio
+    Rails.logger.debug{ "Next unblocked radio #{next_unboxed_radio.attributes}" }
     # Merge assembled_radio into next_unboxed_radio
     # There's a more ruby way to do this but we'll just brute force it for now
     updated_attributes = {}
@@ -108,4 +115,7 @@ class RadiosController < ApplicationController
       Rails.logger.debug("Request params: #{params}")
       params.require(:radio).permit(:frequency, :shipment_id, :pcb_version, :serial_number, :operator, :boxed, :country_code)
     end
+end
+
+class TprError < StandardError
 end

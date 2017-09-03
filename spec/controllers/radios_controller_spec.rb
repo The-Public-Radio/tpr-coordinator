@@ -154,4 +154,19 @@ RSpec.describe RadiosController, type: :controller do
       }.to change(Radio, :count).by(-1)
     end
   end
+
+  describe "Updating a radio to be boxed and attached to shipment" do
+    context "with valid params" do
+      it "raises an error if the specified serial_number is already attached to a shipment" do
+        radio_boxed = create(:radio_boxed)
+        new_attributes = {
+            serial_number: radio_boxed.serial_number,
+            boxed: true
+          }
+
+        expect{ put :update_radio_to_boxed, params: { id: shipment.id, radio: new_attributes }, 
+          session: valid_session}.to raise_error(TprError)
+      end
+    end
+  end
 end
