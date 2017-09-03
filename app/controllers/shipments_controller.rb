@@ -5,12 +5,11 @@ class ShipstationError < StandardError
 end
 
 class ShipmentsController < ApplicationController
-  before_action :set_shipment, only: [:show, :update, :destroy, :next_unboxed_radio]
+  before_action :set_shipment, only: [:index, :show, :update, :destroy, :next_unboxed_radio]
 
   # GET /shipments
   # GET /shipments.json
   def index
-    set_shipment
     api_response(@shipment)
   end
 

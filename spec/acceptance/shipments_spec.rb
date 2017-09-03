@@ -52,6 +52,20 @@ resource "Shipments" do
     end
   end
 
+  get "/shipments" do
+    parameter :shipment_status, 'String, shipment status', required: true
+    let(:shipment_status) { 'label_created' } 
+
+    example "Look up all shipments that have unprinted labels" do
+      do_request
+      expect(status).to eq 200
+      data = JSON.parse(response_body)['data']
+      expect(data.length).to be 2
+      expect(data[0].id).to eq(ship_date)
+      expect(data[0].label_data).to eq(File.read('spec/fixtures/shipstation/label_data.pdf'))
+    end
+  end
+
   put "/shipments/:id" do
     let(:tracking_number) { created_shipment.tracking_number }
     let(:shipment_status) { 'label_created' }
