@@ -137,6 +137,10 @@ RSpec.describe RadiosController, type: :controller do
         expect(response).to have_http_status(:ok)
         expect(response.content_type).to eq('application/json')
       end
+
+      it "returns an error when a radio is attempted to be attached to the shipment but that radio is not found" do
+        skip('do this')
+      end
     end
 
     context "with invalid params" do
