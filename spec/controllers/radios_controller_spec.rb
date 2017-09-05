@@ -100,8 +100,12 @@ RSpec.describe RadiosController, type: :controller do
         expect(response.content_type).to eq('application/json')
       end
 
-      it 'make country codes from shipping country' do
-        skip('Write this test!')
+      it 'defaults country codes to US' do
+        valid_attributes['country_code'] = nil
+
+        post :create, params: { shipment_id: shipment_id, radio: valid_attributes }, session: valid_session
+        expect(response).to have_http_status(:created)
+        expect(JSON.parse(response.body)['data']['country_code']).to eq('US')
       end
     end
 

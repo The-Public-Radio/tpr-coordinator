@@ -104,6 +104,10 @@ RSpec.describe OrdersController, type: :controller do
         expect(radios.select{ |r| r.frequency == '79.5' }.count).to be 6
         expect(radios.select{ |r| r.frequency == '105.6' }.count).to be 1
       end
+
+      it 'make country codes from shipping country' do
+        skip('Write this test!')
+      end
     end
 
     context "with invalid params" do
