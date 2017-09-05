@@ -1,7 +1,6 @@
 FactoryGirl.define do
   factory :order do
-    first_name "Spencer"
-    last_name "Right"
+    name "Spencer Right"
     street_address_1 "123 West 9th St."
     street_address_2 'Apt 4'
     city 'Brooklyn'
@@ -10,7 +9,7 @@ FactoryGirl.define do
     country 'US'
     phone '123-321-1231'
     order_source 'other'
-    email { "#{first_name}.#{last_name}@gmail.com" }
+    email { "#{name.split(' ').join}@gmail.com" }
     
     factory :kickstarter, class: Order do
       order_source "kickstarter"

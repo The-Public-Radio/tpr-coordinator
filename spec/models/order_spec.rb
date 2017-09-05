@@ -7,13 +7,8 @@ RSpec.describe Order, type: :model do
     expect(model).to be_valid
   end
 
-  it 'is not valid without a first name' do
-    model.first_name = nil
-    expect(model).to_not be_valid
-  end
-
-  it 'is not valid without a last name' do
-    model.last_name = nil
+  it 'is not valid without a name' do
+    model.name = nil
     expect(model).to_not be_valid
   end
 
