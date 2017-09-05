@@ -34,7 +34,7 @@ class RadiosController < ApplicationController
     if @radio.save
       api_response(@radio, :created)
     else
-      api_response('terrible', :unprocessable_entity, @radio.errors)
+      api_response([], :unprocessable_entity, @radio.errors)
       # render json: @radio.errors, status: :unprocessable_entity
     end
   end
@@ -66,7 +66,7 @@ class RadiosController < ApplicationController
     assembled_radio = Radio.find_by_serial_number radio_params[:serial_number]
     unless assembled_radio.try(:shipment_id).nil?
       Rails.logger.info{ "User trying to update radio that is already attached to a shipment" }
-      api_response({'serial_number': 'terrible'}, :unprocessable_entity, 'Radio given already attached to shipment')
+      api_response([], :unprocessable_entity, 'Radio given already attached to shipment')
       raise TprError::UserError.new('Can not add shipment_id to radio already attached to shipment')
     end
     # Get the next_unboxed_radio radio in shipment
