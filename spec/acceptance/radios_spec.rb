@@ -31,6 +31,30 @@ resource "Radios" do
     end
   end 
 
+  get "/radios" do
+    example "Look up all radios" do
+      do_request
+      expect(status).to eq 200
+      data = JSON.parse(response_body)['data']
+      expect(data.length).to be 3
+    end
+  end 
+
+  get "/radios" do
+    parameter :serial_number, 'String, serial number of a radio', required: true
+    let(:serial_number) { radio_boxed.serial_number }
+
+    example "Look a radio by serial number" do
+      do_request
+      expect(status).to eq 200
+      data = JSON.parse(response_body)['data']
+      binding.pry
+      expect(data.count).to be 1
+      expect(data['id']).to be radio_boxed.id
+      expect(data['serial_number']).to be radio_boxed.serial_number
+    end
+  end 
+
   get "/shipments/:shipment_id/radios" do
     parameter :page, 'String, paganation page number', required: false
     let(:page) { 2 }
