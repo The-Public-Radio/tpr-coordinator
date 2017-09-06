@@ -36,7 +36,7 @@ def random_tracking_number
 end
 
 def random_name
-  Namey::Generator.new.name(:common)
+  Faker::Name.name
 end
 
 orders_params = [
