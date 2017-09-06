@@ -115,7 +115,7 @@ class ShipmentsController < ApplicationController
           "residential": false
         },
         "shipTo": {
-          "name": "#{order.first_name} #{order.last_name.nil? ? '' : order.last_name}",
+          "name": order.name,
           "company": '',
           "street1": order.street_address_1,
           "street2": order.street_address_2,

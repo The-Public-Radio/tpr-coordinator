@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :order do
-    name "Spencer Right"
+    name random_name
     street_address_1 "123 West 9th St."
     street_address_2 'Apt 4'
     city 'Brooklyn'

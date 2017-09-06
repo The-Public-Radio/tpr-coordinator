@@ -57,7 +57,7 @@ resource "Radios" do
 
     let(:pcb_version) { '1' }
     let(:serial_number) { random_tpr_serial_number }
-    let(:operator) { random_operator_name }
+    let(:operator) { random_name }
     let(:country_code) { 'US' }
 
     example "Create a radio" do

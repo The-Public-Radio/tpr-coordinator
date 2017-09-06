@@ -23,7 +23,7 @@ def random_tpr_serial_number
   "TPRv2.0_1_#{Random.new.rand(99999)}"
 end
 
-def random_operator_name
+def random_name
   Namey::Generator.new.name(:common)
 end
 

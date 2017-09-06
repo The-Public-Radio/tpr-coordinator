@@ -97,6 +97,7 @@ RSpec.describe ShipmentsController, type: :controller do
         url = 'https://ssapi.shipstation.com/shipments/createlabel'
 
         it 'creates a tracking number from the shipstation API' do
+          create_label_params[:shipTo][:name] = order.name
           Timecop.freeze('2017-08-06')
           valid_attributes.delete('tracking_number')
           shipstation_response_object = object_double('response', code: 200, body: create_label_response )
@@ -109,6 +110,7 @@ RSpec.describe ShipmentsController, type: :controller do
         end
 
         it 'updates the shipment_status to label_created on successful storage of tracking_number' do
+          create_label_params[:shipTo][:name] = order.name
           Timecop.freeze('2017-08-06')
           valid_attributes.delete('tracking_number')
           shipstation_response_object = object_double('response', code: 200, body: create_label_response )

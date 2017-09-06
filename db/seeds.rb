@@ -35,10 +35,13 @@ def random_tracking_number
   "#{number}#{check_digit}"
 end
 
+def random_name
+  Namey::Generator.new.name(:common)
+end
+
 orders_params = [
 	{
-		first_name: 'Person',
-		last_name: 'McPersonson',
+    name: random_name,
 		order_source: 'kickstarter',
 		street_address_1: "123 West 9th St.",
     street_address_2: 'Apt 4',
@@ -50,8 +53,7 @@ orders_params = [
 		email: 'Person.McPersonson@gmail.com'
 	},
 	{
-		first_name: 'Person',
-		last_name: 'McPersonson',
+    name: random_name,
 		order_source: 'squarespace',
 		street_address_1: "123 West 9th St.",
     street_address_2: 'Apt 4',
@@ -62,8 +64,7 @@ orders_params = [
 		email: 'Person.McPersonson@gmail.com'
 	},	
 	{
-		first_name: 'Person',
-		last_name: 'McPersonson',
+    name: random_name,
 		order_source: 'other',
 		street_address_1: "123 West 9th St.",
     street_address_2: 'Apt 4',
