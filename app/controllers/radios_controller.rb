@@ -8,6 +8,8 @@ class RadiosController < ApplicationController
       @radio = Radio.find_by_serial_number(params[:serial_number])
     elsif !params[:shipment_id].nil?
       @radio = Radio.where(shipment_id: params[:shipment_id])
+    else
+      @radio = Radio.all
     end
 
     if !params[:page].nil?

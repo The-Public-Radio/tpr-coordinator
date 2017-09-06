@@ -32,6 +32,15 @@ resource "Radios" do
   end 
 
   get "/radios" do
+    example "Look up all radios" do
+      do_request
+      expect(status).to eq 200
+      data = JSON.parse(response_body)['data']
+      expect(data.count).to be Radio.all.count 
+    end
+  end 
+
+  get "/radios" do
     parameter :serial_number, 'String, serial number of a radio', required: true
     let(:serial_number) { radio_boxed.serial_number }
 
