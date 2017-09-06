@@ -1,4 +1,4 @@
-class MonitoringController < ApplicationController
+class MonitoringController < ActionController::API
 
   def health
     # TODO make a basic DB call

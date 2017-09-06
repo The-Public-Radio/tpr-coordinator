@@ -128,6 +128,8 @@ GEM
     public_suffix (2.0.5)
     puma (3.9.1)
     rack (2.0.3)
+    rack-attack (5.0.1)
+      rack
     rack-test (0.6.3)
       rack (>= 1.0)
     rails (5.1.2)
@@ -254,6 +256,7 @@ DEPENDENCIES
   pry
   pry-nav
   puma (~> 3.7)
+  rack-attack
   rails (~> 5.1.2)
   rspec-rails (~> 3.5)
   rspec_api_documentation
