@@ -30,6 +30,7 @@ RSpec.describe RadiosController, type: :controller do
   # adjust the attributes here as well.
   let(:shipment) { create(:shipment) }
   let(:shipment_id) { shipment.id }
+  let(:created_radio_serial) { create(:radio_boxed).serial_number }
 
   let(:valid_attributes) { build(:radio_boxed).attributes }
 
@@ -107,10 +108,6 @@ RSpec.describe RadiosController, type: :controller do
         expect(response).to have_http_status(:created)
         expect(JSON.parse(response.body)['data']['country_code']).to eq('US')
       end
-
-      it 'errors when trying to create a radio with the same serial_number' do
-        skip('write this')
-      end
     end
 
     context "with invalid params" do
@@ -184,9 +181,5 @@ RSpec.describe RadiosController, type: :controller do
           session: valid_session}.to raise_error(TprError::UserError, "Can not add shipment_id to radio already attached to shipment")
       end
     end
-  end
-
-  it 'handle radio not assembled and in DB when scanned' do
-    skip('do this')
   end
 end
