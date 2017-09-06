@@ -144,7 +144,16 @@ RSpec.describe RadiosController, type: :controller do
       end
 
       it "returns an error when a radio is attempted to be attached to the shipment but that radio is not found" do
-        skip('do this')
+        new_attributes = {
+          serial_number: random_tpr_serial_number,
+          boxed: true
+        }
+
+        expect{ put :update, params: { id: 1234556, radio: new_attributes}, session: valid_session }
+          .to_not raise_error
+
+        expect(response).to have_http_status(:not_found)
+        expect(JSON.parse(response.body)['errors'][0]).to eq "Couldn't find Radio with 'id'=1234556"
       end
     end
 

@@ -99,7 +99,6 @@ resource "Radios" do
 
     let(:boxed) { true }
     let(:serial_number) { radio_assembled.serial_number }
-    let(:frequency) { radio_boxed.frequency }
 
     example "Update a radio to be boxed and attached to a shipment" do
       shipment =  Shipment.find(shipment_id)

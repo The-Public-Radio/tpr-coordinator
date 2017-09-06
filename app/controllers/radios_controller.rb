@@ -52,17 +52,11 @@ class RadiosController < ApplicationController
   # PATCH/PUT /radios/1
   # PATCH/PUT /radios/1.json
   def update
-    # if radio_params[:boxed]
-    #   update_radio_to_boxed
-    # elsif !radio_params[:boxed]
-    #   update_radio_to_unboxed
-    # else
       if @radio.update(radio_params)
         api_response(@radio)
       else
         api_response([], :unprocessable_entity, @radio.errors)
       end
-    # end
   end
 
   # DELETE /radios/1
@@ -110,7 +104,12 @@ class RadiosController < ApplicationController
 
     # Use callbacks to share common setup or constraints between actions.
     def set_radio
-      @radio = Radio.find(params[:id])
+      begin
+        @radio = Radio.find(params[:id])
+      rescue ActiveRecord::RecordNotFound => e
+        Rails.logger.error("Radio not found: #{e}")
+        api_response([], 404, e.message)
+      end
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
