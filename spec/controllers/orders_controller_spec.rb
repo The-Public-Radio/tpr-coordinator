@@ -72,7 +72,7 @@ RSpec.describe OrdersController, type: :controller do
 
     context "with a frequency list" do
 
-      it "creates a shipment for each set of 3 radios" do
+      it "creates a shipment for each set of 3 radios, tracking numbers, and label data" do
         frequencies = { 
           'US': ['98.3', '79.5', '79.5', '98.3'],
           'FR': ['79.5', '98.3'],
@@ -87,6 +87,10 @@ RSpec.describe OrdersController, type: :controller do
         expect(shipments.select{ |s| s.radio.count == 3 }.count).to be 2
         expect(shipments.select{ |s| s.radio.count == 2 }.count).to be 1
         expect(shipments.select{ |s| s.radio.count == 1 }.count).to be 1
+        shipments.each do |shipment|
+          expect(shipment.tracking_number).to eq 'tracking_number'
+          expect(shipment.label_data).to eq 'some base64 thing'
+        end
       end
 
       it "creates a radio for each entry in the list" do

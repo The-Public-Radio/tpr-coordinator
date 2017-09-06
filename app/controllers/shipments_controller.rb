@@ -26,6 +26,7 @@ class ShipmentsController < ApplicationController
 
     # Create tracking number and store base64 encoded label pdf data
     if @shipment.tracking_number.nil?
+      Rails.logger.info('No tracking number provided for new shipment')
       @shipment.tracking_number = shipstation_tracking_number 
       @shipment.shipment_status = 'label_created'
       @shipment.label_data = shipstation_label_data
@@ -82,6 +83,8 @@ class ShipmentsController < ApplicationController
     end
 
     def create_shipstation_label  
+      Rails.logger.info('Creating shipping label')
+
       order = Order.find(@shipment.order_id)
       Rails.logger.debug("Order: #{order}")
       url = 'https://ssapi.shipstation.com/shipments/createlabel'

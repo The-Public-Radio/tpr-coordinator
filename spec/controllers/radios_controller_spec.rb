@@ -107,6 +107,10 @@ RSpec.describe RadiosController, type: :controller do
         expect(response).to have_http_status(:created)
         expect(JSON.parse(response.body)['data']['country_code']).to eq('US')
       end
+
+      it 'errors when trying to create a radio with the same serial_number' do
+        skip('write this')
+      end
     end
 
     context "with invalid params" do
