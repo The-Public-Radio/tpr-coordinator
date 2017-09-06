@@ -12,7 +12,7 @@ resource "Radios" do
   let(:radio_assembled) { create(:radio_assembled) }
   let(:radio_boxed) { create(:radio_boxed) }
 
-  get "/shipments/:shipment_id/radios/:id" do
+  get "/radios/:id" do
     let(:id) { radio_boxed.id }
     example "Look up a single radio" do
       do_request
@@ -32,15 +32,6 @@ resource "Radios" do
   end 
 
   get "/radios" do
-    example "Look up all radios" do
-      do_request
-      expect(status).to eq 200
-      data = JSON.parse(response_body)['data']
-      expect(data.length).to be 3
-    end
-  end 
-
-  get "/radios" do
     parameter :serial_number, 'String, serial number of a radio', required: true
     let(:serial_number) { radio_boxed.serial_number }
 
@@ -48,10 +39,8 @@ resource "Radios" do
       do_request
       expect(status).to eq 200
       data = JSON.parse(response_body)['data']
-      binding.pry
-      expect(data.count).to be 1
-      expect(data['id']).to be radio_boxed.id
-      expect(data['serial_number']).to be radio_boxed.serial_number
+      expect(data['id']).to eq radio_boxed.id
+      expect(data['serial_number']).to eq radio_boxed.serial_number
     end
   end 
 

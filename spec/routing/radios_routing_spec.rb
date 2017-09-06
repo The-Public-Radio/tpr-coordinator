@@ -10,7 +10,11 @@ RSpec.describe RadiosController, type: :routing do
     it "routes to #index" do
       expect(:get => "/radios").to route_to("radios#index")
     end
-    
+
+    it "routes to #show" do
+      expect(:get => "/radios/1").to route_to("radios#show", :id => "1")
+    end
+
     it "routes to #show" do
       expect(:get => "/shipments/1/radios/1").to route_to("radios#show", :id => "1", shipment_id: "1")
     end

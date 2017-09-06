@@ -4,11 +4,16 @@ class RadiosController < ApplicationController
   # GET /radios
   # GET /radios.json
   def index
-    @radios = Radio.where(shipment_id: params[:shipment_id])
+    if !params[:serial_number].nil?
+      @radio = Radio.find_by_serial_number(params[:serial_number])
+    elsif !params[:shipment_id].nil?
+      @radio = Radio.where(shipment_id: params[:shipment_id])
+    end
+
     if !params[:page].nil?
-      paginate json: @radios, status: :ok, per_page: 1
+      paginate json: @radio, status: :ok, per_page: 1
     else
-      api_response(@radios)
+      api_response(@radio)
     end
   end
 
@@ -103,11 +108,7 @@ class RadiosController < ApplicationController
 
     # Use callbacks to share common setup or constraints between actions.
     def set_radio
-      if !params[:serial_number].nil?
-        @radio = Radio.find_by_serial_number(params[:serial_number])
-      else
-        @radio = Radio.find(params[:id])
-      end
+      @radio = Radio.find(params[:id])
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

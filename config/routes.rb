@@ -13,7 +13,7 @@ Rails.application.routes.draw do
   post '/radios', to: 'radios#create'
   put '/radios', to: 'radios#update'
   get '/radios', to: 'radios#index'
-  put '/radios/:id', to: 'radios#show'
+  get '/radios/:id', to: 'radios#show'
 
 
   get '/shipments/:id/next_radio', to: 'shipments#next_unboxed_radio'
