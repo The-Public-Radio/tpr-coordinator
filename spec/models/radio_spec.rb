@@ -16,17 +16,6 @@ RSpec.describe Radio, type: :model do
     expect(model).to be_valid
   end
 
-  it 'has a properly formated serial number' do
-    model.serial_number = 'not a tpr serial'
-    expect(model).to_not be_valid
-
-    model.serial_number = random_tracking_number
-    expect(model).to_not be_valid
-
-    model.serial_number = random_tpr_serial_number
-    expec(model).to be_valid
-  end
-
   it 'is not valid with a poorly formated frequency' do
     # Frequencies must be:
     #  - nuemeric
