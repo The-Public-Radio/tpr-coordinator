@@ -63,10 +63,14 @@ class OrdersController < ApplicationController
       end
 
       frequencies_by_shipment.each do |frequencies|
-        shipment = Shipment.new(order_id: @order.id)
+        controller = ShipmentsController.new
+        shipment = Shipment.create(order_id: @order.id)
+        shipment.tracking_number = controller.shipstation_create_label_response_body(shipment)['trackingNumber']
+        shipment.label_data = controller.shipstation_create_label_response_body(shipment)['labelData']
+        
         shipment.save
         frequencies.each do |frequency|
-          Radio.new(frequency: frequency, shipment_id: shipment.id, country_code: country_code).save
+          Radio.create(frequency: frequency, shipment_id: shipment.id, country_code: country_code).save
         end
       end
     end

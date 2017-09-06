@@ -67,25 +67,25 @@ class ShipmentsController < ApplicationController
     api_response(@shipment.next_unboxed_radio)
   end
 
+  def shipstation_tracking_number
+    @shipstation_tracking_number = shipstation_create_label_response_body['trackingNumber']
+  end
+
+  def shipstation_label_data
+    @shipstation_tracking_number = shipstation_create_label_response_body['labelData']
+  end
+
+  def shipstation_create_label_response_body(shipment = @shipment)
+    @shipstation_label ||= JSON.parse(create_shipstation_label(shipment).body)
+  end
+
   private
     attr_accessor :shipment
 
-    def shipstation_tracking_number
-      @shipstation_tracking_number = shipstation_create_label_response_body['trackingNumber']
-    end
-
-    def shipstation_label_data
-      @shipstation_tracking_number = shipstation_create_label_response_body['labelData']
-    end
-
-    def shipstation_create_label_response_body
-      @shipstation_label ||= JSON.parse(create_shipstation_label.body)
-    end
-
-    def create_shipstation_label  
+    def create_shipstation_label(shipment)
       Rails.logger.info('Creating shipping label')
 
-      order = Order.find(@shipment.order_id)
+      order = Order.find(shipment.order_id)
       Rails.logger.debug("Order: #{order}")
       url = 'https://ssapi.shipstation.com/shipments/createlabel'
 

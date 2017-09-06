@@ -39,6 +39,9 @@ resource "Orders" do
     parameter :address, 'String, address where the order should be shipped', required: true
     parameter :order_source, 'String, where the order came from. Options: kickstarter, squarespace, other', required: false
 
+    let(:tracking_number) { random_tracking_number }
+    let(:shipstation_response) { object_double('response', code: 200, body: {"trackingNumber": tracking_number, "labelData": "some base64 thing"}.to_json) }
+
     example 'Create a new order' do
       order_params = {
         order_source: 'other',
@@ -49,6 +52,8 @@ resource "Orders" do
           },
         email: 'person.mcpersonson@gmail.com'
       }
+
+      expect(HTTParty).to receive(:post).and_return(shipstation_response).exactly(4)
       expect{ do_request(order_params) }.to change(Order, :count).by(1)
       expect(status).to be 201
 

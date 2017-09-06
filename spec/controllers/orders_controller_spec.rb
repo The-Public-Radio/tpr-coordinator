@@ -71,14 +71,17 @@ RSpec.describe OrdersController, type: :controller do
     end
 
     context "with a frequency list" do
-
+      let(:tracking_number) { random_tracking_number }
+      let(:shipstation_response) { object_double('response', code: 200, body: {"trackingNumber": tracking_number, "labelData": "some base64 thing"}.to_json) }
+      
       it "creates a shipment for each set of 3 radios, tracking numbers, and label data" do
-        frequencies = { 
+       frequencies = { 
           'US': ['98.3', '79.5', '79.5', '98.3'],
           'FR': ['79.5', '98.3'],
           'AZ': ['79.5', '79.5', '105.6']
         }
 
+        expect(HTTParty).to receive(:post).and_return(shipstation_response).exactly(4)
         expect{
           post :create, params: { frequencies: frequencies, order: valid_attributes }, session: valid_session
         }.to change(Shipment, :count).by(4)
@@ -88,7 +91,7 @@ RSpec.describe OrdersController, type: :controller do
         expect(shipments.select{ |s| s.radio.count == 2 }.count).to be 1
         expect(shipments.select{ |s| s.radio.count == 1 }.count).to be 1
         shipments.each do |shipment|
-          expect(shipment.tracking_number).to eq 'tracking_number'
+          expect(shipment.tracking_number).to eq tracking_number
           expect(shipment.label_data).to eq 'some base64 thing'
         end
       end
@@ -99,6 +102,7 @@ RSpec.describe OrdersController, type: :controller do
           'US': ['79.5', '105.6']
         }
 
+        expect(HTTParty).to receive(:post).and_return(shipstation_response).exactly(4)
         expect{
           post :create, params: { frequencies: frequencies, order: valid_attributes }, session: valid_session
         }.to change(Radio, :count).by(10)
