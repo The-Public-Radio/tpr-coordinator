@@ -109,6 +109,25 @@ RSpec.describe ShipmentsController, type: :controller do
           expect(Shipment.find(body['id']).tracking_number).to eq(JSON.parse(create_label_response)['trackingNumber'])
         end
 
+        it 'creates tracking number for international orders' do
+          create_label_int_params = load_json_fixture('./spec/fixtures/shipstation/create_label_request_int_options.json')
+          create_label_int_response = load_fixture('./spec/fixtures/shipstation/create_label_response_int.json')
+          create_label_int_params[:shipTo][:name] = order.name
+
+          valid_attributes = build(:international_order).attributes
+          valid_attributes.delete('tracking_number')
+          Timecop.freeze('2017-08-06')
+
+          shipstation_response_object = object_double('response', code: 200, body: create_label_response )
+
+          expect(HTTParty).to receive(:post).with(url, headers: headers, body: create_label_int_params).and_return(shipstation_response_object)
+          post :create, params: { order_id: order_id, shipment: valid_attributes }, session: valid_session
+
+          body = JSON.parse(response.body)['data']
+          expect(Shipment.find(body['id']).tracking_number).to eq(JSON.parse(create_label_response)['trackingNumber'])
+          expect(body['tracking_number']).to eq JSON.parse(create_label_int_response)['trackingNumber']
+        end
+
         it 'updates the shipment_status to label_created on successful storage of tracking_number' do
           create_label_params[:shipTo][:name] = order.name
           Timecop.freeze('2017-08-06')
@@ -143,10 +162,6 @@ RSpec.describe ShipmentsController, type: :controller do
           expect{ 
             post :create, params: { order_id: order_id, shipment: valid_attributes }, session: valid_session
             }.to raise_error(ShipstationError)
-        end
-
-        it 'creates international orders' do
-          skip('Write this test!')
         end
       end
     end

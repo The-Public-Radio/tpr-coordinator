@@ -26,4 +26,17 @@ FactoryGirl.define do
       end
     end
   end
+
+  factory :international_order, class: Order do
+    name random_name
+    street_address_1 "123 West 9th St."
+    street_address_2 'Apt 4'
+    city 'Toronto'
+    state 'ON'
+    postal_code 'M4K 1G5'
+    country 'CA'
+    phone '123-321-1231'
+    order_source 'other'
+    email { "#{name.split(' ').join}@gmail.com" }
+  end
 end
