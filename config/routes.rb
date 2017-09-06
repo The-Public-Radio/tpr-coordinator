@@ -19,6 +19,5 @@ Rails.application.routes.draw do
   get '/shipments/:id/next_radio', to: 'shipments#next_unboxed_radio'
   put '/shipments/:id/radios', to: 'radios#update_radio_to_boxed'
 
-
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end

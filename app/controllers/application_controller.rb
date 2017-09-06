@@ -4,6 +4,10 @@ class ApplicationController < ActionController::API
   include ActionController::Serialization
   include Rails::Pagination
 
+  def http
+    api_response([], 400, 'derp')  
+  end
+
   def api_response(data, status = :ok, errors = [])
     serializer = ActiveModel::Serializer.serializer_for(data)
     ret = {
