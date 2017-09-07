@@ -138,44 +138,32 @@ radios_params = [
 	# 
 	# The first 3 here have known NYC frequencies for testing, the rest are random
   {
-		frequency: '93.9',
+		frequency: '91.5',
 		shipment_id: created_shipments[2].id,
 		country_code: 'US',
 		boxed: false
 	},
 	{
-		frequency: '97.1',
+		frequency: '107.5',
 		shipment_id: created_shipments[2].id,
 		country_code: 'US',
 		boxed: false
 	},	
 	{
-		frequency: '101.1',
+		frequency: '97.1',
 		shipment_id: created_shipments[2].id,
 		country_code: 'US',
 		boxed: false
 	},
-	 {
-		frequency: '93.9',
-		shipment_id: created_shipments[5].id,
-		country_code: 'US',
-		boxed: false
-	},
 	{
-		frequency: '97.1',
+		frequency: '107.5',
 		shipment_id: created_shipments[5].id,
 		country_code: 'US',
 		boxed: false
 	},	
 	{
-		frequency: '101.1',
+    frequency: '97.1',
 		shipment_id: created_shipments[5].id,
-		country_code: 'US',
-		boxed: false
-	},
-	{
-		frequency: '93.9',
-		shipment_id: created_shipments[6].id,
 		country_code: 'US',
 		boxed: false
 	},
@@ -185,12 +173,6 @@ radios_params = [
 		country_code: 'US',
 		boxed: false
 	},	
-	{
-		frequency: '101.1',
-		shipment_id: created_shipments[6].id,
-		country_code: 'US',
-		boxed: false
-	},
 	{
 		frequency: random_frequency,
 		shipment_id: created_shipments[3].id,
