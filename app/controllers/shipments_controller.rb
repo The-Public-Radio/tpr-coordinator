@@ -23,11 +23,10 @@ class ShipmentsController < ApplicationController
   # POST /shipments.json
   def create
     @shipment = Shipment.new(shipment_params)
-
     # Create tracking number and store base64 encoded label pdf data
     if @shipment.tracking_number.nil?
       Rails.logger.info('No tracking number provided for new shipment')
-      @shipment.tracking_number = shipstation_tracking_number 
+      @shipment.tracking_number = shipstation_tracking_number
       @shipment.shipment_status = 'label_created'
       @shipment.label_data = shipstation_label_data
     end
@@ -84,7 +83,6 @@ class ShipmentsController < ApplicationController
 
     def create_shipstation_label(shipment)
       Rails.logger.info('Creating shipping label')
-
       order = Order.find(shipment.order_id)
       Rails.logger.debug("Order: #{order}")
       url = 'https://ssapi.shipstation.com/shipments/createlabel'
@@ -93,7 +91,22 @@ class ShipmentsController < ApplicationController
         "Authorization" => "Basic #{shipstation_basic_auth_key}"
       }
 
-      create_label_options = {
+      create_label_options = order.country == 'US' ? shipstation_label_options(order) : international_shipstation_label_options(order)
+      Rails.logger.debug("HTTP params: url: #{url}, headers: #{headers}, body: #{create_label_options}")
+
+      response = HTTParty.post(url, headers: headers, body: create_label_options)
+      
+      Rails.logger.debug(response)
+      if !(200..299).include?(response.code)
+        Rails.logger.error(response.body)
+        raise ShipstationError
+      end
+
+      response
+    end
+
+    def shipstation_label_options(order)
+      {
         "carrierCode": "stamps_com",
         "serviceCode": "usps_first_class_mail",
         "packageCode": "package",
@@ -129,17 +142,25 @@ class ShipmentsController < ApplicationController
           "residential": true
         }
       }
-      Rails.logger.debug("HTTP params: url: #{url}, headers: #{headers}, body: #{create_label_options}")
+    end
 
-      response = HTTParty.post(url, headers: headers, body: create_label_options)
-      
-      Rails.logger.debug(response)
-      if !(200..299).include?(response.code)
-        Rails.logger.error(response.body)
-        raise ShipstationError
-      end
-
-      response
+    def international_shipstation_label_options(order)
+      radio_count = @shipment.radio.count rescue nil
+      options = shipstation_label_options(order)
+      international_options = {
+        "internationalOptions": {
+          "contents": "gift",
+          "customsItems": {
+            "description": "An FM Radio",
+            "quanity": "#{radio_count}",
+            "value": "40",
+            "harmonizedTariffCode": "85271900",
+            "countryOfOrigin": "US"
+          },
+          "nonDelivery": "treat_as_abandoned"
+        }
+      }
+      options.merge(international_options)
     end
 
     def shipstation_basic_auth_key

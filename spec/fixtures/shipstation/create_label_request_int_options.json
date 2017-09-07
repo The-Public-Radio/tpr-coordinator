@@ -27,17 +27,17 @@
     "company": "",
     "street1": "123 West 9th St.",
     "street2": "Apt 4",
-    "city": "Brooklyn",
-    "state": "NY",
-    "postalCode": "11221",
-    "country": "US",
+    "city": "Toronto",
+    "state": "ON",
+    "postalCode": "M4K 1G5",
+    "country": "CA",
     "residential": true
   },
   "internationalOptions": {
     "contents": "gift",
     "customsItems": {
       "description": "An FM Radio",
-      "quanity": "4",
+      "quanity": "0",
       "value": "40",
       "harmonizedTariffCode": "85271900",
       "countryOfOrigin": "US"

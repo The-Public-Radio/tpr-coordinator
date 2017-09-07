@@ -41,7 +41,7 @@ RSpec.describe ShipmentsController, type: :controller do
   # in order to pass any filters (e.g. authentication) defined in
   # ShipmentsController. Be sure to keep this updated too.
   let(:valid_session) { {} }
-  let(:order) { build(:order) }
+  let(:order) { create(:order) }
   let(:order_id) { order.id }
 
   describe "GET #index" do
@@ -110,22 +110,23 @@ RSpec.describe ShipmentsController, type: :controller do
         end
 
         it 'creates tracking number for international orders' do
-          create_label_int_params = load_json_fixture('./spec/fixtures/shipstation/create_label_request_int_options.json')
-          create_label_int_response = load_fixture('./spec/fixtures/shipstation/create_label_response_int.json')
-          create_label_int_params[:shipTo][:name] = order.name
-
-          valid_attributes = build(:international_order).attributes
-          valid_attributes.delete('tracking_number')
           Timecop.freeze('2017-08-06')
+          international_order = create(:international_order)
+          create_label_int_params = load_json_fixture('./spec/fixtures/shipstation/create_label_request_int_options.json')
+          create_label_int_response = load_json_fixture('./spec/fixtures/shipstation/create_label_response_int.json')
+          create_label_int_params[:shipTo][:name] = international_order.name
+          create_label_int_response[:shipTo][:name] = international_order.name
 
-          shipstation_response_object = object_double('response', code: 200, body: create_label_response )
+          valid_attributes.delete('tracking_number')
+          valid_attributes['order_id'] = international_order.id
 
+          shipstation_response_object = object_double('response', code: 200, body: create_label_int_response.to_json )
           expect(HTTParty).to receive(:post).with(url, headers: headers, body: create_label_int_params).and_return(shipstation_response_object)
-          post :create, params: { order_id: order_id, shipment: valid_attributes }, session: valid_session
+          post :create, params: { order_id: international_order.id, shipment: valid_attributes }, session: valid_session
 
           body = JSON.parse(response.body)['data']
           expect(Shipment.find(body['id']).tracking_number).to eq(JSON.parse(create_label_response)['trackingNumber'])
-          expect(body['tracking_number']).to eq JSON.parse(create_label_int_response)['trackingNumber']
+          expect(body['tracking_number']).to eq create_label_int_response[:trackingNumber]
         end
 
         it 'updates the shipment_status to label_created on successful storage of tracking_number' do
@@ -146,7 +147,6 @@ RSpec.describe ShipmentsController, type: :controller do
           shipstation_response_object = object_double('response', code: 200, body: create_label_response )
 
           expect(HTTParty).to receive(:post).and_return(shipstation_response_object)
-           
           post :create, params: { order_id: order_id, shipment: valid_attributes }, session: valid_session 
 
           expect(Shipment.last.label_data).to eq(JSON.parse(create_label_response)['labelData'])
