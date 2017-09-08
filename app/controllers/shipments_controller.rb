@@ -94,7 +94,7 @@ class ShipmentsController < ApplicationController
       create_label_options = order.country == 'US' ? shipstation_label_options(order) : international_shipstation_label_options(order)
       Rails.logger.debug("HTTP params: url: #{url}, headers: #{headers}, body: #{create_label_options}")
 
-      response = HTTParty.post(url, headers: headers, body: create_label_options)
+      response ||= HTTParty.post(url, headers: headers, body: create_label_options)
       
       Rails.logger.debug(response)
       if !(200..299).include?(response.code)

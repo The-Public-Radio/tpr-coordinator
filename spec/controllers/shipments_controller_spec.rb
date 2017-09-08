@@ -121,7 +121,7 @@ RSpec.describe ShipmentsController, type: :controller do
           valid_attributes['order_id'] = international_order.id
 
           shipstation_response_object = object_double('response', code: 200, body: create_label_int_response.to_json )
-          expect(HTTParty).to receive(:post).with(url, headers: headers, body: create_label_int_params).and_return(shipstation_response_object)
+          expect(HTTParty).to receive(:post).with(url, headers: headers, body: create_label_int_params).and_return(shipstation_response_object).once
           post :create, params: { order_id: international_order.id, shipment: valid_attributes }, session: valid_session
 
           body = JSON.parse(response.body)['data']
@@ -135,7 +135,7 @@ RSpec.describe ShipmentsController, type: :controller do
           valid_attributes.delete('tracking_number')
           shipstation_response_object = object_double('response', code: 200, body: create_label_response )
 
-          expect(HTTParty).to receive(:post).with(url, headers: headers, body: create_label_params).and_return(shipstation_response_object)
+          expect(HTTParty).to receive(:post).with(url, headers: headers, body: create_label_params).and_return(shipstation_response_object).once
           post :create, params: { order_id: order_id, shipment: valid_attributes }, session: valid_session
 
           body = JSON.parse(response.body)['data']
