@@ -93,6 +93,7 @@ RSpec.describe OrdersController, type: :controller do
         shipments.each do |shipment|
           expect(shipment.tracking_number).to eq tracking_number
           expect(shipment.label_data).to eq 'some base64 thing'
+          expect(shipment.shipment_status).to eq 'label_created'
         end
       end
 

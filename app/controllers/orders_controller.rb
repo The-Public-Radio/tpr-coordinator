@@ -67,6 +67,7 @@ class OrdersController < ApplicationController
         shipment = Shipment.create(order_id: @order.id)
         shipment.tracking_number = controller.shipstation_create_label_response_body(shipment)['trackingNumber']
         shipment.label_data = controller.shipstation_create_label_response_body(shipment)['labelData']
+        shipment.shipment_status = 'label_created'
         
         shipment.save
         frequencies.each do |frequency|
