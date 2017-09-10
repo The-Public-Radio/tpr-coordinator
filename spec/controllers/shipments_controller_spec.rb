@@ -134,7 +134,9 @@ RSpec.describe ShipmentsController, type: :controller do
         it 'authenticates with Shippo' do
           test_token = ENV['SHIPPO_TOKEN']
 
-          expect(Shippo::API).to receive(:token).with(test_token).return(test_token)
+          expect(Shippo::API).to receive(:token).and_call_original
+          expect(Shippo::Transaction).to receive(:create).with(create_label_params).and_return(shippo_response_object).once
+
           post :create, params: { order_id: order_id, shipment: valid_shipping_attributes }, session: valid_session
         end
 
@@ -145,7 +147,7 @@ RSpec.describe ShipmentsController, type: :controller do
           Timecop.freeze('2017-08-06')
           create_label_params[:address_to][:name] = order.name
 
-          expect(Shippo::Shipment).to receive(:create).with(create_label_params).and_return(shippo_response_object).once
+          expect(Shippo::Transaction).to receive(:create).with(create_label_params).and_return(shippo_response_object).once
           post :create, params: { order_id: order_id, shipment: valid_shipping_attributes }, session: valid_session
 
           body = JSON.parse(response.body)['data']
@@ -184,7 +186,7 @@ RSpec.describe ShipmentsController, type: :controller do
           create_label_params[:customs_declaration] = customs_declaration_response
           valid_shipping_attributes['order_id'] = international_order.id
 
-          expect(Shippo::Shipment).to receive(:create).with(create_label_params).and_return(shippo_response_object).once
+          expect(Shippo::Transaction).to receive(:create).with(create_label_params).and_return(shippo_response_object).once
           post :create, params: { order_id: international_order.id, shipment: valid_shipping_attributes }, session: valid_session
 
           body = JSON.parse(response.body)['data']
@@ -199,7 +201,7 @@ RSpec.describe ShipmentsController, type: :controller do
             status: 'SUCCESS', success?: true, tracking_number: '9400111298370829688891', 
             label_url: 'https://shippo-delivery-east.s3.amazonaws.com/some_international_label.pdf')
 
-          expect(Shippo::Shipment).to receive(:create).with(create_label_params).and_return(shippo_response_object)
+          expect(Shippo::Transaction).to receive(:create).with(create_label_params).and_return(shippo_response_object)
 
           post :create, params: { order_id: order_id, shipment: valid_shipping_attributes }, session: valid_session
 
@@ -211,7 +213,7 @@ RSpec.describe ShipmentsController, type: :controller do
 
           s3_label_object = object_double('s3_label_object', code: 200, body: 'somelabelpdf')
 
-          expect(Shippo::Shipment).to receive(:create).with(create_label_params).and_return(shippo_response_object)
+          expect(Shippo::Transaction).to receive(:create).with(create_label_params).and_return(shippo_response_object)
           expect(HTTParty).to receive(:get).with(url: shippo_response_object[:label_url]).and_return(s3_label_object)
 
           post :create, params: { order_id: order_id, shipment: valid_shipping_attributes }, session: valid_session 
@@ -225,7 +227,7 @@ RSpec.describe ShipmentsController, type: :controller do
          
           shippo_response_object = object_double('response', code: 500, body: create_label_error_response)
 
-          expect(Shippo::Shipment).to receive(:create).with(create_label_params).and_return(shippo_response_object)
+          expect(Shippo::Transaction).to receive(:create).with(create_label_params).and_return(shippo_response_object)
 
           expect{ 
             post :create, params: { order_id: order_id, shipment: valid_shipping_attributes }, session: valid_session

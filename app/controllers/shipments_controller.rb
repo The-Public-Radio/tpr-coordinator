@@ -1,7 +1,8 @@
 require 'httparty'
 require 'date'
+require 'shippo'
 
-class ShipstationError < StandardError
+class ShippoError < StandardError
 end
 
 class ShipmentsController < ApplicationController
@@ -26,9 +27,9 @@ class ShipmentsController < ApplicationController
     # Create tracking number and store base64 encoded label pdf data
     if @shipment.tracking_number.nil?
       Rails.logger.info('No tracking number provided for new shipment')
-      @shipment.tracking_number = shipstation_tracking_number
+      @shipment.tracking_number = shipping_tracking_number
       @shipment.shipment_status = 'label_created'
-      @shipment.label_data = shipstation_label_data
+      @shipment.label_data = shipping_label_data
     end
 
     if @shipment.save
@@ -66,105 +67,176 @@ class ShipmentsController < ApplicationController
     api_response(@shipment.next_unboxed_radio)
   end
 
-  def shipstation_tracking_number
-    @shipstation_tracking_number = shipstation_create_label_response_body['trackingNumber']
+  def shipping_tracking_number
+    @shipping_tracking_number = shipping_label_creation_response.tracking_number
   end
 
-  def shipstation_label_data
-    @shipstation_tracking_number = shipstation_create_label_response_body['labelData']
+  def shipping_label_data
+     label_url = shipping_label_creation_response.label_url
+     shipping_label = HTTParty.get(label_url).body
+     @shipping_label_data ||= Base64.encode(shipping_label)
   end
 
-  def shipstation_create_label_response_body(shipment = @shipment)
-    @shipstation_label ||= JSON.parse(create_shipstation_label(shipment).body)
+  def shipping_label_creation_response(shipment = @shipment)
+    @shipping_label_creation_response ||= create_shipping_label(shipment)
   end
 
   private
     attr_accessor :shipment
 
-    def create_shipstation_label(shipment)
-      Rails.logger.info('Creating shipping label')
-      order = Order.find(shipment.order_id)
-      Rails.logger.debug("Order: #{order}")
-      url = 'https://ssapi.shipstation.com/shipments/createlabel'
+    def create_shipping_label(shipment)
+      @shipment = shipment
+      Rails.logger.info("Creating shipping label for shipment #{shipment.id}")
 
-      headers = { 
-        "Authorization" => "Basic #{shipstation_basic_auth_key}"
+      @order = Order.find(shipment.order_id)
+      Rails.logger.debug("Order: #{@order}")
+
+      Shippo::API.token = ENV['SHIPPO_TOKEN']
+
+      shippo_options = { 
+        :shipment => @order.country != 'US' ? international_shipment : shipment,
+        :carrier_account => 'd2ed2a63bef746218a32e15450ece9d9',
+        :servicelevel_token => "usps_priority"
       }
+      Rails.logger.debug("Shipping label create options: #{shippo_options}")
 
-      create_label_options = order.country == 'US' ? shipstation_label_options(order) : international_shipstation_label_options(order)
-      Rails.logger.debug("HTTP params: url: #{url}, headers: #{headers}, body: #{create_label_options}")
-
-      response ||= HTTParty.post(url, headers: headers, body: create_label_options)
+      transaction = Shippo::Transaction.create(shippo_options)
       
-      Rails.logger.debug(response)
-      if !(200..299).include?(response.code)
+      Rails.logger.debug(transaction)
+      if !transaction.success?
         Rails.logger.error(response.body)
-        raise ShipstationError
+        raise ShippoError
       end
 
-      response
+      transaction
     end
 
-    def shipstation_label_options(order)
+    def shipment
       {
-        "carrierCode": "stamps_com",
-        "serviceCode": "usps_first_class_mail",
-        "packageCode": "package",
-        "shipDate": Date.today.to_s,
-        "weight": {
-          "value": 12,
-          "units": "ounces"
-        },
-        "dimensions": {  
-          "units": "inches",
-          "length": 5.0,
-          "width": 4.0,
-          "height": 3.0
-        },
-        "shipFrom": {
-          "name": "Centerline Labs c/o Accelerated Assemblies",
-          "street1": "725 Nicholas Blvd",
-          "city": "Elk Grove Village",
-          "state": "IL",
-          "postalCode": "60007",
-          "country": "US",
-          "residential": false
-        },
-        "shipTo": {
-          "name": order.name,
-          "company": '',
-          "street1": order.street_address_1,
-          "street2": order.street_address_2,
-          "city": order.city,
-          "state": order.state,
-          "postalCode": order.postal_code,
-          "country": order.country,
-          "residential": true
-        }
+        :address_from => address_from,
+        :address_to => address_to,
+        :parcels => parcel
       }
     end
 
-    def international_shipstation_label_options(order)
-      radio_count = @shipment.radio.count rescue nil
-      options = shipstation_label_options(order)
-      international_options = {
-        "internationalOptions": {
-          "contents": "gift",
-          "customsItems": {
-            "description": "An FM Radio",
-            "quanity": "#{radio_count}",
-            "value": "40",
-            "harmonizedTariffCode": "85271900",
-            "countryOfOrigin": "US"
-          },
-          "nonDelivery": "treat_as_abandoned"
-        }
+    def international_shipment
+      {
+        address_from: address_from,
+        address_to: address_to,
+        parcels: parcel,
+        customs_declaration: customs_declaration,
+        async: false
       }
-      options.merge(international_options)
     end
 
-    def shipstation_basic_auth_key
-      Base64.strict_encode64("#{ENV['SHIPSTATION_API_KEY']}:#{ENV['SHIPSTATION_API_SECRET']}")
+    def address_to
+      {
+        :name => @order.name,
+        :company => '',
+        :street1 => @order.street_address_1,
+        :street2 => @order.street_address_2,
+        :city => @order.city,
+        :state => @order.state,
+        :zip => @order.postal_code,
+        :country => @order.country,
+        :phone => @order.phone,
+        :email => @order.email 
+      }
+    end
+
+    def address_from
+      {
+        :name => 'Centerline Labs c/o Accelerated Assemblies',
+        :company => 'Centerline Labs',
+        :street1 => '725 Nicholas Blvd',
+        :street2 => '',
+        :city => 'Elk Grove Village',
+        :state => 'IL',
+        :zip => '60007',
+        :country => 'US',
+        :phone => '',
+        :email => 'info@thepublicrad.io' 
+    }
+    end
+
+    def parcel
+      shipment_size = @shipment.radio.count
+      if shipment_size == 1
+        {
+          :length => 5,
+          :width => 4,
+          :height => 3,
+          :distance_unit => :in,
+          :weight => 12,
+          :mass_unit => :oz
+        }
+      elsif shipment_size == 2
+        {
+          :length => 6,
+          :width => 5,
+          :height => 4,
+          :distance_unit => :in,
+          :weight => 1.75,
+          :mass_unit => :lb
+        }
+      elsif shipment_size == 3
+        {
+          :length => 9,
+          :width => 5,
+          :height => 4,
+          :distance_unit => :in,
+          :weight => 2.60,
+          :mass_unit => :lb
+        }
+      end
+    end
+
+    def customs_declaration
+      customs_declaration_options = {
+        :contents_type => "MERCHANDISE",
+        :contents_explanation => "Single station FM radio",
+        :non_delivery_option => "ABANDON",
+        :certify => true,
+        :certify_signer => "Spencer Wright",
+        :items => [customs_item]
+      }
+
+      Shippo::CustomsDeclaration.create(customs_declaration_options)
+    end
+
+    def customs_item
+      shipment_size = @shipment.radio.count
+      if shipment_size == 1
+        {
+          :description => "Single station FM radio",
+          :quantity => 1,
+          :net_weight => "12",
+          :mass_unit => "oz",
+          :value_amount => "40",
+          :value_currency => "USD",
+          :origin_country => "US"
+        }
+      elsif shipment_size == 2
+        {
+          :description => "Single station FM radio",
+          :quantity => 2,
+          :net_weight => "1.75",
+          :mass_unit => "lb",
+          :value_amount => "80",
+          :value_currency => "USD",
+          :origin_country => "US"
+        }
+      elsif shipment_size == 3
+        {
+          :description => "Single station FM radio",
+          :quantity => 3,
+          :net_weight => "2.60",
+          :mass_unit => "lb",
+          :value_amount => "120",
+          :value_currency => "USD",
+          :origin_country => "US"
+        }
+      end
     end
 
     # Use callbacks to share common setup or constraints between actions.
