@@ -86,23 +86,62 @@ RSpec.describe ShipmentsController, type: :controller do
       end
 
       context 'without a tracking number' do        
-        create_label_params = load_json_fixture('./spec/fixtures/shipstation/create_label_request_options.json')
-        create_label_response = load_fixture('./spec/fixtures/shipstation/create_label_response.json')
-        create_label_error_response = load_fixture('./spec/fixtures/shipstation/create_label_error_response.json')
-
-        headers = { 
-          "Authorization" => "Basic #{Base64.strict_encode64('test_api_key:test_api_secret')}"
+        create_label_params = {
+          address_from: {
+              :name => 'Centerline Labs c/o Accelerated Assemblies',
+              :company => 'Centerline Labs',
+              :street1 => '725 Nicholas Blvd',
+              :street2 => '',
+              :city => 'Elk Grove Village',
+              :state => 'IL',
+              :zip => '60007',
+              :country => 'US',
+              :phone => '',
+              :email => 'test_address_from@email.com' 
+          },
+          address_to: {
+              :name => 'Spencer Right"',
+              :company => '',
+              :street1 => '123 West 9th Ave',
+              :street2 => 'Apt 4',
+              :city => 'New York',
+              :state => 'NY',
+              :zip => '10001',
+              :country => 'US',
+              :phone => '',
+              :email => 'test_address_to@email.com'
+          },
+          parcel: {
+              :length => 5,
+              :width => 4,
+              :height => 3,
+              :distance_unit => :in,
+              :weight => 12,
+              :mass_unit => :oz
+          }
         }
 
-        url = 'https://ssapi.shipstation.com/shipments/createlabel'
+        shippo_response_object = object_double('shippo response', code: 200, 
+          status: 'SUCCESS', success?: true, tracking_number: '9400111298370829688891', 
+          label_url: 'https://shippo-delivery-east.s3.amazonaws.com/some_international_label.pdf')
 
-        it 'creates a tracking number from the shipstation API' do
-          create_label_params[:shipTo][:name] = order.name
+        valid_attributes.delete('tracking_number')
+
+        it 'authenticates with Shippo' do
+          test_token = ENV['SHIPPO_TOKEN']
+
+          expect(Shippo::API).to receive(:token).with(test_token).return(test_token)
+          post :create, params: { order_id: order_id, shipment: valid_attributes }, session: valid_session
+        end
+
+        it 'creates a tracking number and label from the Shippo API' do
+          # Sample create label reponse object
+          # => #<Transaction:0x3ff8084b9f70[id=7eac98cbcd0e4f47b0f8c143c3e91331]{"object_state"=>"VALID", "status"=>"SUCCESS", "object_created"=>"2017-09-10T20:32:21.436Z", "object_updated"=>"2017-09-10T20:32:23.455Z", "object_id"=>"7eac98cbcd0e4f47b0f8c143c3e91331", "object_owner"=>"info@thepublicrad.io", "test"=>true, "rate"=>{"object_id"=>"0ca3611323ea4eefb8c660aeedae3212", "amount"=>"6.66", "currency"=>"USD", "amount_local"=>"6.66", "currency_local"=>"USD", "provider"=>"USPS", "servicelevel_name"=>"Priority Mail", "servicelevel_token"=>"usps_priority", "carrier_account"=>"d2ed2a63bef746218a32e15450ece9d9"}, "tracking_number"=>"92055901755477000000000015", "tracking_status"=>"UNKNOWN", "eta"=>nil, "tracking_url_provider"=>"https://tools.usps.com/go/TrackConfirmAction_input?origTrackNum=92055901755477000000000015", "label_url"=>"https://shippo-delivery-east.s3.amazonaws.com/7eac98cbcd0e4f47b0f8c143c3e91331.pdf?Signature=b0ovKkUqrhyiZfDPYk%2F3SpTlJUo%3D&Expires=1536611542&AWSAccessKeyId=AKIAJGLCC5MYLLWIG42A", "commercial_invoice_url"=>nil, "messages"=>[], "order"=>nil, "metadata"=>"", "parcel"=>"01f2dc092d8e467db5321eadd903ce36", "billing"=>{"payments"=>[]}}->#<Shippo::API::ApiObject created=2017-09-10 20:32:21 UTC id="7eac98cbcd0e4f47b0f8c143c3e91331" owner="info@thepublicrad.io" state=#<Shippo::API::Category::State:0x007ff011b265c0 @name=:state, @value=:valid> updated=2017-09-10 20:32:23 UTC>
+          
           Timecop.freeze('2017-08-06')
-          valid_attributes.delete('tracking_number')
-          shipstation_response_object = object_double('response', code: 200, body: create_label_response )
+          create_label_params[:address_to][:name] = order.name
 
-          expect(HTTParty).to receive(:post).with(url, headers: headers, body: create_label_params).and_return(shipstation_response_object)
+          expect(Shippo::Shipment).to receive(:create).with(create_label_params).and_return(shippo_response_object).once
           post :create, params: { order_id: order_id, shipment: valid_attributes }, session: valid_session
 
           body = JSON.parse(response.body)['data']
@@ -112,16 +151,38 @@ RSpec.describe ShipmentsController, type: :controller do
         it 'creates tracking number for international orders' do
           Timecop.freeze('2017-08-06')
           international_order = create(:international_order)
-          create_label_int_params = load_json_fixture('./spec/fixtures/shipstation/create_label_request_int_options.json')
-          create_label_int_response = load_json_fixture('./spec/fixtures/shipstation/create_label_response_int.json')
-          create_label_int_params[:shipTo][:name] = international_order.name
-          create_label_int_response[:shipTo][:name] = international_order.name
+
+          customs_item = {
+            :description => "Single station FM radio",
+            :quantity => 1,
+            :net_weight => "12",
+            :mass_unit => "oz",
+            :value_amount => "40",
+            :value_currency => "USD",
+            :origin_country => "US"
+          }
+
+          customs_declaration_options = {
+            :contents_type => "MERCHANDISE",
+            :contents_explanation => "Single station FM radio",
+            :non_delivery_option => "ABANDON",
+            :certify => true,
+            :certify_signer => "Spencer Wright",
+            :items => [customs_item]
+          }
+
+          customs_declaration_response = object_double('customs_declaration', valid: true)
+
+          expect(Shippo::CustomsDeclaration).to receive(:create).with(customs_declaration_options)
+            .and_return(customs_declaration_response)
+          
+          create_label_params[:address_to][:name] = international_order.name
+          create_label_params[:customs_declaration] = customs_declaration_response
 
           valid_attributes.delete('tracking_number')
           valid_attributes['order_id'] = international_order.id
 
-          shipstation_response_object = object_double('response', code: 200, body: create_label_int_response.to_json )
-          expect(HTTParty).to receive(:post).with(url, headers: headers, body: create_label_int_params).and_return(shipstation_response_object).once
+          expect(Shippo::Shipment).to receive(:create).with(create_label_params).and_return(shippo_response_object).once
           post :create, params: { order_id: international_order.id, shipment: valid_attributes }, session: valid_session
 
           body = JSON.parse(response.body)['data']
@@ -130,35 +191,44 @@ RSpec.describe ShipmentsController, type: :controller do
         end
 
         it 'updates the shipment_status to label_created on successful storage of tracking_number' do
-          create_label_params[:shipTo][:name] = order.name
           Timecop.freeze('2017-08-06')
-          valid_attributes.delete('tracking_number')
-          shipstation_response_object = object_double('response', code: 200, body: create_label_response )
+          create_label_params[:address_to][:name] = order.name
 
-          expect(HTTParty).to receive(:post).with(url, headers: headers, body: create_label_params).and_return(shipstation_response_object).once
+          valid_attributes.delete('tracking_number')
+          shippo_response_object = object_double('shippo response', code: 200, 
+            status: 'SUCCESS', success?: true, tracking_number: '9400111298370829688891', 
+            label_url: 'https://shippo-delivery-east.s3.amazonaws.com/some_international_label.pdf')
+
+          expect(Shippo::Shipment).to receive(:create).with(create_label_params).and_return(shippo_response_object)
+
           post :create, params: { order_id: order_id, shipment: valid_attributes }, session: valid_session
 
           body = JSON.parse(response.body)['data']
           expect(Shipment.find(body['id']).shipment_status).to eq 'label_created'
         end
 
-        it 'stores the label_data from the Shipstation api response' do
+        it 'downloads a label from label_url from the Shippo api response and stores it as base64 encoded data' do
           valid_attributes.delete('tracking_number')
-          shipstation_response_object = object_double('response', code: 200, body: create_label_response )
 
-          expect(HTTParty).to receive(:post).and_return(shipstation_response_object)
+          s3_label_object = object_double('s3_label_object', code: 200, body: 'somelabelpdf')
+
+          expect(Shippo::Shipment).to receive(:create).with(create_label_params).and_return(shippo_response_object)
+          expect(HTTParty).to receive(:get).with(url: shippo_response_object[:label_url]).and_return(s3_label_object)
+
           post :create, params: { order_id: order_id, shipment: valid_attributes }, session: valid_session 
 
-          expect(Shipment.last.label_data).to eq(JSON.parse(create_label_response)['labelData'])
-
-          body = JSON.parse(response.body)['label_data']
+          expect(Shipment.last.label_data).to eq(Base64.encode(s3_label_object[:body]))
         end
 
-        it 'handles errors from shipstation and raises an exception' do
+        it 'handles errors from Shippo and raises an exception' do
+          # Sample error object
+          # => #<Transaction:0x3ff808e2f3ac[id=91bdbecdc6ca49689b4984670dc52393]{"object_state"=>"VALID", "status"=>"ERROR", "object_created"=>"2017-09-10T20:25:46.898Z", "object_updated"=>"2017-09-10T20:25:47.952Z", "object_id"=>"91bdbecdc6ca49689b4984670dc52393", "object_owner"=>"info@thepublicrad.io", "test"=>true, "rate"=>{"object_id"=>"33c2904f50384420988c1329f1a988fc", "amount"=>"7.18", "currency"=>"USD", "amount_local"=>"7.18", "currency_local"=>"USD", "provider"=>"USPS", "servicelevel_name"=>"Priority Mail", "servicelevel_token"=>"usps_priority", "carrier_account"=>"d2ed2a63bef746218a32e15450ece9d9"}, "tracking_number"=>"", "tracking_status"=>"UNKNOWN", "eta"=>nil, "tracking_url_provider"=>"", "label_url"=>"", "commercial_invoice_url"=>nil, "messages"=>[#<Hashie::Mash code="" source="USPS" text="Recipient address invalid: The address as submitted could not be found. Please check for excessive abbreviations in the street address line or in the City name.">], "order"=>nil, "metadata"=>"", "parcel"=>"588d1166330b46778f666bc808e216ec", "billing"=>{"payments"=>[]}}->#<Shippo::API::ApiObject created=2017-09-10 20:25:46 UTC id="91bdbecdc6ca49689b4984670dc52393" owner="info@thepublicrad.io" state=#<Shippo::API::Category::State:0x007ff011b265c0 @name=:state, @value=:valid> updated=2017-09-10 20:25:47 UTC>
+          
           valid_attributes.delete('tracking_number')
-          shipstation_response_object = object_double('response', code: 500, body: create_label_error_response)
+          shippo_response_object = object_double('response', code: 500, body: create_label_error_response)
 
-          expect(HTTParty).to receive(:post).and_return(shipstation_response_object)
+          expect(Shippo::Shipment).to receive(:create).with(create_label_params).and_return(shippo_response_object)
+
           expect{ 
             post :create, params: { order_id: order_id, shipment: valid_attributes }, session: valid_session
             }.to raise_error(ShipstationError)

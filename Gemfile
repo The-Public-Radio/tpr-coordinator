@@ -35,7 +35,7 @@ gem 'skylight'
 gem 'bugsnag'
 
 # Shipstation API gem
-gem 'shipstation'
+gem 'shippo', '~> 3.0', '>= 3.0.1'
 gem 'tracking_number'
 
 # paaaaaaaaaagination
