@@ -121,17 +121,21 @@ RSpec.describe ShipmentsController, type: :controller do
           }
         }
 
-        shippo_response_object = object_double('shippo response', code: 200, 
+        let(:shippo_response_object) { object_double('shippo response', code: 200, 
           status: 'SUCCESS', success?: true, tracking_number: '9400111298370829688891', 
           label_url: 'https://shippo-delivery-east.s3.amazonaws.com/some_international_label.pdf')
+        }
 
-        valid_attributes.delete('tracking_number')
+        let(:valid_shipping_attributes) do 
+          valid_attributes.delete('tracking_number')
+          valid_attributes
+        end          
 
         it 'authenticates with Shippo' do
           test_token = ENV['SHIPPO_TOKEN']
 
           expect(Shippo::API).to receive(:token).with(test_token).return(test_token)
-          post :create, params: { order_id: order_id, shipment: valid_attributes }, session: valid_session
+          post :create, params: { order_id: order_id, shipment: valid_shipping_attributes }, session: valid_session
         end
 
         it 'creates a tracking number and label from the Shippo API' do
@@ -142,7 +146,7 @@ RSpec.describe ShipmentsController, type: :controller do
           create_label_params[:address_to][:name] = order.name
 
           expect(Shippo::Shipment).to receive(:create).with(create_label_params).and_return(shippo_response_object).once
-          post :create, params: { order_id: order_id, shipment: valid_attributes }, session: valid_session
+          post :create, params: { order_id: order_id, shipment: valid_shipping_attributes }, session: valid_session
 
           body = JSON.parse(response.body)['data']
           expect(Shipment.find(body['id']).tracking_number).to eq(JSON.parse(create_label_response)['trackingNumber'])
@@ -178,12 +182,10 @@ RSpec.describe ShipmentsController, type: :controller do
           
           create_label_params[:address_to][:name] = international_order.name
           create_label_params[:customs_declaration] = customs_declaration_response
-
-          valid_attributes.delete('tracking_number')
-          valid_attributes['order_id'] = international_order.id
+          valid_shipping_attributes['order_id'] = international_order.id
 
           expect(Shippo::Shipment).to receive(:create).with(create_label_params).and_return(shippo_response_object).once
-          post :create, params: { order_id: international_order.id, shipment: valid_attributes }, session: valid_session
+          post :create, params: { order_id: international_order.id, shipment: valid_shipping_attributes }, session: valid_session
 
           body = JSON.parse(response.body)['data']
           expect(Shipment.find(body['id']).tracking_number).to eq(JSON.parse(create_label_response)['trackingNumber'])
@@ -193,29 +195,26 @@ RSpec.describe ShipmentsController, type: :controller do
         it 'updates the shipment_status to label_created on successful storage of tracking_number' do
           Timecop.freeze('2017-08-06')
           create_label_params[:address_to][:name] = order.name
-
-          valid_attributes.delete('tracking_number')
           shippo_response_object = object_double('shippo response', code: 200, 
             status: 'SUCCESS', success?: true, tracking_number: '9400111298370829688891', 
             label_url: 'https://shippo-delivery-east.s3.amazonaws.com/some_international_label.pdf')
 
           expect(Shippo::Shipment).to receive(:create).with(create_label_params).and_return(shippo_response_object)
 
-          post :create, params: { order_id: order_id, shipment: valid_attributes }, session: valid_session
+          post :create, params: { order_id: order_id, shipment: valid_shipping_attributes }, session: valid_session
 
           body = JSON.parse(response.body)['data']
           expect(Shipment.find(body['id']).shipment_status).to eq 'label_created'
         end
 
         it 'downloads a label from label_url from the Shippo api response and stores it as base64 encoded data' do
-          valid_attributes.delete('tracking_number')
 
           s3_label_object = object_double('s3_label_object', code: 200, body: 'somelabelpdf')
 
           expect(Shippo::Shipment).to receive(:create).with(create_label_params).and_return(shippo_response_object)
           expect(HTTParty).to receive(:get).with(url: shippo_response_object[:label_url]).and_return(s3_label_object)
 
-          post :create, params: { order_id: order_id, shipment: valid_attributes }, session: valid_session 
+          post :create, params: { order_id: order_id, shipment: valid_shipping_attributes }, session: valid_session 
 
           expect(Shipment.last.label_data).to eq(Base64.encode(s3_label_object[:body]))
         end
@@ -223,14 +222,13 @@ RSpec.describe ShipmentsController, type: :controller do
         it 'handles errors from Shippo and raises an exception' do
           # Sample error object
           # => #<Transaction:0x3ff808e2f3ac[id=91bdbecdc6ca49689b4984670dc52393]{"object_state"=>"VALID", "status"=>"ERROR", "object_created"=>"2017-09-10T20:25:46.898Z", "object_updated"=>"2017-09-10T20:25:47.952Z", "object_id"=>"91bdbecdc6ca49689b4984670dc52393", "object_owner"=>"info@thepublicrad.io", "test"=>true, "rate"=>{"object_id"=>"33c2904f50384420988c1329f1a988fc", "amount"=>"7.18", "currency"=>"USD", "amount_local"=>"7.18", "currency_local"=>"USD", "provider"=>"USPS", "servicelevel_name"=>"Priority Mail", "servicelevel_token"=>"usps_priority", "carrier_account"=>"d2ed2a63bef746218a32e15450ece9d9"}, "tracking_number"=>"", "tracking_status"=>"UNKNOWN", "eta"=>nil, "tracking_url_provider"=>"", "label_url"=>"", "commercial_invoice_url"=>nil, "messages"=>[#<Hashie::Mash code="" source="USPS" text="Recipient address invalid: The address as submitted could not be found. Please check for excessive abbreviations in the street address line or in the City name.">], "order"=>nil, "metadata"=>"", "parcel"=>"588d1166330b46778f666bc808e216ec", "billing"=>{"payments"=>[]}}->#<Shippo::API::ApiObject created=2017-09-10 20:25:46 UTC id="91bdbecdc6ca49689b4984670dc52393" owner="info@thepublicrad.io" state=#<Shippo::API::Category::State:0x007ff011b265c0 @name=:state, @value=:valid> updated=2017-09-10 20:25:47 UTC>
-          
-          valid_attributes.delete('tracking_number')
+         
           shippo_response_object = object_double('response', code: 500, body: create_label_error_response)
 
           expect(Shippo::Shipment).to receive(:create).with(create_label_params).and_return(shippo_response_object)
 
           expect{ 
-            post :create, params: { order_id: order_id, shipment: valid_attributes }, session: valid_session
+            post :create, params: { order_id: order_id, shipment: valid_shipping_attributes }, session: valid_session
             }.to raise_error(ShipstationError)
         end
       end
