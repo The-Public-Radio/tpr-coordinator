@@ -25,7 +25,7 @@ ENV['LOG_LEVEL'] = 'warn'
 ENV['SHIPSTATION_API_SECRET'] = 'test_api_secret'
 ENV['SHIPSTATION_API_KEY'] = 'test_api_key'
 ENV['SHIPPO_TOKEN'] = 'shippo_test_b9b68824dbd11b65305ea9714a039287c499b6ff'
-
+ENV['FROM_ADDRESS_PHONE_NUMBER'] = '123-456-7890'
 
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate

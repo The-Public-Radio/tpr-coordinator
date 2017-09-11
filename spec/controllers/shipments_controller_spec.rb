@@ -85,7 +85,8 @@ RSpec.describe ShipmentsController, type: :controller do
         expect(response.content_type).to eq('application/json')
       end
 
-      context 'without a tracking number' do        
+      context 'without a tracking number' do
+
         let(:create_label_params)  { {
           shipment: {
             address_from: {
@@ -97,7 +98,7 @@ RSpec.describe ShipmentsController, type: :controller do
               :state => 'IL',
               :zip => '60007',
               :country => 'US',
-              :phone => '',
+              :phone => '123-456-7890',
               :email => 'info@thepublicrad.io' 
             },
             address_to: {

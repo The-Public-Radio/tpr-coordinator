@@ -159,7 +159,7 @@ class ShipmentsController < ApplicationController
         :state => 'IL',
         :zip => '60007',
         :country => 'US',
-        :phone => '',
+        :phone => ENV['FROM_ADDRESS_PHONE_NUMBER'],
         :email => 'info@thepublicrad.io' 
     }
     end
