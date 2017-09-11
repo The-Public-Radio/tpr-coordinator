@@ -109,7 +109,6 @@ class ShipmentsController < ApplicationController
 
       transaction = Shippo::Transaction.create(shippo_options)
       
-      Rails.logger.debug(transaction)
       if transaction["status"] != "SUCCESS"
         Rails.logger.error(transaction.messages)
         raise ShippoError 
