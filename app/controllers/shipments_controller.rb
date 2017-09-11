@@ -103,14 +103,14 @@ class ShipmentsController < ApplicationController
       shippo_options = { 
         :shipment => @order.country != 'US' ? international_shipment_options : shipment_options,
         :carrier_account => 'd2ed2a63bef746218a32e15450ece9d9',
-        :servicelevel_token => "usps_priority"
+        :servicelevel_token => @order.country != 'US' ? "usps_first_class_package_international_service" : "usps_first", 
       }
       Rails.logger.debug("Shipping label create options: #{shippo_options}")
 
       transaction = Shippo::Transaction.create(shippo_options)
       
       Rails.logger.debug(transaction)
-      if transaction.status != 'SUCCESS'
+      if transaction["status"] != "SUCCESS"
         Rails.logger.error(transaction.messages)
         raise ShippoError 
       end

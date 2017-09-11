@@ -121,12 +121,12 @@ RSpec.describe ShipmentsController, type: :controller do
               :mass_unit => :oz
             }
           },
-          servicelevel_token: "usps_priority",
+          servicelevel_token: "usps_first",
           carrier_account: "d2ed2a63bef746218a32e15450ece9d9"
         }}
 
         let(:shippo_response_object) { object_double('shippo response', code: 200, 
-          status: 'SUCCESS', success?: true, tracking_number: '9400111298370829688891', 
+          'status'=> 'SUCCESS', tracking_number: '9400111298370829688891', 
           label_url: 'https://shippo-delivery-east.s3.amazonaws.com/some_international_label.pdf')
         }
 
@@ -203,6 +203,7 @@ RSpec.describe ShipmentsController, type: :controller do
             }
 
             create_label_params[:shipment][:customs_declaration] = customs_declaration_response
+            create_label_params[:servicelevel_token] = 'usps_first_class_package_international_service'
             valid_shipping_attributes['order_id'] = international_order.id
 
             expect(Shippo::Transaction).to receive(:create).with(create_label_params).and_return(shippo_response_object).once
