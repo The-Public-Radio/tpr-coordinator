@@ -24,6 +24,14 @@ class ShipmentsController < ApplicationController
   # POST /shipments.json
   def create
     @shipment = Shipment.new(shipment_params)
+    @shipment.save
+    
+    if !params['shipment']['frequencies'].nil?
+      params['shipment']['frequencies'].each do |frequency| 
+        Radio.create(frequency: frequency, boxed: false, shipment_id: @shipment.id).save!
+      end
+    end
+
     # Create tracking number and store base64 encoded label pdf data
     if @shipment.tracking_number.nil?
       Rails.logger.info('No tracking number provided for new shipment')
@@ -33,7 +41,6 @@ class ShipmentsController < ApplicationController
     end
 
     if @shipment.save
-
       api_response(@shipment, :created)
     else
       render json: @shipment.errors, status: :unprocessable_entity
@@ -74,7 +81,7 @@ class ShipmentsController < ApplicationController
   def shipping_label_data
      label_url = shipping_label_creation_response.label_url
      shipping_label = HTTParty.get(label_url).body
-     @shipping_label_data ||= Base64.encode(shipping_label)
+     @shipping_label_data ||= Base64.strict_encode64(shipping_label)
   end
 
   def shipping_label_creation_response(shipment = @shipment)
@@ -94,7 +101,7 @@ class ShipmentsController < ApplicationController
       Shippo::API.token = ENV['SHIPPO_TOKEN']
 
       shippo_options = { 
-        :shipment => @order.country != 'US' ? international_shipment : shipment,
+        :shipment => @order.country != 'US' ? international_shipment_options : shipment_options,
         :carrier_account => 'd2ed2a63bef746218a32e15450ece9d9',
         :servicelevel_token => "usps_priority"
       }
@@ -104,14 +111,14 @@ class ShipmentsController < ApplicationController
       
       Rails.logger.debug(transaction)
       if !transaction.success?
-        Rails.logger.error(response.body)
-        raise ShippoError
+        Rails.logger.error(transaction.messages)
+        raise ShippoError 
       end
 
       transaction
     end
 
-    def shipment
+    def shipment_options
       {
         :address_from => address_from,
         :address_to => address_to,
@@ -119,13 +126,12 @@ class ShipmentsController < ApplicationController
       }
     end
 
-    def international_shipment
+    def international_shipment_options
       {
         address_from: address_from,
         address_to: address_to,
         parcels: parcel,
-        customs_declaration: customs_declaration,
-        async: false
+        customs_declaration: customs_declaration
       }
     end
 
@@ -257,6 +263,6 @@ class ShipmentsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def shipment_params
-      params.require(:shipment).permit(:tracking_number, :ship_date, :shipment_status, :order_id)
+      params.require(:shipment).permit(:tracking_number, :ship_date, :shipment_status, :order_id, :frequencies)
     end
 end
