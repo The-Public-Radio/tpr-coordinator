@@ -2,7 +2,7 @@ FactoryGirl.define do
   factory :base_radio, class: Radio do 
     serial_number random_tpr_serial_number
     operator random_name
-    pcb_version '1'
+    pcb_version 'PR9026'
 
     factory :radio_assembled, class: Radio do
       serial_number random_tpr_serial_number

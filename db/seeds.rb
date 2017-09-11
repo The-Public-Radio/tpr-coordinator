@@ -209,43 +209,43 @@ radios_params = [
 	# 
 	# First assembled radio has a known serial nubmer for testing
 	{
-		pcb_version: '1',
+		pcb_version: 'PR9026',
 		serial_number: 'TPRv2.0_1_63297',
 		assembly_date: Time.now,
 		operator: 'Person McPersonson'
 	},
 	{
-		pcb_version: '1',
+		pcb_version: 'PR9026',
 		serial_number: random_tpr_serial_number,
 		assembly_date: Time.now,
 		operator: 'Person McPersonson'
 	},	
 	{
-		pcb_version: '1',
+		pcb_version: 'PR9026',
 		serial_number: random_tpr_serial_number,
 		assembly_date: Time.now,
 		operator: 'Person McPersonson'
 	},
 	{
-		pcb_version: '1',
+		pcb_version: 'PR9026',
 		serial_number: random_tpr_serial_number,
 		assembly_date: Time.now,
 		operator: 'Person McPersonson'
 	},
 	{
-		pcb_version: '1',
+		pcb_version: 'PR9026',
 		serial_number: random_tpr_serial_number,
 		assembly_date: Time.now,
 		operator: 'Person McPersonson'
 	},
 	{
-		pcb_version: '1',
+		pcb_version: 'PR9026',
 		serial_number: random_tpr_serial_number,
 		assembly_date: Time.now,
 		operator: 'Person McPersonson'
 	},
 	{
-		pcb_version: '1',
+		pcb_version: 'PR9026',
 		serial_number: random_tpr_serial_number,
 		assembly_date: Time.now,
 		operator: 'Person McPersonson'
@@ -255,7 +255,7 @@ radios_params = [
 	# Boxed Radios, assigned to a shipment and frequency
 	{
 		frequency: random_frequency,
-		pcb_version: '1',
+		pcb_version: 'PR9026',
 		serial_number: random_tpr_serial_number,
 		assembly_date: Time.now,
 		operator: 'Person McPersonson',
@@ -265,7 +265,7 @@ radios_params = [
 	},
 	{
 		frequency: random_frequency,
-		pcb_version: '1',
+		pcb_version: 'PR9026',
 		serial_number: random_tpr_serial_number,
 		assembly_date: Time.now,
 		operator: 'Person McPersonson',
@@ -275,7 +275,7 @@ radios_params = [
 	},
 	{
 		frequency: random_frequency,
-		pcb_version: '1',
+		pcb_version: 'PR9026',
 		serial_number: random_tpr_serial_number,
 		assembly_date: Time.now,
 		operator: 'Person McPersonson',
