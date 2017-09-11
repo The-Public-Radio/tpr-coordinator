@@ -71,9 +71,17 @@ RSpec.describe OrdersController, type: :controller do
     end
 
     context "with a frequency list" do
-      let(:tracking_number) { random_tracking_number }
-      let(:shipstation_response) { object_double('response', code: 200, body: {"trackingNumber": tracking_number, "labelData": "some base64 thing"}.to_json) }
+      let(:shippo_response_object) { object_double('shippo response', code: 200, 
+        status: 'SUCCESS', success?: true, tracking_number: random_tracking_number, 
+        label_url: 'https://shippo-delivery-east.s3.amazonaws.com/some_international_label.pdf')
+      }
+      let(:s3_label_object) { object_double('s3_label_object', code: 200, body: 'somelabelpdf') }
       
+      before(:each) do
+        expect(HTTParty).to receive(:get).with(shippo_response_object.label_url).and_return(s3_label_object).exactly(4)
+        expect(Shippo::Transaction).to receive(:create).and_return(shippo_response_object).exactly(4)
+      end
+
       it "creates a shipment for each set of 3 radios, tracking numbers, and label data" do
        frequencies = { 
           'US': ['98.3', '79.5', '79.5', '98.3'],
@@ -81,7 +89,6 @@ RSpec.describe OrdersController, type: :controller do
           'AZ': ['79.5', '79.5', '105.6']
         }
 
-        expect(HTTParty).to receive(:post).and_return(shipstation_response).exactly(4)
         expect{
           post :create, params: { frequencies: frequencies, order: valid_attributes }, session: valid_session
         }.to change(Shipment, :count).by(4)
@@ -91,8 +98,8 @@ RSpec.describe OrdersController, type: :controller do
         expect(shipments.select{ |s| s.radio.count == 2 }.count).to be 1
         expect(shipments.select{ |s| s.radio.count == 1 }.count).to be 1
         shipments.each do |shipment|
-          expect(shipment.tracking_number).to eq tracking_number
-          expect(shipment.label_data).to eq 'some base64 thing'
+          expect(shipment.tracking_number).to eq shippo_response_object.tracking_number
+          expect(shipment.label_data).to eq Base64.strict_encode64(s3_label_object.body)
           expect(shipment.shipment_status).to eq 'label_created'
         end
       end
@@ -103,7 +110,6 @@ RSpec.describe OrdersController, type: :controller do
           'US': ['79.5', '105.6']
         }
 
-        expect(HTTParty).to receive(:post).and_return(shipstation_response).exactly(4)
         expect{
           post :create, params: { frequencies: frequencies, order: valid_attributes }, session: valid_session
         }.to change(Radio, :count).by(10)
