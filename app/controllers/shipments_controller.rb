@@ -74,17 +74,17 @@ class ShipmentsController < ApplicationController
     api_response(@shipment.next_unboxed_radio)
   end
 
-  def shipping_tracking_number
-    @shipping_tracking_number = shipping_label_creation_response.tracking_number
+  def shipping_tracking_number(shipment = @shipment)
+    @shipping_tracking_number ||= shipping_label_creation_response(shipment).tracking_number
   end
 
-  def shipping_label_data
-     label_url = shipping_label_creation_response.label_url
+  def shipping_label_data(shipment = @shipment)
+     label_url = shipping_label_creation_response(shipment).label_url
      shipping_label = HTTParty.get(label_url).body
      @shipping_label_data ||= Base64.strict_encode64(shipping_label)
   end
 
-  def shipping_label_creation_response(shipment = @shipment)
+  def shipping_label_creation_response(shipment)
     @shipping_label_creation_response ||= create_shipping_label(shipment)
   end
 

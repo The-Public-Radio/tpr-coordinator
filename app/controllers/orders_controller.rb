@@ -18,6 +18,10 @@ class OrdersController < ApplicationController
 
     @order = Order.new(order_params)
 
+    if order_params[:country].nil?
+      @order.country = 'US'
+    end
+
     if @order.save
       make_shipments_for_order(frequency_hash) unless frequency_hash.nil?
       render json: @order, status: :created, location: @order
@@ -65,8 +69,8 @@ class OrdersController < ApplicationController
       frequencies_by_shipment.each do |frequencies|
         controller = ShipmentsController.new
         shipment = Shipment.create(order_id: @order.id)
-        shipment.tracking_number = controller.shipstation_create_label_response_body(shipment)['trackingNumber']
-        shipment.label_data = controller.shipstation_create_label_response_body(shipment)['labelData']
+        shipment.tracking_number = controller.shipping_tracking_number(shipment)
+        shipment.label_data = controller.shipping_label_data(shipment)
         shipment.shipment_status = 'label_created'
         
         shipment.save

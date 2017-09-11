@@ -40,7 +40,6 @@ resource "Orders" do
     parameter :order_source, 'String, where the order came from. Options: kickstarter, squarespace, other', required: false
 
     let(:tracking_number) { random_tracking_number }
-    let(:shipstation_response) { object_double('response', code: 200, body: {"trackingNumber": tracking_number, "labelData": "some base64 thing"}.to_json) }
 
     example 'Create a new order' do
       order_params = {
@@ -53,7 +52,15 @@ resource "Orders" do
         email: 'person.mcpersonson@gmail.com'
       }
 
-      expect(HTTParty).to receive(:post).and_return(shipstation_response).exactly(4)
+      shippo_response_object = object_double('shippo response', code: 200, 
+        status: 'SUCCESS', success?: true, tracking_number: '9400111298370829688891', 
+        label_url: 'https://shippo-delivery-east.s3.amazonaws.com/some_label.pdf')
+
+      s3_label_object = object_double('s3_label_object', code: 200, body: 'somelabelpdf') 
+
+      expect(HTTParty).to receive(:get).with(shippo_response_object.label_url).and_return(s3_label_object).exactly(4)
+      expect(Shippo::Transaction).to receive(:create).and_return(shippo_response_object).exactly(4)
+
       expect{ do_request(order_params) }.to change(Order, :count).by(1)
       expect(status).to be 201
 
