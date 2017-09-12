@@ -89,7 +89,7 @@ class ShipmentsController < ApplicationController
   end
 
   private
-    attr_accessor :shipment
+    attr_accessor :shipment, :shipment_size
 
     def create_shipping_label(shipment)
       @shipment = shipment
@@ -103,7 +103,7 @@ class ShipmentsController < ApplicationController
       shippo_options = { 
         :shipment => @order.country != 'US' ? international_shipment_options : shipment_options,
         :carrier_account => 'd2ed2a63bef746218a32e15450ece9d9',
-        :servicelevel_token => @order.country != 'US' ? "usps_first_class_package_international_service" : "usps_first", 
+        :servicelevel_token => usps_service_level, 
       }
       Rails.logger.debug("Shipping label create options: #{shippo_options}")
 
@@ -115,6 +115,20 @@ class ShipmentsController < ApplicationController
       end
 
       transaction
+    end
+
+    def usps_service_level
+      @order.country != 'US' ? usps_service_level_international : usps_service_level_domestic
+    end
+
+    def usps_service_level_domestic
+      # If under 1 lb (16oz) the shipment can go first class, > 1lb it has to go priority
+      @shipment_size > 1 ? 'usps_priority' : 'usps_first'
+    end
+
+    def usps_service_level_international
+      # Has to go priority mail due to it being a package and not flat
+      'usps_first_class_package_international_service'
     end
 
     def shipment_options
@@ -164,8 +178,11 @@ class ShipmentsController < ApplicationController
     }
     end
 
+    def shipment_size
+      @shipment_size ||= @shipment.radio.count
+    end
+
     def parcel
-      shipment_size = @shipment.radio.count
       if shipment_size == 2
         {
           :length => 6,
@@ -210,7 +227,6 @@ class ShipmentsController < ApplicationController
     end
 
     def customs_item
-      shipment_size = @shipment.radio.count
       if shipment_size == 1
         {
           :description => "Single station FM radio",
