@@ -166,16 +166,7 @@ class ShipmentsController < ApplicationController
 
     def parcel
       shipment_size = @shipment.radio.count
-      if shipment_size == 1
-        {
-          :length => 5,
-          :width => 4,
-          :height => 3,
-          :distance_unit => :in,
-          :weight => 12,
-          :mass_unit => :oz
-        }
-      elsif shipment_size == 2
+      if shipment_size == 2
         {
           :length => 6,
           :width => 5,
@@ -192,6 +183,15 @@ class ShipmentsController < ApplicationController
           :distance_unit => :in,
           :weight => 2.60,
           :mass_unit => :lb
+        }
+      else
+        {
+          :length => 5,
+          :width => 4,
+          :height => 3,
+          :distance_unit => :in,
+          :weight => 12,
+          :mass_unit => :oz
         }
       end
     end
