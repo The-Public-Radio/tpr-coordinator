@@ -60,7 +60,9 @@ resource "Orders" do
 
       expect(HTTParty).to receive(:get).with(shippo_response_object.label_url).and_return(s3_label_object).exactly(4)
       expect(Shippo::Transaction).to receive(:create).and_return(shippo_response_object).exactly(4)
-
+      expect(shippo_response_object).to receive(:[]).with('status').and_return('SUCCESS').exactly(4)
+      expect(shippo_response_object).to receive(:tracking_number).and_return('9400111298370829688891').exactly(4)
+      expect(shippo_response_object).to receive(:label_url).and_return('https://shippo-delivery-east.s3.amazonaws.com/some_label.pdf').exactly(4)
       expect{ do_request(order_params) }.to change(Order, :count).by(1)
       expect(status).to be 201
 

@@ -128,7 +128,7 @@ RSpec.describe ShipmentsController, type: :controller do
 
         let(:shippo_response_object) { object_double('shippo response', code: 200, 
           'status'=> 'SUCCESS', tracking_number: '9400111298370829688891', 
-          label_url: 'https://shippo-delivery-east.s3.amazonaws.com/some_international_label.pdf')
+          label_url: 'https://shippo-delivery-east.s3.amazonaws.com/some_label.pdf')
         }
 
         let(:valid_shipping_attributes) do 
@@ -147,6 +147,9 @@ RSpec.describe ShipmentsController, type: :controller do
 
           before(:each) do 
             expect(HTTParty).to receive(:get).with(shippo_response_object.label_url).and_return(s3_label_object)
+            expect(shippo_response_object).to receive(:[]).with('status').and_return('SUCCESS')
+            expect(shippo_response_object).to receive(:tracking_number).and_return('9400111298370829688891')
+            expect(shippo_response_object).to receive(:label_url).and_return('https://shippo-delivery-east.s3.amazonaws.com/some_label.pdf')
           end
 
           it 'creates a tracking number and label from the Shippo API' do
@@ -160,6 +163,7 @@ RSpec.describe ShipmentsController, type: :controller do
 
             body = JSON.parse(response.body)['data']
             expect(Shipment.find(body['id']).tracking_number).to eq(shippo_response_object.tracking_number)
+            expect(Shipment.find(body['id']).shipment_status).to eq 'label_created'
           end
 
           it 'creates tracking number for international orders' do
@@ -215,20 +219,6 @@ RSpec.describe ShipmentsController, type: :controller do
             expect(body['tracking_number']).to eq shippo_response_object.tracking_number
           end
 
-          it 'updates the shipment_status to label_created on successful storage of tracking_number' do
-            Timecop.freeze('2017-08-06')
-            shippo_response_object = object_double('shippo response', code: 200, 
-              status: 'SUCCESS', success?: true, tracking_number: '9400111298370829688891', 
-              label_url: 'https://shippo-delivery-east.s3.amazonaws.com/some_international_label.pdf')
-
-            expect(Shippo::Transaction).to receive(:create).with(create_label_params).and_return(shippo_response_object)
-
-            post :create, params: { order_id: order_id, shipment: valid_shipping_attributes }, session: valid_session
-
-            body = JSON.parse(response.body)['data']
-            expect(Shipment.find(body['id']).shipment_status).to eq 'label_created'
-          end
-
           it 'downloads a label from label_url from the Shippo api response and stores it as base64 encoded data' do
 
             expect(Shippo::Transaction).to receive(:create).with(create_label_params).and_return(shippo_response_object)
@@ -244,6 +234,8 @@ RSpec.describe ShipmentsController, type: :controller do
           # => #<Transaction:0x3ff808e2f3ac[id=91bdbecdc6ca49689b4984670dc52393]{"object_state"=>"VALID", "status"=>"ERROR", "object_created"=>"2017-09-10T20:25:46.898Z", "object_updated"=>"2017-09-10T20:25:47.952Z", "object_id"=>"91bdbecdc6ca49689b4984670dc52393", "object_owner"=>"info@thepublicrad.io", "test"=>true, "rate"=>{"object_id"=>"33c2904f50384420988c1329f1a988fc", "amount"=>"7.18", "currency"=>"USD", "amount_local"=>"7.18", "currency_local"=>"USD", "provider"=>"USPS", "servicelevel_name"=>"Priority Mail", "servicelevel_token"=>"usps_priority", "carrier_account"=>"d2ed2a63bef746218a32e15450ece9d9"}, "tracking_number"=>"", "tracking_status"=>"UNKNOWN", "eta"=>nil, "tracking_url_provider"=>"", "label_url"=>"", "commercial_invoice_url"=>nil, "messages"=>[#<Hashie::Mash code="" source="USPS" text="Recipient address invalid: The address as submitted could not be found. Please check for excessive abbreviations in the street address line or in the City name.">], "order"=>nil, "metadata"=>"", "parcel"=>"588d1166330b46778f666bc808e216ec", "billing"=>{"payments"=>[]}}->#<Shippo::API::ApiObject created=2017-09-10 20:25:46 UTC id="91bdbecdc6ca49689b4984670dc52393" owner="info@thepublicrad.io" state=#<Shippo::API::Category::State:0x007ff011b265c0 @name=:state, @value=:valid> updated=2017-09-10 20:25:47 UTC>
           create_label_error_response = object_double('error', success?: false, status: 'ERROR', 
             messages: object_double('message', text: 'Recipient address invalid: The address as submitted could not be found. Please check for excessive abbreviations in the street address line or in the City name.') )
+          
+          expect(create_label_error_response).to receive(:[]).with('status').and_return('FAILURE')
 
           expect(Shippo::Transaction).to receive(:create).with(create_label_params).and_return(create_label_error_response)
 
