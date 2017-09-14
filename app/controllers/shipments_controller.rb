@@ -265,17 +265,22 @@ class ShipmentsController < ApplicationController
 
     # Use callbacks to share common setup or constraints between actions.
     def set_shipment
-      if !params[:tracking_number].nil?
-        tracking_number = params[:tracking_number].length == 34 ? params[:tracking_number][8..-1] : params[:tracking_number]
-        @shipment ||= Shipment.find_by_tracking_number tracking_number
-        Rails.logger.debug(@shipment.attributes)
-      elsif !params[:shipment_status].nil?
-        @shipment ||= Shipment.where(shipment_status: params[:shipment_status])
-      elsif !params[:id].nil?
-        @shipment ||= Shipment.find(params[:id])
-        Rails.logger.debug(@shipment.attributes)
-      else
-        @shipment ||= Shipment.all
+      begin
+        if !params[:tracking_number].nil?
+          tracking_number = params[:tracking_number].length == 34 ? params[:tracking_number][8..-1] : params[:tracking_number]
+          @shipment ||= Shipment.find_by_tracking_number tracking_number
+          Rails.logger.debug(@shipment.attributes)
+        elsif !params[:shipment_status].nil?
+          @shipment ||= Shipment.where(shipment_status: params[:shipment_status])
+        elsif !params[:id].nil?
+          @shipment ||= Shipment.find(params[:id])
+          Rails.logger.debug(@shipment.attributes)
+        else
+          @shipment ||= Shipment.all
+        end
+      rescue NoMethodError => e
+        api_response([], :not_found, ["Error looking up shipment #{params[:tracking_number]}"])
+        raise TprCoordinatorError
       end
     end
 

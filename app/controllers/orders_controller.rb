@@ -72,7 +72,7 @@ class OrdersController < ApplicationController
         
         shipment.save
         frequencies.each do |frequency|
-          Radio.create(frequency: frequency, shipment_id: shipment.id, country_code: country_code).save
+          Radio.create(frequency: frequency, shipment_id: shipment.id, country_code: country_code, boxed: false).save
         end
 
         shipment.tracking_number = controller.shipping_tracking_number(shipment)

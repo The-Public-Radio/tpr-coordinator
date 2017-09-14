@@ -64,15 +64,16 @@ RSpec.describe ShipmentsController, type: :controller do
 
     it "handles a failed look up by tracking number and returns a 404 and errors" do
       shipment = create(:label_created)
+      tracking_number = "42010008881#{shipment.tracking_number}"
 
-      expect{ get :index, params: { tracking_number: "42010001#{shipment.tracking_number}"}, session: valid_session }
-        .to raise_error(TprCoordinatorError, 'omgomgomgomgomg no tracking number')
+      expect{ get :index, params: { tracking_number: tracking_number}, session: valid_session }
+        .to raise_error(TprCoordinatorError)
 
       expect(response).to have_http_status(:not_found)
       data = JSON.parse(response.body)['data']
       errors = JSON.parse(response.body)['errors']
-      expect(data).to be []
-      expect(errors).to 'something'
+      expect(data).to eq []
+      expect(errors).to eq ["Error looking up shipment #{tracking_number}"]
     end
   end
 
