@@ -74,7 +74,7 @@ orders_params = [
     country: 'US',
     phone: '123-321-1231',
     email: 'Person.McPersonson@gmail.com'
-  }
+  },
   {
     name: 'Tarik Saleh',
     order_source: 'other',
@@ -86,7 +86,7 @@ orders_params = [
     country: 'US',
     phone: '123-321-1231',
     email: 'Person.McPersonson@gmail.com'
-  }
+  },
   {
     name: 'kevin dunham',
     order_source: 'other',
@@ -98,7 +98,7 @@ orders_params = [
     country: 'US',
     phone: '123-321-1231',
     email: 'Person.McPersonson@gmail.com'
-  }
+  },
 	{
     name: random_name,
 		order_source: 'other',
