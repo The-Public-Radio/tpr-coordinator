@@ -61,6 +61,19 @@ RSpec.describe ShipmentsController, type: :controller do
       data = JSON.parse(response.body)['data']
       expect(data['tracking_number']).to eq(shipment.tracking_number)
     end
+
+    it "handles a failed look up by tracking number and returns a 404 and errors" do
+      shipment = create(:label_created)
+
+      expect{ get :index, params: { tracking_number: "42010001#{shipment.tracking_number}"}, session: valid_session }
+        .to raise_error(TprCoordinatorError, 'omgomgomgomgomg no tracking number')
+
+      expect(response).to have_http_status(:not_found)
+      data = JSON.parse(response.body)['data']
+      errors = JSON.parse(response.body)['errors']
+      expect(data).to be []
+      expect(errors).to 'something'
+    end
   end
 
   describe "GET #show" do

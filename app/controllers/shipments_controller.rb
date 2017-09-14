@@ -5,6 +5,9 @@ require 'shippo'
 class ShippoError < StandardError
 end
 
+class TprCoordinatorError < StandardError
+end
+
 class ShipmentsController < ApplicationController
   before_action :set_shipment, only: [:index, :show, :update, :destroy, :next_unboxed_radio]
 
