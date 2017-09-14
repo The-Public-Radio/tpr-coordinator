@@ -31,7 +31,7 @@ gem 'bigdecimal'
 gem "apitome"
 
 # Monitoring
-gem 'skylight'
+# gem 'skylight'
 gem 'bugsnag'
 gem 'ddtrace'
 

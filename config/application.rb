@@ -34,8 +34,8 @@ module TprCoordinator
     config.api_only = true
 
     # configure skylight monitoring
-    config.skylight.logger = Logger.new(STDOUT)
-    config.skylight.environments += ["test"]
+    # config.skylight.logger = Logger.new(STDOUT)
+    # config.skylight.environments += ["test"]
 
     # Rack::Attack to keep things out
     config.middleware.use Rack::Attack
