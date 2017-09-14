@@ -17,7 +17,7 @@ resource "Shipments" do
       do_request
       expect(status).to eq 200
       data = JSON.parse(response_body)['data']
-      expect(data['tracking_number'].length).to be 22
+      expect(data['tracking_number'].length).to be shipped_shipment.tracking_number.length
       expect(data['ship_date']).to eq('2017-07-28')
       expect(data['shipment_status']).to eq('shipped')
     end
@@ -46,7 +46,7 @@ resource "Shipments" do
       do_request
       expect(status).to eq 200
       data = JSON.parse(response_body)['data']
-      expect(data['tracking_number'].length).to be 22
+      expect(data['tracking_number'].length).to be tracking_number.length
       expect(data['ship_date']).to eq(ship_date)
       expect(data['shipment_status']).to eq('shipped')
     end

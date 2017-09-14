@@ -50,9 +50,9 @@ RSpec.describe ShipmentsController, type: :controller do
       get :index, params: {}, session: valid_session
     end
 
-    # USPS Tracking numbers are 20,22, or 30 digits. The norm is 22.
-    # 30 digit tracking numbers are an application code + zip code + 22 digit tracking number
-    it "shortens a 30 digit USPS tracking number to a 22 digit one" do
+    # USPS Tracking numbers are 20,22,26 or 30 digits. The norm is 26 for Shippo.
+    # 34 digit tracking numbers are an application code + zip code + 26 digit tracking number
+    it "shortens a 34 digit USPS tracking number to a 26 digit one" do
       shipment = create(:label_created)
 
       get :index, params: { tracking_number: "42010001#{shipment.tracking_number}"}, session: valid_session

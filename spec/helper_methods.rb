@@ -2,7 +2,7 @@ require 'json'
 require 'faker'
 
 def random_tracking_number
-  number = "9374889691090496#{Random.new.rand(99999)}"
+  number = "937488969109049600#{Random.new.rand(9999999)}"
   chars = number.gsub(/^420\d{5}/, '').chars.to_a
 
   total = 0
@@ -38,3 +38,4 @@ end
 def load_json_fixture(path)
   JSON.parse(load_fixture(path), symbolize_names: true)
 end
+
