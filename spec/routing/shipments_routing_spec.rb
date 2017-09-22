@@ -15,6 +15,10 @@ RSpec.describe ShipmentsController, type: :routing do
       expect(:get => "/shipments/1").to route_to("shipments#show", :id => "1")
     end
 
+    it "routes to #next_label_created_shipment" do
+      expect(:get => "/shipments/next_to_print").to route_to("shipments#next_label_created_shipment")
+    end
+
     it "routes to #next_unboxed_radio" do
       expect(:get => "/shipments/1/next_radio").to route_to("shipments#next_unboxed_radio", :id => "1")
     end
@@ -42,6 +46,5 @@ RSpec.describe ShipmentsController, type: :routing do
     it "routes to #destroy" do
       expect(:delete => "/shipments/1").to route_to("shipments#destroy", :id => "1")
     end
-
   end
 end
