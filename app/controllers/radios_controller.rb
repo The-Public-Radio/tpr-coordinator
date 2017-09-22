@@ -36,7 +36,7 @@ class RadiosController < ApplicationController
     # Default to US country code if not given
     @radio.country_code = 'US'
 
-    # Recording assembly date. When the radio is attached to a shipment later 
+    # Recording assembly date. When the radio is attached to a shipment later
     # the assemble_date will differ from the objects creation date so we must
     # record it separately
     @radio.assembly_date = @radio.assembly_date.nil? ? Date.today.to_s : @radio.assembly_date
@@ -115,7 +115,7 @@ class RadiosController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def radio_params
       Rails.logger.debug("Request params: #{params}")
-      params.require(:radio).permit(:frequency, :shipment_id, :pcb_version, :serial_number, :operator, :boxed, :country_code)
+      params.require(:radio).permit(:frequency, :shipment_id, :pcb_version, :serial_number, :operator, :boxed, :country_code, :firmware_version)
     end
 end
 
