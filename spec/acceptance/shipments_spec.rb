@@ -38,7 +38,7 @@ resource "Shipments" do
 
   get "/shipments" do
     parameter :tracking_number, 'String, shipment tracking number', required: true
-    let(:ship) { create(:shipped) } 
+    let(:ship) { create(:shipped) }
     let(:tracking_number) { ship.tracking_number }
     let(:ship_date) {ship.ship_date}
 
@@ -54,7 +54,7 @@ resource "Shipments" do
 
   get "/shipments" do
     parameter :shipment_status, 'String, shipment status', required: true
-    let(:shipment_status) { 'label_created' } 
+    let(:shipment_status) { 'label_created' }
 
     example "Look up all shipments that have unprinted labels" do
       shipments = create_list(:label_created, 2)
@@ -65,6 +65,19 @@ resource "Shipments" do
       expect(data.length).to be 2
       expect(data[0]['id']).to eq(shipments[0].id)
       expect(data[0]['label_data']).to eq(shipments[0].label_data)
+    end
+  end
+
+  get "/shipments/next_to_print" do
+    example "Look the next shipments with an unprinted label." do
+      shipments = create_list(:label_printed, 2)
+
+      do_request
+      expect(status).to eq 200
+      data = JSON.parse(response_body)['data']
+      expect(data.length).to be 1
+      expect(data['id']).to eq(shipments[0].id)
+      expect(data['label_data']).to eq(shipments[0].label_data)
     end
   end
 
