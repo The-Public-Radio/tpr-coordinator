@@ -96,6 +96,17 @@ class ShipmentsController < ApplicationController
     api_response(@shipment)
   end
 
+  def shipment_label_created_count
+    count = Shipment.where(shipment_status: 'label_created').count
+    response = {
+      data: {
+        shipment_count: count
+      },
+      error: {}
+    }
+    render json: response, status: :ok
+  end
+
   private
     attr_accessor :shipment, :shipment_size
 
