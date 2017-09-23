@@ -1,8 +1,15 @@
 # Shipments API
 
-## All shipments
+## Look up all shipments that have unprinted labels
 
 ### GET /shipments
+
+### Parameters
+
+| Name | Description | Required | Scope |
+|------|-------------|----------|-------|
+| shipment_status | String, shipment status | true |  |
+
 ### Request
 
 #### Headers
@@ -11,7 +18,11 @@
 
 #### Route
 
-<pre>GET /shipments</pre>
+<pre>GET /shipments?shipment_status=label_created</pre>
+
+#### Query Parameters
+
+<pre>shipment_status: label_created</pre>
 
 ### Response
 
@@ -28,27 +39,19 @@
 <pre>{
   "data": [
     {
-      "id": 2333,
-      "tracking_number": "93748896910904960056315635",
-      "ship_date": "2017-07-28",
-      "shipment_status": "shipped",
-      "order_id": 2409,
-      "label_data": "label_data_fixture"
-    },
-    {
-      "id": 2334,
-      "tracking_number": "93748896910904960056315635",
-      "ship_date": null,
-      "shipment_status": "created",
-      "order_id": 2410,
-      "label_data": null
-    },
-    {
-      "id": 2335,
+      "id": 2337,
       "tracking_number": "93748896910904960056315635",
       "ship_date": null,
       "shipment_status": "label_created",
-      "order_id": 2411,
+      "order_id": 2413,
+      "label_data": "label_data_fixture"
+    },
+    {
+      "id": 2338,
+      "tracking_number": "93748896910904960056315635",
+      "ship_date": null,
+      "shipment_status": "label_created",
+      "order_id": 2414,
       "label_data": "label_data_fixture"
     }
   ],

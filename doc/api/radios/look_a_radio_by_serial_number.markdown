@@ -1,8 +1,15 @@
 # Radios API
 
-## Look up a single radio
+## Look a radio by serial number
 
-### GET /radios/:id
+### GET /radios
+
+### Parameters
+
+| Name | Description | Required | Scope |
+|------|-------------|----------|-------|
+| serial_number | String, serial number of a radio | true |  |
+
 ### Request
 
 #### Headers
@@ -11,7 +18,11 @@
 
 #### Route
 
-<pre>GET /radios/2334</pre>
+<pre>GET /radios?serial_number=TPRv2.0_1_21434</pre>
+
+#### Query Parameters
+
+<pre>serial_number: TPRv2.0_1_21434</pre>
 
 ### Response
 
@@ -27,13 +38,13 @@
 
 <pre>{
   "data": {
-    "id": 2334,
+    "id": 2338,
     "frequency": "94.4",
     "pcb_version": "PR9026",
     "serial_number": "TPRv2.0_1_21434",
     "assembly_date": "2017-09-22 22:03:35 -0400",
     "operator": "Reuben Jast",
-    "shipment_id": 2327,
+    "shipment_id": 2329,
     "boxed": true,
     "country_code": "US",
     "firmware_version": "firmware_v1",

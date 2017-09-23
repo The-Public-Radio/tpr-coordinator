@@ -18,11 +18,11 @@
 
 #### Route
 
-<pre>GET /shipments?tracking_number=9374889691090496601517</pre>
+<pre>GET /shipments?tracking_number=93748896910904960056315635</pre>
 
 #### Query Parameters
 
-<pre>tracking_number: 9374889691090496601517</pre>
+<pre>tracking_number: 93748896910904960056315635</pre>
 
 ### Response
 
@@ -38,11 +38,12 @@
 
 <pre>{
   "data": {
-    "id": 713,
-    "tracking_number": "9374889691090496601517",
+    "id": 2336,
+    "tracking_number": "93748896910904960056315635",
     "ship_date": "2017-07-28",
     "shipment_status": "shipped",
-    "order_id": 670
+    "order_id": 2412,
+    "label_data": "label_data_fixture"
   },
   "errors": [
 
