@@ -68,14 +68,15 @@ resource "Shipments" do
     end
   end
 
-  get "/shipments/next_to_print" do
+  get "/next_shipment_to_print" do
     example "Look the next shipments with an unprinted label." do
       shipments = create_list(:label_printed, 2)
+      shipments = create_list(:shipped, 2)
+      shipments = create_list(:label_created, 2)
 
       do_request
       expect(status).to eq 200
       data = JSON.parse(response_body)['data']
-      expect(data.length).to be 1
       expect(data['id']).to eq(shipments[0].id)
       expect(data['label_data']).to eq(shipments[0].label_data)
     end

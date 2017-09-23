@@ -28,9 +28,9 @@ class ShipmentsController < ApplicationController
   def create
     @shipment = Shipment.new(shipment_params)
     @shipment.save
-    
+
     if !params['shipment']['frequencies'].nil?
-      params['shipment']['frequencies'].each do |frequency| 
+      params['shipment']['frequencies'].each do |frequency|
         Radio.create(frequency: frequency, boxed: false, shipment_id: @shipment.id).save!
       end
     end
@@ -91,6 +91,11 @@ class ShipmentsController < ApplicationController
     @shipping_label_creation_response ||= create_shipping_label(shipment)
   end
 
+  def next_label_created_shipment
+    @shipment = Shipment.all.order(:created_at).select{ |s| s.shipment_status == 'label_created' }[0]
+    api_response(@shipment)
+  end
+
   private
     attr_accessor :shipment, :shipment_size
 
@@ -103,18 +108,18 @@ class ShipmentsController < ApplicationController
 
       Shippo::API.token = ENV['SHIPPO_TOKEN']
 
-      shippo_options = { 
+      shippo_options = {
         :shipment => @order.country != 'US' ? international_shipment_options : shipment_options,
         :carrier_account => 'd2ed2a63bef746218a32e15450ece9d9',
-        :servicelevel_token => usps_service_level, 
+        :servicelevel_token => usps_service_level,
       }
       Rails.logger.debug("Shipping label create options: #{shippo_options}")
 
       transaction = Shippo::Transaction.create(shippo_options)
-      
+
       if transaction["status"] != "SUCCESS"
         Rails.logger.error(transaction.messages)
-        raise ShippoError 
+        raise ShippoError
       end
 
       transaction
@@ -162,7 +167,7 @@ class ShipmentsController < ApplicationController
         :zip => @order.postal_code,
         :country => @order.country,
         :phone => @order.phone,
-        :email => @order.email 
+        :email => @order.email
       }
     end
 
@@ -177,7 +182,7 @@ class ShipmentsController < ApplicationController
         :zip => '60007',
         :country => 'US',
         :phone => ENV['FROM_ADDRESS_PHONE_NUMBER'],
-        :email => 'info@thepublicrad.io' 
+        :email => 'info@thepublicrad.io'
     }
     end
 

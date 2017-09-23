@@ -16,7 +16,7 @@ RSpec.describe ShipmentsController, type: :routing do
     end
 
     it "routes to #next_label_created_shipment" do
-      expect(:get => "/shipments/next_to_print").to route_to("shipments#next_label_created_shipment")
+      expect(:get => "/next_shipment_to_print").to route_to("shipments#next_label_created_shipment")
     end
 
     it "routes to #next_unboxed_radio" do
