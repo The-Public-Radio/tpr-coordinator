@@ -181,12 +181,12 @@ shipments_params.each{ |params| created_shipments << Shipment.create(params) }
 
 radios_params = [
 	# Radios created from orders params / customer orders
-	# 
+	#
 	# shipment 2 should have one radio
   # shipment 5 should have two radios
   # shipment 6 should have one radio
   # shipment 7 should have three radios
-  # 
+  #
   {
 		frequency: '91.5',
 		shipment_id: created_shipments[2].id,
@@ -198,7 +198,7 @@ radios_params = [
 		shipment_id: created_shipments[5].id,
 		country_code: 'US',
 		boxed: false
-	},	
+	},
 	{
 		frequency: '97.1',
 		shipment_id: created_shipments[5].id,
@@ -210,7 +210,7 @@ radios_params = [
 		shipment_id: created_shipments[6].id,
 		country_code: 'US',
 		boxed: false
-	},	
+	},
 	{
     frequency: '97.1',
 		shipment_id: created_shipments[7].id,
@@ -222,7 +222,7 @@ radios_params = [
 		shipment_id: created_shipments[7].id,
 		country_code: 'US',
 		boxed: false
-	},	
+	},
 	{
 		frequency: random_frequency,
 		shipment_id: created_shipments[7].id,
@@ -256,51 +256,63 @@ radios_params = [
 
 
 	# Assembled Radios
-	# 
+	#
 	# First assembled radio has a known serial nubmer for testing
 	{
 		pcb_version: 'PR9026',
 		serial_number: 'TPRv2.0_1_63297',
 		assembly_date: Time.now,
-		operator: 'Person McPersonson'
+		operator: 'Person McPersonson',
+    quality_control_status: 'passed',
+    firmware_version: 'a10fde1a52063d7022efb00924f25e9d915fc66c'
+	},
+	{
+		pcb_version: 'PR9026',
+		serial_number: random_tpr_serial_number,
+		assembly_date: Time.now,
+		operator: 'Person McPersonson',
+    quality_control_status: 'passed',
+    firmware_version: 'a10fde1a52063d7022efb00924f25e9d915fc66c'
+	},
+	{
+		pcb_version: 'PR9026',
+		serial_number: random_tpr_serial_number,
+		assembly_date: Time.now,
+		operator: 'Person McPersonson',
+    quality_control_status: 'passed',
+    firmware_version: 'a10fde1a52063d7022efb00924f25e9d915fc66c'
+	},
+	{
+		pcb_version: 'PR9026',
+		serial_number: random_tpr_serial_number,
+		assembly_date: Time.now,
+		operator: 'Person McPersonson',
+    quality_control_status: 'passed',
+    firmware_version: 'a10fde1a52063d7022efb00924f25e9d915fc66c'
 	},
 	{
 		pcb_version: 'PR9026',
 		serial_number: random_tpr_serial_number,
 		assembly_date: Time.now,
 		operator: 'Person McPersonson'
-	},	
-	{
-		pcb_version: 'PR9026',
-		serial_number: random_tpr_serial_number,
-		assembly_date: Time.now,
-		operator: 'Person McPersonson'
+    quality_control_status: 'failed_mech',
 	},
 	{
 		pcb_version: 'PR9026',
 		serial_number: random_tpr_serial_number,
 		assembly_date: Time.now,
-		operator: 'Person McPersonson'
+		operator: 'Person McPersonson',
+    quality_control_status: 'failed_software',
+    firmware_version: 'a10fde1a52063d7022efb00924f25e9d915fc66c'
 	},
 	{
 		pcb_version: 'PR9026',
 		serial_number: random_tpr_serial_number,
 		assembly_date: Time.now,
-		operator: 'Person McPersonson'
+		operator: 'Person McPersonson',
+    quality_control_status: 'failed_software',
+    firmware_version: 'a10fde1a52063d7022efb00924f25e9d915fc66c'
 	},
-	{
-		pcb_version: 'PR9026',
-		serial_number: random_tpr_serial_number,
-		assembly_date: Time.now,
-		operator: 'Person McPersonson'
-	},
-	{
-		pcb_version: 'PR9026',
-		serial_number: random_tpr_serial_number,
-		assembly_date: Time.now,
-		operator: 'Person McPersonson'
-	},
-
 
 	# Boxed Radios, assigned to a shipment and frequency
 	{
@@ -311,7 +323,9 @@ radios_params = [
 		operator: 'Person McPersonson',
 		shipment_id: created_shipments[4].id,
 		country_code: 'US',
-		boxed: true
+		boxed: true,
+    quality_control_status: 'passed',
+    firmware_version: 'a10fde1a52063d7022efb00924f25e9d915fc66c'
 	},
 	{
 		frequency: random_frequency,
@@ -321,7 +335,9 @@ radios_params = [
 		operator: 'Person McPersonson',
 		shipment_id: created_shipments[4].id,
 		country_code: 'US',
-		boxed: true
+		boxed: true,
+    quality_control_status: 'passed',
+    firmware_version: 'a10fde1a52063d7022efb00924f25e9d915fc66c'
 	},
 	{
 		frequency: random_frequency,
@@ -331,7 +347,9 @@ radios_params = [
 		operator: 'Person McPersonson',
 		shipment_id: created_shipments[4].id,
 		country_code: 'US',
-		boxed: true
+		boxed: true,
+    quality_control_status: 'passed',
+    firmware_version: 'a10fde1a52063d7022efb00924f25e9d915fc66c'
 	}
 ]
 
