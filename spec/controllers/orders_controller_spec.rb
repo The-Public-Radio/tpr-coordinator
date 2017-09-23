@@ -35,7 +35,14 @@ RSpec.describe OrdersController, type: :controller do
   # This should return the minimal set of values that should be in the session
   # in order to pass any filters (e.g. authentication) defined in
   # OrdersController. Be sure to keep this updated too.
-  let(:valid_session) { {} }
+  let(:valid_session) {
+    {
+    }
+  }
+
+  before(:each) do
+    request.headers['HTTP_AUTHORIZATION'] = "Bearer #{ENV['HTTP_AUTH_TOKENS']}"
+  end
 
   describe "GET #index" do
     it "returns a success response" do
@@ -72,12 +79,12 @@ RSpec.describe OrdersController, type: :controller do
 
     context "with a frequency list" do
       random_track_num = random_tracking_number
-      let(:shippo_response_object) { object_double('shippo response', code: 200, 
-        status: 'SUCCESS', success?: true, tracking_number: random_track_num, 
+      let(:shippo_response_object) { object_double('shippo response', code: 200,
+        status: 'SUCCESS', success?: true, tracking_number: random_track_num,
         label_url: 'https://shippo-delivery-east.s3.amazonaws.com/some_international_label.pdf')
       }
       let(:s3_label_object) { object_double('s3_label_object', code: 200, body: 'somelabelpdf') }
-      
+
       before(:each) do
         expect(HTTParty).to receive(:get).with(shippo_response_object.label_url).and_return(s3_label_object).exactly(4)
         expect(Shippo::Transaction).to receive(:create).and_return(shippo_response_object).exactly(4)
@@ -87,7 +94,7 @@ RSpec.describe OrdersController, type: :controller do
       end
 
       it "creates a shipment for each set of 3 radios, tracking numbers, and label data" do
-       frequencies = { 
+       frequencies = {
           'US': ['98.3', '79.5', '79.5', '98.3'],
           'FR': ['79.5', '98.3'],
           'AZ': ['79.5', '79.5', '105.6']
@@ -122,7 +129,7 @@ RSpec.describe OrdersController, type: :controller do
 
         expect(radios.select{ |r| r.frequency == '79.5' }.count).to be 6
         expect(radios.select{ |r| r.frequency == '105.6' }.count).to be 1
-        radios.each do |r| 
+        radios.each do |r|
           expect(r.boxed).to be false
         end
 
