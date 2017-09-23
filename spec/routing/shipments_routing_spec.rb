@@ -19,6 +19,10 @@ RSpec.describe ShipmentsController, type: :routing do
       expect(:get => "/next_shipment_to_print").to route_to("shipments#next_label_created_shipment")
     end
 
+    it "routes to #shipment_label_created_count" do
+      expect(:get => "/shipment_label_created_count").to route_to("shipments#shipment_label_created_count")
+    end
+
     it "routes to #next_unboxed_radio" do
       expect(:get => "/shipments/1/next_radio").to route_to("shipments#next_unboxed_radio", :id => "1")
     end

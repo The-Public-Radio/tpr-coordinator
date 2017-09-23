@@ -82,6 +82,17 @@ resource "Shipments" do
     end
   end
 
+  get "/shipment_label_created_count" do
+    example "Look the next shipments with an unprinted label." do
+      shipments = create_list(:label_created, 2)
+
+      do_request
+      expect(status).to eq 200
+      data = JSON.parse(response_body)['data']
+      expect(data['shipment_count']).to be 2
+    end
+  end
+
   put "/shipments/:id" do
     let(:tracking_number) { created_shipment.tracking_number }
     let(:shipment_status) { 'label_created' }
