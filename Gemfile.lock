@@ -63,8 +63,6 @@ GEM
     crack (0.4.3)
       safe_yaml (~> 1.0.0)
     database_cleaner (1.6.1)
-    ddtrace (0.8.2)
-      msgpack
     diff-lcs (1.3)
     docile (1.1.5)
     domain_name (0.5.20170404)
@@ -116,7 +114,6 @@ GEM
     mime-types-data (3.2016.0521)
     mini_portile2 (2.2.0)
     minitest (5.10.3)
-    msgpack (1.1.0)
     multi_xml (0.6.0)
     mustache (1.0.5)
     netrc (0.11.0)
@@ -253,7 +250,6 @@ DEPENDENCIES
   bigdecimal
   bugsnag
   database_cleaner
-  ddtrace
   factory_girl_rails (~> 4.0)
   faker
   httparty
