@@ -33,7 +33,6 @@ gem "apitome"
 # Monitoring
 # gem 'skylight'
 gem 'bugsnag'
-gem 'ddtrace'
 
 # Shipstation API gem
 gem 'shippo', '~> 3.0', '>= 3.0.1'

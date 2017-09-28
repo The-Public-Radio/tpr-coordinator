@@ -124,6 +124,8 @@ resource "Radios" do
       expect(next_unboxed_radio.serial_number).to eq assembled_radio.serial_number
       expect(next_unboxed_radio.operator).to eq assembled_radio.operator
       expect(next_unboxed_radio.assembly_date).to eq assembled_radio.assembly_date
+      expect(next_unboxed_radio.quality_control_status).to eq assembled_radio.quality_control_status
+      expect(next_unboxed_radio.firmware_version).to eq assembled_radio.firmware_version
       expect(next_unboxed_radio.boxed).to be true
       expect{ assembled_radio.reload }.to raise_error(ActiveRecord::RecordNotFound)
     end

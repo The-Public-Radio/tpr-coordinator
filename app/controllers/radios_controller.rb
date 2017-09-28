@@ -80,7 +80,7 @@ class RadiosController < ApplicationController
     updated_attributes = {}
     assembled_radio.attributes.each do |k,v|
       next if v.nil?
-      next unless %w(operator assembly_date pcb_version serial_number).include?(k)
+      next unless %w(operator assembly_date pcb_version serial_number firmware_version quality_control_status).include?(k)
       Rails.logger.debug("OH NO RICK, THERE A CHANGE: #{k}")
       updated_attributes[k] = v
     end
