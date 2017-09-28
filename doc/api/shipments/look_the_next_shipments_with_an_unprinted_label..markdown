@@ -2,7 +2,7 @@
 
 ## Look the next shipments with an unprinted label.
 
-### GET /shipment_label_created_count
+### GET /next_shipment_to_print
 ### Request
 
 #### Headers
@@ -11,7 +11,7 @@
 
 #### Route
 
-<pre>GET /shipment_label_created_count</pre>
+<pre>GET /next_shipment_to_print</pre>
 
 ### Response
 
@@ -27,8 +27,14 @@
 
 <pre>{
   "data": {
-    "shipment_count": 2
+    "id": 143,
+    "tracking_number": "93748896910904960078111017",
+    "ship_date": null,
+    "shipment_status": "label_created",
+    "order_id": 135,
+    "label_data": "label_data_fixture"
   },
-  "error": {
-  }
+  "errors": [
+
+  ]
 }</pre>

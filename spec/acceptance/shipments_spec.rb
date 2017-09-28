@@ -83,7 +83,7 @@ resource "Shipments" do
   end
 
   get "/shipment_label_created_count" do
-    example "Look the next shipments with an unprinted label." do
+    example "Look the number of shipments with an unprinted label." do
       shipments = create_list(:label_created, 2)
 
       do_request

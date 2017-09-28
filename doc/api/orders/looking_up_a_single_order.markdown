@@ -11,7 +11,7 @@
 
 #### Route
 
-<pre>GET /orders/2401</pre>
+<pre>GET /orders/117</pre>
 
 ### Response
 
@@ -26,10 +26,10 @@
 #### Body
 
 <pre>{
-  "id": 2401,
-  "name": "Tre Wisozk",
+  "id": 117,
+  "name": "Trevor Maggio",
   "order_source": "kickstarter",
-  "email": "TreWisozk@gmail.com",
+  "email": "TrevorMaggio@gmail.com",
   "street_address_1": "123 West 9th St.",
   "street_address_2": "Apt 4",
   "city": "Brooklyn",

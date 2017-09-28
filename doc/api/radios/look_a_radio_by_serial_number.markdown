@@ -18,11 +18,11 @@
 
 #### Route
 
-<pre>GET /radios?serial_number=TPRv2.0_1_21434</pre>
+<pre>GET /radios?serial_number=TPRv2.0_1_83316</pre>
 
 #### Query Parameters
 
-<pre>serial_number: TPRv2.0_1_21434</pre>
+<pre>serial_number: TPRv2.0_1_83316</pre>
 
 ### Response
 
@@ -38,13 +38,13 @@
 
 <pre>{
   "data": {
-    "id": 2338,
-    "frequency": "94.4",
+    "id": 122,
+    "frequency": "89.4",
     "pcb_version": "PR9026",
-    "serial_number": "TPRv2.0_1_21434",
-    "assembly_date": "2017-09-22 22:03:35 -0400",
-    "operator": "Reuben Jast",
-    "shipment_id": 2329,
+    "serial_number": "TPRv2.0_1_83316",
+    "assembly_date": "2017-09-27 21:19:55 -0400",
+    "operator": "Kennith Strosin",
+    "shipment_id": 129,
     "boxed": true,
     "country_code": "US",
     "firmware_version": "firmware_v1",

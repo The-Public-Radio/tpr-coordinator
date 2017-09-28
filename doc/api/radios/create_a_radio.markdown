@@ -26,7 +26,7 @@
 
 #### Body
 
-<pre>{"pcb_version":"1","serial_number":"TPRv2.0_1_77231","operator":"Darian Konopelski PhD","country_code":"US"}</pre>
+<pre>{"pcb_version":"1","serial_number":"TPRv2.0_1_50544","operator":"Anna Herzog","country_code":"US"}</pre>
 
 ### Response
 
@@ -42,12 +42,12 @@
 
 <pre>{
   "data": {
-    "id": 2342,
+    "id": 126,
     "frequency": null,
     "pcb_version": "1",
-    "serial_number": "TPRv2.0_1_77231",
-    "assembly_date": "2017-09-22",
-    "operator": "Darian Konopelski PhD",
+    "serial_number": "TPRv2.0_1_50544",
+    "assembly_date": "2017-09-27",
+    "operator": "Anna Herzog",
     "shipment_id": null,
     "boxed": false,
     "country_code": "US",
