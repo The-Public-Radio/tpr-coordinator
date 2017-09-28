@@ -25,6 +25,8 @@ class ApplicationController < ActionController::API
   end
 
   def authorize
+    api_response([], 400, ['No authorization header provided']) if request.headers['HTTP_AUTHORIZATION'].nil?
+
     auth_header = request.headers['HTTP_AUTHORIZATION'].split(' ')
 
     unless auth_header[0].eql?('Bearer') && allowed_auth_tokens.include?(auth_header[1])
