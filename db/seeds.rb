@@ -294,7 +294,7 @@ radios_params = [
 		pcb_version: 'PR9026',
 		serial_number: random_tpr_serial_number,
 		assembly_date: Time.now,
-		operator: 'Person McPersonson'
+		operator: 'Person McPersonson',
     quality_control_status: 'failed_mech',
 	},
 	{
