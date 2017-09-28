@@ -33,4 +33,18 @@ RSpec.describe Radio, type: :model do
     model.frequency = '75.2'
     expect(model).to_not be_valid
   end
+
+  it 'valid with quality_control_status of passed, failed_mech, or failed_software' do
+    model.quality_control_status = 'passed'
+    expect(model).to be_valid
+
+    model.quality_control_status = 'failed_software'
+    expect(model).to be_valid
+
+    model.quality_control_status = 'failed_mech'
+    expect(model).to be_valid
+
+    model.quality_control_status = 'failed'
+    expect(model).to_not be_valid
+  end
 end

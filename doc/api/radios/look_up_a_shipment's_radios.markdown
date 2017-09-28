@@ -11,7 +11,7 @@
 
 #### Route
 
-<pre>GET /shipments/706/radios</pre>
+<pre>GET /shipments/2328/radios</pre>
 
 ### Response
 
@@ -28,37 +28,43 @@
 <pre>{
   "data": [
     {
-      "id": 655,
-      "frequency": "85.2",
-      "pcb_version": "1",
-      "serial_number": "TPRv2.0_1_38286",
-      "assembly_date": "2017-09-03 12:41:55 -0400",
-      "operator": "Elizabeth Perez",
-      "shipment_id": 706,
+      "id": 2335,
+      "frequency": "94.4",
+      "pcb_version": "PR9026",
+      "serial_number": "TPRv2.0_1_9478",
+      "assembly_date": "2017-09-22 22:03:35 -0400",
+      "operator": "Reuben Jast",
+      "shipment_id": 2328,
       "boxed": true,
-      "country_code": "US"
+      "country_code": "US",
+      "firmware_version": "firmware_v1",
+      "quality_control_status": "passed"
     },
     {
-      "id": 656,
-      "frequency": "94.3",
+      "id": 2336,
+      "frequency": "95.3",
       "pcb_version": null,
       "serial_number": null,
       "assembly_date": null,
       "operator": null,
-      "shipment_id": 706,
+      "shipment_id": 2328,
       "boxed": false,
-      "country_code": "US"
+      "country_code": "US",
+      "firmware_version": null,
+      "quality_control_status": null
     },
     {
-      "id": 657,
-      "frequency": "94.3",
+      "id": 2337,
+      "frequency": "95.3",
       "pcb_version": null,
       "serial_number": null,
       "assembly_date": null,
       "operator": null,
-      "shipment_id": 706,
+      "shipment_id": 2328,
       "boxed": false,
-      "country_code": "US"
+      "country_code": "US",
+      "firmware_version": null,
+      "quality_control_status": null
     }
   ],
   "errors": [

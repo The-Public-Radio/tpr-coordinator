@@ -9,8 +9,7 @@
 | Name | Description | Required | Scope |
 |------|-------------|----------|-------|
 | frequencies | String array, frequencies requested. Each entity in the array corresponds to a single radio | true |  |
-| first_name | String, first name for the order | true |  |
-| last_name | String, last name for the order | true |  |
+| name | String, first name for the order | true |  |
 | address | String, address where the order should be shipped | true |  |
 | order_source | String, where the order came from. Options: kickstarter, squarespace, other | false |  |
 
@@ -26,7 +25,7 @@
 
 #### Body
 
-<pre>{"order_source":"other","first_name":"Person","last_name":"McPersonson","address":"345 West Way, Brooklyn, NY, 11221","frequencies":{"us":["98.3","79.5","79.5","98.3","79.5","79.5","98.3","79.5","79.5","105.6"]},"email":"person.mcpersonson@gmail.com"}</pre>
+<pre>{"order_source":"other","name":"Winnifred Ferry DVM","address":"345 West Way, Brooklyn, NY, 11221","frequencies":{"us":["98.3","79.5","79.5","98.3","79.5","79.5","98.3","79.5","79.5","105.6"]},"email":"person.mcpersonson@gmail.com"}</pre>
 
 ### Response
 
@@ -41,9 +40,8 @@
 #### Body
 
 <pre>{
-  "id": 660,
-  "first_name": "Person",
-  "last_name": "McPersonson",
+  "id": 2402,
+  "name": "Winnifred Ferry DVM",
   "order_source": "other",
   "email": "person.mcpersonson@gmail.com",
   "street_address_1": null,
@@ -51,6 +49,6 @@
   "city": null,
   "state": null,
   "postal_code": null,
-  "country": null,
+  "country": "US",
   "phone": null
 }</pre>

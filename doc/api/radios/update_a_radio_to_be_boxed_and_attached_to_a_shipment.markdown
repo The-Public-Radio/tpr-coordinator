@@ -19,11 +19,11 @@
 
 #### Route
 
-<pre>PUT /shipments/708/radios</pre>
+<pre>PUT /shipments/2331/radios</pre>
 
 #### Body
 
-<pre>{"boxed":true,"serial_number":"TPRv2.0_1_40172"}</pre>
+<pre>{"boxed":true,"serial_number":"TPRv2.0_1_8227"}</pre>
 
 ### Response
 
@@ -39,15 +39,17 @@
 
 <pre>{
   "data": {
-    "id": 663,
-    "frequency": "94.3",
-    "pcb_version": "1",
-    "serial_number": "TPRv2.0_1_40172",
-    "assembly_date": "2017-09-03 12:41:55 -0400",
-    "operator": "Elizabeth Perez",
-    "shipment_id": 708,
+    "id": 2344,
+    "frequency": "95.3",
+    "pcb_version": "PR9026",
+    "serial_number": "TPRv2.0_1_8227",
+    "assembly_date": "2017-09-22 22:03:35 -0400",
+    "operator": "Reuben Jast",
+    "shipment_id": 2331,
     "boxed": true,
-    "country_code": "US"
+    "country_code": "US",
+    "firmware_version": null,
+    "quality_control_status": null
   },
   "errors": [
 
