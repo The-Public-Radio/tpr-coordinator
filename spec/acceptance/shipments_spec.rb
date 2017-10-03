@@ -115,6 +115,12 @@ resource "Shipments" do
     end
   end
 
+
+  get "/shipments?order_id=1" do
+    # "curl api.thepublicrad.io/shipments?order_id=4"
+    skip('write this test! It should fail')
+  end
+
   get "/shipments/:id/next_radio" do
     let(:id) { label_created_shipment.id }
 

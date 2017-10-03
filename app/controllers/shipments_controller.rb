@@ -185,7 +185,7 @@ class ShipmentsController < ApplicationController
     def address_from
       {
         :name => 'Centerline Labs c/o Accelerated Assemblies',
-        :company => 'Centerline Labs',
+        :company => '',
         :street1 => '725 Nicholas Blvd',
         :street2 => '',
         :city => 'Elk Grove Village',
