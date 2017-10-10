@@ -1,8 +1,8 @@
 # Shipments API
 
-## All shipments
+## Find a shipments that are attached to an order
 
-### GET /shipments
+### GET /shipments?order_id=1
 ### Request
 
 #### Headers
@@ -11,7 +11,11 @@
 
 #### Route
 
-<pre>GET /shipments</pre>
+<pre>GET /shipments?order_id=1</pre>
+
+#### Query Parameters
+
+<pre>order_id: 1</pre>
 
 ### Response
 
@@ -28,28 +32,20 @@
 <pre>{
   "data": [
     {
-      "id": 2106,
-      "tracking_number": "93748896910904960072494970",
-      "ship_date": "2017-07-28",
-      "shipment_status": "shipped",
-      "order_id": 2131,
-      "label_data": "label_data_fixture"
-    },
-    {
-      "id": 2107,
+      "id": 2121,
       "tracking_number": "93748896910904960072494970",
       "ship_date": null,
-      "shipment_status": "created",
-      "order_id": 2132,
+      "shipment_status": null,
+      "order_id": 2146,
       "label_data": null
     },
     {
-      "id": 2108,
+      "id": 2122,
       "tracking_number": "93748896910904960072494970",
       "ship_date": null,
-      "shipment_status": "label_created",
-      "order_id": 2133,
-      "label_data": "label_data_fixture"
+      "shipment_status": null,
+      "order_id": 2146,
+      "label_data": null
     }
   ],
   "errors": [

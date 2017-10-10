@@ -99,7 +99,7 @@ resource "Shipments" do
     let(:before_shipment_status) { created_shipment.shipment_status }
 
     parameter :tracking_number, 'String, shipment tracking number', required: false
-    parameter :shipment_status, 'String, shipment tracking number', required: true
+    parameter :shipment_status, 'String, shipment status', required: true
 
     example "Update a shipment's status" do
 
@@ -117,8 +117,16 @@ resource "Shipments" do
 
 
   get "/shipments?order_id=1" do
-    # "curl api.thepublicrad.io/shipments?order_id=4"
-    skip('write this test! It should fail')
+    example "Find a shipments that are attached to an order" do
+      order = create(:squarespace)
+      do_request
+      expect(status).to eq 200
+      data = JSON.parse(response_body)['data']
+      expect(data.count).to eq(2)
+      data.each do |shipment|
+        expect(shipment['order_id']).to eq(order.id)
+      end
+    end
   end
 
   get "/shipments/:id/next_radio" do

@@ -19,6 +19,7 @@
 ## Shipments
 
 * [All shipments](shipments/all_shipments.markdown)
+* [Find a shipments that are attached to an order](shipments/find_a_shipments_that_are_attached_to_an_order.markdown)
 * [Look the next shipments with an unprinted label.](shipments/look_the_next_shipments_with_an_unprinted_label..markdown)
 * [Look the number of shipments with an unprinted label.](shipments/look_the_number_of_shipments_with_an_unprinted_label..markdown)
 * [Look up all shipments that have unprinted labels](shipments/look_up_all_shipments_that_have_unprinted_labels.markdown)

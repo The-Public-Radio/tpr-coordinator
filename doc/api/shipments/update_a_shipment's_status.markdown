@@ -9,7 +9,7 @@
 | Name | Description | Required | Scope |
 |------|-------------|----------|-------|
 | tracking_number | String, shipment tracking number | false |  |
-| shipment_status | String, shipment tracking number | true |  |
+| shipment_status | String, shipment status | true |  |
 
 ### Request
 
@@ -23,7 +23,7 @@
 
 #### Body
 
-<pre>{"tracking_number":"93748896910904960078111017","shipment_status":"label_created"}</pre>
+<pre>{"tracking_number":"93748896910904960072494970","shipment_status":"label_created"}</pre>
 
 ### Response
 
@@ -39,11 +39,11 @@
 
 <pre>{
   "data": {
-    "id": 147,
-    "tracking_number": "93748896910904960078111017",
+    "id": 2120,
+    "tracking_number": "93748896910904960072494970",
     "ship_date": null,
     "shipment_status": "label_created",
-    "order_id": 139,
+    "order_id": 2145,
     "label_data": null
   },
   "errors": [

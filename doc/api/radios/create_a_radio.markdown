@@ -26,7 +26,7 @@
 
 #### Body
 
-<pre>{"pcb_version":"1","serial_number":"TPRv2.0_1_50544","operator":"Anna Herzog","country_code":"US"}</pre>
+<pre>{"pcb_version":"1","serial_number":"TPRv2.0_1_81667","operator":"Candida Mraz","country_code":"US"}</pre>
 
 ### Response
 
@@ -42,12 +42,12 @@
 
 <pre>{
   "data": {
-    "id": 126,
+    "id": 2156,
     "frequency": null,
     "pcb_version": "1",
-    "serial_number": "TPRv2.0_1_50544",
-    "assembly_date": "2017-09-27",
-    "operator": "Anna Herzog",
+    "serial_number": "TPRv2.0_1_81667",
+    "assembly_date": "2017-10-09",
+    "operator": "Candida Mraz",
     "shipment_id": null,
     "boxed": false,
     "country_code": "US",
