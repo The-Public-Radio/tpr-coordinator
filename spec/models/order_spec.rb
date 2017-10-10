@@ -22,6 +22,11 @@ RSpec.describe Order, type: :model do
     expect(model).to be_valid
   end
 
+  it 'is valid when the order source is kickstarter' do
+    model.order_source = 'WBEZ'
+    expect(model).to be_valid
+  end
+
 	it 'is not valid when the order source is not squarespace or kickstarter' do
     model.order_source = 'foo'
     expect(model).to_not be_valid
