@@ -27,11 +27,11 @@
 
 <pre>{
   "data": {
-    "id": 2116,
-    "tracking_number": "93748896910904960072494970",
+    "id": 2583,
+    "tracking_number": "93748896910904960041061097",
     "ship_date": null,
     "shipment_status": "label_created",
-    "order_id": 2141,
+    "order_id": 2568,
     "label_data": "label_data_fixture"
   },
   "errors": [

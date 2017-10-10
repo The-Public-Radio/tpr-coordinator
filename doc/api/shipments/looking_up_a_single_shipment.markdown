@@ -11,7 +11,7 @@
 
 #### Route
 
-<pre>GET /shipments/2105</pre>
+<pre>GET /shipments/2572</pre>
 
 ### Response
 
@@ -27,11 +27,11 @@
 
 <pre>{
   "data": {
-    "id": 2105,
-    "tracking_number": "93748896910904960072494970",
+    "id": 2572,
+    "tracking_number": "93748896910904960041061097",
     "ship_date": "2017-07-28",
     "shipment_status": "shipped",
-    "order_id": 2130,
+    "order_id": 2557,
     "label_data": "label_data_fixture"
   },
   "errors": [

@@ -11,7 +11,7 @@
 
 #### Route
 
-<pre>GET /orders/2123</pre>
+<pre>GET /orders/2549</pre>
 
 ### Response
 
@@ -26,10 +26,10 @@
 #### Body
 
 <pre>{
-  "id": 2123,
-  "name": "Jalyn Hintz",
+  "id": 2549,
+  "name": "Chelsea Stehr",
   "order_source": "kickstarter",
-  "email": "JalynHintz@gmail.com",
+  "email": "ChelseaStehr@gmail.com",
   "street_address_1": "123 West 9th St.",
   "street_address_2": "Apt 4",
   "city": "Brooklyn",

@@ -1,8 +1,15 @@
 # Orders API
 
-## All orders
+## Lookup orders with a particular order_source
 
 ### GET /orders
+
+### Parameters
+
+| Name | Description | Required | Scope |
+|------|-------------|----------|-------|
+| order_source | String, the source for the order; valid values: kickstarter, squarespace, WBEZ, other | true |  |
+
 ### Request
 
 #### Headers
@@ -11,7 +18,11 @@
 
 #### Route
 
-<pre>GET /orders</pre>
+<pre>GET /orders?order_source=squarespace</pre>
+
+#### Query Parameters
+
+<pre>order_source: squarespace</pre>
 
 ### Response
 
@@ -28,20 +39,7 @@
 <pre>{
   "data": [
     {
-      "id": 2547,
-      "name": "Chelsea Stehr",
-      "order_source": "kickstarter",
-      "email": "ChelseaStehr@gmail.com",
-      "street_address_1": "123 West 9th St.",
-      "street_address_2": "Apt 4",
-      "city": "Brooklyn",
-      "state": "NY",
-      "postal_code": "11221",
-      "country": "US",
-      "phone": "123-321-1231"
-    },
-    {
-      "id": 2548,
+      "id": 2550,
       "name": "Chelsea Stehr",
       "order_source": "squarespace",
       "email": "ChelseaStehr@gmail.com",
