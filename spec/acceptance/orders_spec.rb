@@ -33,6 +33,24 @@ resource "Orders" do
     end
   end
 
+  get "/orders" do
+    parameter :order_source, 'String, the source for the order; valid values: kickstarter, squarespace, WBEZ, other', required: true
+
+    let(:order_source) { 'squarespace' }
+    example "Lookup orders with a particular order_source" do
+      order = create(:squarespace)
+
+      do_request
+      expect(status).to eq 200
+      data = JSON.parse(response_body)['data']
+      expect(data.length).to be 1
+      data.each do |returned_order|
+        expect(returned_order['order_source']).to eq(order.order_source)
+        expect(returned_order['id']).to eq(order.id)
+      end
+    end
+  end
+
   post '/orders' do
     parameter :frequencies, 'String array, frequencies requested. Each entity in the array corresponds to a single radio', required: true
     parameter :name, 'String, first name for the order', required: true

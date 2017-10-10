@@ -115,7 +115,6 @@ resource "Shipments" do
     end
   end
 
-
   get "/shipments?order_id=1" do
     example "Find a shipments that are attached to an order" do
       order = create(:squarespace)
