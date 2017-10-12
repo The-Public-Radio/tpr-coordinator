@@ -291,6 +291,8 @@ class ShipmentsController < ApplicationController
         elsif !params[:id].nil?
           @shipment = Shipment.find(params[:id])
           Rails.logger.debug(@shipment.attributes)
+        elsif !params[:order_id].nil?
+          @shipment = Shipment.where(order_id: params[:order_id])
         else
           @shipment = Shipment.all
         end

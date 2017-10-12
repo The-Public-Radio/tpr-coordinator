@@ -10,6 +10,7 @@ resource "Shipments" do
   let(:created_shipment) { create :created }
   let(:label_created_shipment) { create :label_created }
   let(:shipped_shipment) { create :shipped }
+  let(:order) { create(:squarespace) }
 
   get "/shipments/:id" do
     let(:id) { shipped_shipment.id }
@@ -115,9 +116,10 @@ resource "Shipments" do
     end
   end
 
-  get "/shipments?order_id=1" do
+  get "/shipments?order_id=:order_id" do
+    let(:order_id) { order.id }
     example "Find a shipments that are attached to an order" do
-      order = create(:squarespace)
+      create(:kickstarter)
       do_request
       expect(status).to eq 200
       data = JSON.parse(response_body)['data']
