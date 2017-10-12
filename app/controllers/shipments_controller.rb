@@ -84,7 +84,7 @@ class ShipmentsController < ApplicationController
   def shipping_label_data(shipment = @shipment)
      label_url = shipping_label_creation_response(shipment).label_url
      shipping_label = HTTParty.get(label_url).body
-     @shipping_label_data ||= Base64.strict_encode64(shipping_label)
+     @shipping_label_data = Base64.strict_encode64(shipping_label)
   end
 
   def shipping_label_creation_response(shipment)
@@ -284,15 +284,15 @@ class ShipmentsController < ApplicationController
       begin
         if !params[:tracking_number].nil?
           tracking_number = params[:tracking_number].length == 34 ? params[:tracking_number][8..-1] : params[:tracking_number]
-          @shipment ||= Shipment.find_by_tracking_number tracking_number
+          @shipment = Shipment.find_by_tracking_number tracking_number
           Rails.logger.debug(@shipment.attributes)
         elsif !params[:shipment_status].nil?
-          @shipment ||= Shipment.where(shipment_status: params[:shipment_status])
+          @shipment = Shipment.where(shipment_status: params[:shipment_status])
         elsif !params[:id].nil?
-          @shipment ||= Shipment.find(params[:id])
+          @shipment = Shipment.find(params[:id])
           Rails.logger.debug(@shipment.attributes)
         else
-          @shipment ||= Shipment.all
+          @shipment = Shipment.all
         end
       rescue NoMethodError => e
         api_response([], :not_found, ["Error looking up shipment #{params[:tracking_number]}"])
