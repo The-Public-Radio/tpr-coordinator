@@ -3,7 +3,11 @@ class OrdersController < ApplicationController
 
   # GET /orders
   def index
-    @orders = Order.all
+    if !params[:order_source].nil?
+      @orders = Order.where(order_source: params['order_source'])
+    else
+      @orders = Order.all
+    end
     api_response(@orders)
   end
 

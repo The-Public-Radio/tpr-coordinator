@@ -39,6 +39,7 @@ resource "Orders" do
     let(:order_source) { 'squarespace' }
     example "Lookup orders with a particular order_source" do
       order = create(:squarespace)
+      create(:kickstarter)
 
       do_request
       expect(status).to eq 200
