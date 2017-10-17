@@ -17,13 +17,18 @@ RSpec.describe Order, type: :model do
     expect(model).to be_valid
   end
 
-	it 'is valid when the order source is kickstarter' do
+  it 'is valid when the order source is kickstarter' do
     model.order_source = 'kickstarter'
     expect(model).to be_valid
   end
 
-  it 'is valid when the order source is kickstarter' do
+  it 'is valid when the order source is wbez' do
     model.order_source = 'WBEZ'
+    expect(model).to be_valid
+  end
+
+  it 'is valid when the order source is warranty' do
+    model.order_source = 'warranty'
     expect(model).to be_valid
   end
 
