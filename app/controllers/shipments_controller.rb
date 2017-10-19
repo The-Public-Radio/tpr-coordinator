@@ -177,7 +177,7 @@ class ShipmentsController < ApplicationController
         :state => @order.state,
         :zip => @order.postal_code,
         :country => @order.country,
-        :phone => @order.phone,
+        :phone => @order.phone.nil? ? '' : @order.phone,
         :email => @order.email
       }
     end
