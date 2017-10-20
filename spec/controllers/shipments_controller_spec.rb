@@ -108,13 +108,13 @@ RSpec.describe ShipmentsController, type: :controller do
         let(:create_label_params)  { {
           shipment: {
             address_from: {
-              :name => 'Centerline Labs c/o Accelerated Assemblies',
+              :name => 'Centerline Labs',
               :company => '',
-              :street1 => '725 Nicholas Blvd',
-              :street2 => '',
-              :city => 'Elk Grove Village',
-              :state => 'IL',
-              :zip => '60007',
+              :street1 => '814 Lincoln Pl',
+              :street2 => '#2',
+              :city => 'Brooklyn',
+              :state => 'NY',
+              :zip => '11216',
               :country => 'US',
               :phone => '123-456-7890',
               :email => 'info@thepublicrad.io'
