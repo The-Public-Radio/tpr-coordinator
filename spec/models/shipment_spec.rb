@@ -51,9 +51,6 @@ RSpec.describe Shipment, type: :model do
       model.shipment_status = 'failure'
       expect(model).to be_valid
 
-      model.shipment_status = 'unknown'
-      expect(model).to be_valid
-
       model.shipment_status = 'done'
       expect(model).to_not be_valid
     end
