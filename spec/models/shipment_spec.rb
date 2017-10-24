@@ -23,7 +23,7 @@ RSpec.describe Shipment, type: :model do
   end
 
   context 'a shipment has a status that' do
-    it 'is valid when boxed, shipped, label_created, label_printed or created' do
+    it 'has a valid shipment_status' do
       model.shipment_status = 'created'
       expect(model).to be_valid
 
@@ -37,6 +37,21 @@ RSpec.describe Shipment, type: :model do
       expect(model).to be_valid
 
       model.shipment_status = 'boxed'
+      expect(model).to be_valid
+
+      model.shipment_status = 'transit'
+      expect(model).to be_valid
+
+      model.shipment_status = 'delivered'
+      expect(model).to be_valid
+
+      model.shipment_status = 'returned'
+      expect(model).to be_valid
+
+      model.shipment_status = 'failure'
+      expect(model).to be_valid
+
+      model.shipment_status = 'unknown'
       expect(model).to be_valid
 
       model.shipment_status = 'done'
