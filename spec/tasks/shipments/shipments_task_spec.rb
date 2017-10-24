@@ -4,39 +4,29 @@ describe "rake shipments:check_shipment_status", type: :task do
     expect(task.prerequisites).to include "environment"
   end
 
-  it "runs gracefully with no subscribers" do
-    expect { task.execute }.not_to raise_error
-  end
-
-  it "logs to stdout" do
-    expect { task.execute }.to output("Checking package shipment status for 5 shipments").to_stdout
-  end
-
   it "calls the shippo API to check the tracking status of the shipment" do
-    shipments = create_list(:kickstarter)
+   status_map = {
+      'UNKNOWN' => 'unknown',
+      'DELIVERED' => 'delivered',
+      'TRANSIT' => 'transit',
+      'FAILURE' => 'failure',
+      'RETURNED' => 'returned'
+    }
+    shippo_response = JSON.parse('spec/fixtures/shippo_track_response.json')
 
-    shipments.each do |shipment|
+    status_map.each do |k,v|
+      # create the shipments we need to test:
+      shipment = create(:boxed)
+      # These shipments should not be checked
+      create(:label_printed)
+      create(:shipped)
+      # Set up tracking number and tracking status
       tracking_number = shipment.tracking_number 
-
-      expect(Shippo::Track).to receive(:get).with(tracking_number, 'usps').and_return(shippo_response_object).once
-
-    task.execute
-
-    expect(subscriber).to have_received_invoice
-  end
-
-  it "only checks shipments that are of shipment_status: boxed" do
-
-    task.execute
-
-    expect(dead_mans_snitch_request).to have_been_requested
-  end
-
-  matcher :have_received_invoice do
-    match_unless_raises do |subscriber|
-      expect(last_email_sent).to be_delivered_to subscriber.email
-      expect(last_email_sent).to have_subject 'Your invoice'
+      shippo_response['tracking_status']['status'] = k
+      # Mock the shippo call
+      expect(Shippo::Track).to receive(:get).with(tracking_number, 'usps').and_return(shippo_response).once
+      # Check the change
+      expect{ task.execute }.to change{ shipment.shipment_status }.from(k).to(v)
     end
   end
-
 end
