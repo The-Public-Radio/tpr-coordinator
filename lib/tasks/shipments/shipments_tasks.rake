@@ -11,6 +11,11 @@ namespace :shipments do
   	boxed_shipments.each do |shipment|
   		Rails.logger.info("Checking tracking status for shipment #{shipment.id} ")
 			# Check tracking status
+			if shipment.tracking_number.nil?
+				Rails.logger.error("Tracking number is nil")
+				next
+			end
+			
 			shippo_response = Shippo::Track.get(shipment.tracking_number, 'usps')
 			if shippo_response['tracking_status'].nil?
 				Rails.logger.error("Tracking status is nil")
