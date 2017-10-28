@@ -70,16 +70,21 @@ resource "Shipments" do
   end
 
   get "/next_shipment_to_print" do
-    example "Look the next shipments with an unprinted label." do
-      shipments = create_list(:label_printed, 2)
-      shipments = create_list(:shipped, 2)
+    example "Look the next shipments with an unprinted label from order_source kickstarter, squarespace, or other" do
+      create_list(:label_printed, 2)
+      create_list(:shipped, 2)
       shipments = create_list(:label_created, 2)
+
+      # Set order to something not kickstarter, squarespace, other
+      order = shipments[0].order
+      order.order_source = 'WBEZ'
+      order.save
 
       do_request
       expect(status).to eq 200
       data = JSON.parse(response_body)['data']
-      expect(data['id']).to eq(shipments[0].id)
-      expect(data['label_data']).to eq(shipments[0].label_data)
+      expect(data['id']).to eq(shipments[1].id)
+      expect(data['label_data']).to eq(shipments[1].label_data)
     end
   end
 
