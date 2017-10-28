@@ -35,30 +35,26 @@ namespace :orders do
   end
 
   def parse_ucg_csv(csv)
+		# Headers are ?
   	
   end
 
 	def parse_generic_csv(csv)
+		# Headers are Name, Email, Address 1, Address 2, City, State, Postal Code, Country, Phone Number, Radio, Radio, Radio
+		
 		orders = []
 		csv.each do |order|
-
-			if !order['Shipping Name'].nil?
-				name = order['Shipping Name']
-			else
-				name = order['order Name']
-			end
-
 			order_params = {
-			  name: name,
+			  name: order['Name'],
 			  order_source: 'other',
 			  email: order['Email'],
-			  street_address_1: order['Shipping Address 1'],
-			  street_address_2: order['Shipping Address 2'],
-			  city: order['Shipping City'],
-			  state: order['Shipping State'],
-			  postal_code: order['Shipping Postal Code'],
-			  country: order['Shipping Country Code'],
-			  phone: order['Shipping Phone Number']
+			  street_address_1: order['Address 1'],
+			  street_address_2: order['Address 2'],
+			  city: order['City'],
+			  state: order['State'],
+			  postal_code: order['Postal Code'],
+			  country: order['Country'],
+			  phone: order['Phone Number'].nil? ? '' : order['Phone Number']
 			}	
 
 			frequencies = []
