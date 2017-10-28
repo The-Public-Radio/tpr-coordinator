@@ -92,7 +92,9 @@ class ShipmentsController < ApplicationController
   end
 
   def next_label_created_shipment
-    @shipment = Shipment.all.order(:created_at).select{ |s| s.shipment_status == 'label_created' }[0]
+    @shipment = Shipment.all.order(:created_at).select do |s| 
+      s.shipment_status == 'label_created' && %w{other kickstarter squarespace}.include?(s.order.order_source)
+    end[0]
     api_response(@shipment)
   end
 
