@@ -30,6 +30,7 @@ ENV['FROM_ADDRESS_PHONE_NUMBER'] = '123-456-7890'
 ENV['HTTP_AUTH_TOKENS'] = 'myaccesstoken'
 ENV['GMAIL_USERNAME'] = 'gmail_test_user'
 ENV['GMAIL_PASSWORD'] = 'gmail_test_password'
+ENV['ORDER_PROCESSING_EMAIL'] = 'orders@ucg.com'
 
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate
