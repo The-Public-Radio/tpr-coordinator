@@ -7,6 +7,7 @@ FactoryGirl.define do
 
     factory :created do
       shipment_status "created"
+      priority true
 
       after :create do |created|
         create(:radio_inital_order, :shipment => created, serial_number: random_tpr_serial_number)
