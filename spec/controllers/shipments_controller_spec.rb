@@ -163,12 +163,30 @@ RSpec.describe ShipmentsController, type: :controller do
 
         context 'and succeeds to' do
 
+          def execute_post
+            # Default is economy shipping
+            expect(Shippo::Transaction).to receive(:create).with(create_label_params).and_return(shippo_response_object).once
+            post :create, params: { order_id: order_id, shipment: valid_shipping_attributes }, session: valid_session
+          end
+
+          def execute_post_priority_shipping
+            create_label_params[:servicelevel_token] = 'usps_priority'
+            expect(Shippo::Transaction).to receive(:create).with(create_label_params).and_return(shippo_response_object).once
+            post :create, params: { order_id: order_id, shipment: valid_shipping_attributes }, session: valid_session
+          end
+
+          def execute_post_express_shipping
+            create_label_params[:servicelevel_token] = 'usps_priority_express '
+            expect(Shippo::Transaction).to receive(:create).with(create_label_params).and_return(shippo_response_object).once
+            post :create, params: { order_id: order_id, shipment: valid_shipping_attributes }, session: valid_session
+          end
+
           before(:each) do
             expect(HTTParty).to receive(:get).with(shippo_response_object.label_url).and_return(s3_label_object)
             expect(shippo_response_object).to receive(:[]).with('status').and_return('SUCCESS')
             expect(shippo_response_object).to receive(:tracking_number).and_return('9400111298370829688891')
             expect(shippo_response_object).to receive(:label_url).and_return('https://shippo-delivery-east.s3.amazonaws.com/some_label.pdf')
-          end
+          end 
 
           it 'create a tracking number and label from the Shippo API' do
             # Sample create label reponse object
@@ -176,8 +194,7 @@ RSpec.describe ShipmentsController, type: :controller do
 
             Timecop.freeze('2017-08-06')
 
-            expect(Shippo::Transaction).to receive(:create).with(create_label_params).and_return(shippo_response_object).once
-            post :create, params: { order_id: order_id, shipment: valid_shipping_attributes }, session: valid_session
+            execute_post
 
             body = JSON.parse(response.body)['data']
             expect(Shipment.find(body['id']).tracking_number).to eq(shippo_response_object.tracking_number)
@@ -238,21 +255,27 @@ RSpec.describe ShipmentsController, type: :controller do
           end
 
           it 'downloads a label from label_url from the Shippo api response and stores it as base64 encoded data' do
-
-            expect(Shippo::Transaction).to receive(:create).with(create_label_params).and_return(shippo_response_object)
-
-            post :create, params: { order_id: order_id, shipment: valid_shipping_attributes }, session: valid_session
+            execute_post
 
             expect(Shipment.last.label_data).to eq(Base64.strict_encode64(s3_label_object.body))
           end
 
           it 'stores the label_url from the shippo response' do
-
-            expect(Shippo::Transaction).to receive(:create).with(create_label_params).and_return(shippo_response_object)
-
-            post :create, params: { order_id: order_id, shipment: valid_shipping_attributes }, session: valid_session
+            execute_post
 
             expect(Shipment.last.label_url).to eq(shippo_response_object.label_url)
+          end
+
+          it 'creates express shipments' do
+            skip('until shipment_speed is created')
+            execute_post_express_shipping
+            expect(Shipment.last.shipment_speed).to eq('express')
+          end
+
+          it 'creates priority shipments' do
+            skip('until shipment_speed is created')
+            execute_post_priority_shipping
+            expect(Shipment.last.shipment_speed).to eq('priority')
           end
         end
 
