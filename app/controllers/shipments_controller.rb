@@ -41,6 +41,7 @@ class ShipmentsController < ApplicationController
       @shipment.tracking_number = shipping_tracking_number
       @shipment.shipment_status = 'label_created'
       @shipment.label_data = shipping_label_data
+      @shipment.label_url = shipping_label_url
     end
 
     if @shipment.save
@@ -79,6 +80,10 @@ class ShipmentsController < ApplicationController
 
   def shipping_tracking_number(shipment = @shipment)
     @shipping_tracking_number ||= shipping_label_creation_response(shipment).tracking_number
+  end
+
+  def shipping_label_url(shipment = @shipment)
+    @shipping_label_url ||= shipping_label_creation_response(shipment).label_url
   end
 
   def shipping_label_data(shipment = @shipment)
@@ -306,6 +311,6 @@ class ShipmentsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def shipment_params
-      params.require(:shipment).permit(:tracking_number, :ship_date, :shipment_status, :order_id, :frequencies, :priority)
+      params.require(:shipment).permit(:tracking_number, :ship_date, :shipment_status, :order_id, :frequencies, :priority, :label_url)
     end
 end
