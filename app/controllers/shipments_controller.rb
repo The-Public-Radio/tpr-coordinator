@@ -92,7 +92,7 @@ class ShipmentsController < ApplicationController
   end
 
   def next_label_created_shipment
-    @shipment = Shipment.all.order(:created_at).select do |s| 
+    @shipment = Shipment.all.order(:priority, :created_at).select do |s| 
       s.shipment_status == 'label_created' && %w{other kickstarter squarespace}.include?(s.order.order_source)
     end[0]
     api_response(@shipment)
@@ -306,6 +306,6 @@ class ShipmentsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def shipment_params
-      params.require(:shipment).permit(:tracking_number, :ship_date, :shipment_status, :order_id, :frequencies)
+      params.require(:shipment).permit(:tracking_number, :ship_date, :shipment_status, :order_id, :frequencies, :priority)
     end
 end
