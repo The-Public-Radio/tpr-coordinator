@@ -12,13 +12,11 @@ FactoryGirl.define do
         create(:radio_inital_order, :shipment => created, serial_number: random_tpr_serial_number)
       end
     end
-
-    factory :label_printed do
-      shipment_status "label_printed"
       
-      factory :label_created do
+    factory :label_created do
         shipment_status "label_created"
         label_data "label_data_fixture"
+        label_url "https://shippo-delivery-east.s3.amazonaws.com/some_label.pdf"
 
         after :create do |label_created|
           create(:radio_boxed, shipment: label_created, serial_number: random_tpr_serial_number)
@@ -26,13 +24,16 @@ FactoryGirl.define do
           create(:radio_inital_order, shipment: label_created)
         end
 
-        factory :priority do
-          priority true
-
-          after :create do |label_created|
-            create(:radio_boxed, shipment: label_created, serial_number: random_tpr_serial_number)
-          end
+      factory :label_printed do
+        shipment_status "label_printed"
       end
+
+      factory :priority do
+        priority true
+
+        after :create do |label_created|
+          create(:radio_boxed, shipment: label_created, serial_number: random_tpr_serial_number)
+        end
       end
     end
 
