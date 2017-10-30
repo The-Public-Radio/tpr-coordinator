@@ -75,7 +75,7 @@ resource "Shipments" do
       create_list(:label_printed, 2)
       create_list(:shipped, 2)
       shipments = create_list(:label_created, 2)
-      priority_shipment = create_list(:priority, 2)
+      priority_shipment = create_list(:priority_processing, 2)
 
       # Set order to something not kickstarter, squarespace, other
       order = shipments[0].order

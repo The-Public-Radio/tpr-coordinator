@@ -11,6 +11,18 @@ FactoryGirl.define do
       after :create do |created|
         create(:radio_inital_order, :shipment => created, serial_number: random_tpr_serial_number)
       end
+
+      factory :express do
+        shipment_priority "express"
+      end
+
+      factory :economy do
+        shipment_priority "economy"
+      end
+
+      factory :preferred do
+        shipment_priority "preferred"
+      end
     end
       
     factory :label_created do
@@ -28,8 +40,8 @@ FactoryGirl.define do
         shipment_status "label_printed"
       end
 
-      factory :priority do
-        priority true
+      factory :priority_processing do
+        priority_processing true
 
         after :create do |label_created|
           create(:radio_boxed, shipment: label_created, serial_number: random_tpr_serial_number)
