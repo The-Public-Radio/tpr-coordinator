@@ -70,10 +70,23 @@ class OrdersController < ApplicationController
         frequencies_by_shipment << frequencies
       end
 
+      # TODO: Don't use anti-paradigms
+
       frequencies_by_shipment.each do |frequencies|
         controller = ShipmentsController.new
-        shipment = Shipment.create(order_id: @order.id)
-        
+      #   controller.request = { 
+      #     parameters: {
+      #     'shipment' => {
+      #       frequencies: frequencies, 
+      #       order_id: @order.id
+      #       }
+      #     }
+      #   }
+       
+        # default to economy
+        shipment_priority = params['shipment_priority'].nil? ? 'economy' : params['shipment_priority']
+
+        shipment = Shipment.create(order_id: @order.id, shipment_priority: shipment_priority )
         shipment.save
         frequencies.each do |frequency|
           Radio.create(frequency: frequency, shipment_id: shipment.id, country_code: country_code, boxed: false).save

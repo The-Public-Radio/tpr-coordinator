@@ -35,6 +35,13 @@ class ShipmentsController < ApplicationController
       end
     end
 
+    # Check priority, default to economy
+    if params['shipment']['shipment_priority'].nil? || params['shipment']['shipment_priority'].try(:empty?)
+      @shipment.shipment_priority = 'economy'
+    else 
+      @shipment.shipment_priority = params['shipment']['shipment_priority']
+    end
+
     # Create tracking number and store base64 encoded label pdf data
     if @shipment.tracking_number.nil?
       Rails.logger.info('No tracking number provided for new shipment')
@@ -97,6 +104,7 @@ class ShipmentsController < ApplicationController
   end
 
   def next_label_created_shipment
+    # TODO: sort by shipment_priority as well
     @shipment = Shipment.all.order(:priority_processing, :created_at).select do |s| 
       s.shipment_status == 'label_created' && %w{other kickstarter squarespace}.include?(s.order.order_source)
     end[0]
@@ -311,6 +319,6 @@ class ShipmentsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def shipment_params
-      params.require(:shipment).permit(:tracking_number, :ship_date, :shipment_status, :order_id, :frequencies, :priority, :label_url)
+      params.require(:shipment).permit(:tracking_number, :ship_date, :shipment_status, :order_id, :frequencies, :priority, :label_url, :shipment_priority)
     end
 end

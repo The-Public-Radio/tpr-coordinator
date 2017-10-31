@@ -103,6 +103,15 @@ RSpec.describe ShipmentsController, type: :controller do
         expect(response.content_type).to eq('application/json')
       end
 
+      it "defaults to economy shipment priority" do
+        valid_attributes['shipment_priority'] = nil
+        post :create, params: { order_id: order_id, shipment: valid_attributes }, session: valid_session
+        body = JSON.parse(response.body)['data']
+        
+        expect(response).to have_http_status(:created)
+        expect(body['shipment_priority']).to eq 'economy'
+      end
+
       context 'without a tracking number' do
 
         let(:create_label_params)  { {

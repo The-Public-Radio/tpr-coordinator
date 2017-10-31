@@ -1,6 +1,8 @@
 FactoryGirl.define do
   factory :shipment do
     tracking_number random_tracking_number
+    # Default to economy processng
+    shipment_priority "economy"
 
     # Associations
     order
@@ -16,12 +18,8 @@ FactoryGirl.define do
         shipment_priority "express"
       end
 
-      factory :economy do
-        shipment_priority "economy"
-      end
-
-      factory :preferred do
-        shipment_priority "preferred"
+      factory :priority do
+        shipment_priority "priority"
       end
     end
       
