@@ -104,7 +104,6 @@ class ShipmentsController < ApplicationController
   end
 
   def next_label_created_shipment
-    # TODO: sort by shipment_priority as well
     @shipment = Shipment.all.order(:priority_processing, :created_at).select do |s| 
       s.shipment_status == 'label_created' && %w{other kickstarter squarespace}.include?(s.order.order_source)
     end[0]
@@ -162,6 +161,9 @@ class ShipmentsController < ApplicationController
         when 'priority'
           'usps_priority'
         when 'express'
+          # express shipments also get priority_processing
+          @shipment.priority_processing = true
+          @shipment.save
           'usps_priority_express'
         end
       end

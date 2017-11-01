@@ -266,6 +266,7 @@ RSpec.describe ShipmentsController, type: :controller do
             create_label_params[:servicelevel_token] = 'usps_priority_express'
             execute_post
             expect(Shipment.last.shipment_priority).to eq('express')
+            expect(Shipment.last.priority_processing).to be true
           end
 
           it 'creates priority shipments' do
