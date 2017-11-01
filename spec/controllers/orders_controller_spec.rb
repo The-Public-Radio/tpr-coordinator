@@ -101,10 +101,11 @@ RSpec.describe OrdersController, type: :controller do
         }
 
         expect{
-          post :create, params: { frequencies: frequencies, order: valid_attributes }, session: valid_session
+          post :create, params: {frequencies: frequencies, shipment_priority: 'priority', order: valid_attributes }, session: valid_session
         }.to change(Shipment, :count).by(4)
 
         shipments = Shipment.all[-4..-1]
+
         expect(shipments.select{ |s| s.radio.count == 3 }.count).to be 2
         expect(shipments.select{ |s| s.radio.count == 2 }.count).to be 1
         expect(shipments.select{ |s| s.radio.count == 1 }.count).to be 1
@@ -112,6 +113,7 @@ RSpec.describe OrdersController, type: :controller do
           expect(shipment.tracking_number).to eq shippo_response_object.tracking_number
           expect(shipment.label_data).to eq Base64.strict_encode64(s3_label_object.body)
           expect(shipment.shipment_status).to eq 'label_created'
+          expect(shipment.shipment_priority).to eq 'priority'
         end
       end
 

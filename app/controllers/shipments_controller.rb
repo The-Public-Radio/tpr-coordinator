@@ -35,6 +35,13 @@ class ShipmentsController < ApplicationController
       end
     end
 
+    # Check priority, default to economy
+    if params['shipment']['shipment_priority'].nil? || params['shipment']['shipment_priority'].try(:empty?)
+      @shipment.shipment_priority = 'economy'
+    else 
+      @shipment.shipment_priority = params['shipment']['shipment_priority']
+    end
+
     # Create tracking number and store base64 encoded label pdf data
     if @shipment.tracking_number.nil?
       Rails.logger.info('No tracking number provided for new shipment')
@@ -97,7 +104,7 @@ class ShipmentsController < ApplicationController
   end
 
   def next_label_created_shipment
-    @shipment = Shipment.all.order(:priority, :created_at).select do |s| 
+    @shipment = Shipment.all.order(:priority_processing, :created_at).select do |s| 
       s.shipment_status == 'label_created' && %w{other kickstarter squarespace}.include?(s.order.order_source)
     end[0]
     api_response(@shipment)
@@ -144,12 +151,22 @@ class ShipmentsController < ApplicationController
     end
 
     def usps_service_level
-      @order.country != 'US' ? usps_service_level_international : usps_service_level_domestic
-    end
-
-    def usps_service_level_domestic
-      # If under 1 lb (16oz) the shipment can go first class, > 1lb it has to go priority
-      @shipment_size > 1 ? 'usps_priority' : 'usps_first'
+      if @order.country != 'US'
+         usps_service_level_international 
+      else
+        case @shipment.shipment_priority
+        when nil || 'economy'
+          # If under 1 lb (16oz) the shipment can go first class, > 1lb it has to go priority
+          @shipment_size > 1 ? 'usps_priority' : 'usps_first'
+        when 'priority'
+          'usps_priority'
+        when 'express'
+          # express shipments also get priority_processing
+          @shipment.priority_processing = true
+          @shipment.save
+          'usps_priority_express'
+        end
+      end
     end
 
     def usps_service_level_international
@@ -311,6 +328,6 @@ class ShipmentsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def shipment_params
-      params.require(:shipment).permit(:tracking_number, :ship_date, :shipment_status, :order_id, :frequencies, :priority, :label_url)
+      params.require(:shipment).permit(:tracking_number, :ship_date, :shipment_status, :order_id, :frequencies, :priority, :label_url, :shipment_priority)
     end
 end

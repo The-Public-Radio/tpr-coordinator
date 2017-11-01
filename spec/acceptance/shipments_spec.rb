@@ -75,7 +75,7 @@ resource "Shipments" do
       create_list(:label_printed, 2)
       create_list(:shipped, 2)
       shipments = create_list(:label_created, 2)
-      priority_shipment = create_list(:priority, 2)
+      priority_shipment = create(:priority_processing)
 
       # Set order to something not kickstarter, squarespace, other
       order = shipments[0].order
@@ -85,8 +85,8 @@ resource "Shipments" do
       do_request
       expect(status).to eq 200
       data = JSON.parse(response_body)['data']
-      expect(data['id']).to eq(priority_shipment[0].id)
-      expect(data['label_data']).to eq(priority_shipment[0].label_data)
+      expect(data['id']).to eq(priority_shipment.id)
+      expect(data['label_data']).to eq(priority_shipment.label_data)
     end
   end
 
