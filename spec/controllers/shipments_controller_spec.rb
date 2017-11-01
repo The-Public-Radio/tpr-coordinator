@@ -149,6 +149,7 @@ RSpec.describe ShipmentsController, type: :controller do
               :mass_unit => :oz
             }
           },
+          # Default is economy shipping
           servicelevel_token: "usps_first",
           carrier_account: "d2ed2a63bef746218a32e15450ece9d9"
         }}
@@ -173,19 +174,6 @@ RSpec.describe ShipmentsController, type: :controller do
         context 'and succeeds to' do
 
           def execute_post
-            # Default is economy shipping
-            expect(Shippo::Transaction).to receive(:create).with(create_label_params).and_return(shippo_response_object).once
-            post :create, params: { order_id: order_id, shipment: valid_shipping_attributes }, session: valid_session
-          end
-
-          def execute_post_priority_shipping
-            create_label_params[:servicelevel_token] = 'usps_priority'
-            expect(Shippo::Transaction).to receive(:create).with(create_label_params).and_return(shippo_response_object).once
-            post :create, params: { order_id: order_id, shipment: valid_shipping_attributes }, session: valid_session
-          end
-
-          def execute_post_express_shipping
-            create_label_params[:servicelevel_token] = 'usps_priority_express '
             expect(Shippo::Transaction).to receive(:create).with(create_label_params).and_return(shippo_response_object).once
             post :create, params: { order_id: order_id, shipment: valid_shipping_attributes }, session: valid_session
           end
@@ -265,25 +253,23 @@ RSpec.describe ShipmentsController, type: :controller do
 
           it 'downloads a label from label_url from the Shippo api response and stores it as base64 encoded data' do
             execute_post
-
             expect(Shipment.last.label_data).to eq(Base64.strict_encode64(s3_label_object.body))
           end
 
           it 'stores the label_url from the shippo response' do
             execute_post
-
             expect(Shipment.last.label_url).to eq(shippo_response_object.label_url)
           end
 
           it 'creates express shipments' do
-            skip('until shipment_speed is created')
-            execute_post_express_shipping
+            create_label_params[:servicelevel_token] = 'usps_priority_express'
+            execute_post
             expect(Shipment.last.shipment_speed).to eq('express')
           end
 
           it 'creates priority shipments' do
-            skip('until shipment_speed is created')
-            execute_post_priority_shipping
+            create_label_params[:servicelevel_token] = 'usps_priority'
+            execute_post
             expect(Shipment.last.shipment_speed).to eq('priority')
           end
         end
