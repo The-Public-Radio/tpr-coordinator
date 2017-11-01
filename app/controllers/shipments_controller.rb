@@ -152,12 +152,19 @@ class ShipmentsController < ApplicationController
     end
 
     def usps_service_level
-      @order.country != 'US' ? usps_service_level_international : usps_service_level_domestic
-    end
-
-    def usps_service_level_domestic
-      # If under 1 lb (16oz) the shipment can go first class, > 1lb it has to go priority
-      @shipment_size > 1 ? 'usps_priority' : 'usps_first'
+      if @order.country != 'US'
+         usps_service_level_international 
+      else
+        case @shipment.shipment_priority
+        when nil || 'economy'
+          # If under 1 lb (16oz) the shipment can go first class, > 1lb it has to go priority
+          @shipment_size > 1 ? 'usps_priority' : 'usps_first'
+        when 'priority'
+          'usps_priority'
+        when 'express'
+          'usps_priority_express'
+        end
+      end
     end
 
     def usps_service_level_international
