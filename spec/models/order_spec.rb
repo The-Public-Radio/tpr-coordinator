@@ -22,6 +22,11 @@ RSpec.describe Order, type: :model do
     expect(model).to be_valid
   end
 
+  it 'is valid when the order source is uncommon_goods' do
+    model.order_source = 'uncommon_goods'
+    expect(model).to be_valid
+  end
+
   it 'is valid when the order source is wbez' do
     model.order_source = 'WBEZ'
     expect(model).to be_valid

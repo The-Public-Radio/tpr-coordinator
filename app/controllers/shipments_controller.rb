@@ -105,7 +105,7 @@ class ShipmentsController < ApplicationController
 
   def next_label_created_shipment
     @shipment = Shipment.all.order(:priority_processing, :created_at).select do |s| 
-      s.shipment_status == 'label_created' && %w{other kickstarter squarespace}.include?(s.order.order_source)
+      s.shipment_status == 'label_created' && %w{other kickstarter squarespace uncommon_goods}.include?(s.order.order_source)
     end[0]
     api_response(@shipment)
   end
