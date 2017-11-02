@@ -72,6 +72,17 @@ resource "Shipments" do
   get "/next_shipment_to_print" do
     example "Look the next shipments with an unprinted label from order_source kickstarter, squarespace, or other" do
       explanation "This endpoint also respects the priority field on a shipment; returning those shipments with priority: true first."
+      
+      # Create the shipments in order to test returned shipment is correct one
+      # TODO: split these out into descret tests for each level of selection
+      
+      # Time travel to make this shipment come out first because we want to prove we skip it
+      Timecop.freeze(Time.now - 30) do
+        shipments_with_no_radio = create(:shipment)
+        shipments_with_no_radio.priority_processing = true
+        shipments_with_no_radio.shipment_status = 'label_created'
+        shipments_with_no_radio.save
+      end
       create_list(:label_printed, 2)
       create_list(:shipped, 2)
       shipments = create_list(:label_created, 2)
