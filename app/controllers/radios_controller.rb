@@ -105,7 +105,11 @@ class RadiosController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_radio
       begin
-        @radio = Radio.find(params[:id])
+        if !radio_params[:serial_number].nil?
+          @radio = Radio.find_by_serial_number(radio_params[:serial_number])
+        else
+          @radio = Radio.find(params[:id])
+        end
       rescue ActiveRecord::RecordNotFound => e
         Rails.logger.error("Radio not found: #{e}")
         api_response([], 404, e.message)

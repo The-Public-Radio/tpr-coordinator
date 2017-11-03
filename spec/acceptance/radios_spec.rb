@@ -29,16 +29,16 @@ resource "Radios" do
       data = JSON.parse(response_body)['data']
       expect(data.length).to be 3
     end
-  end 
+  end
 
   get "/radios" do
     example "Look up all radios" do
       do_request
       expect(status).to eq 200
       data = JSON.parse(response_body)['data']
-      expect(data.count).to be Radio.all.count 
+      expect(data.count).to be Radio.all.count
     end
-  end 
+  end
 
   get "/radios" do
     parameter :serial_number, 'String, serial number of a radio', required: true
@@ -51,7 +51,7 @@ resource "Radios" do
       expect(data['id']).to eq radio_boxed.id
       expect(data['serial_number']).to eq radio_boxed.serial_number
     end
-  end 
+  end
 
   get "/shipments/:shipment_id/radios" do
     parameter :page, 'String, paganation page number', required: false
@@ -93,6 +93,30 @@ resource "Radios" do
     end
   end
 
+  put "/radios" do
+    parameter :serial_number, 'String, radio (speaker) serial number', required: true
+    parameter :operator, 'String, paganation page number', required: false
+    parameter :boxed, 'Boolean, is the radio in a box?', required: false
+
+    let(:radio_to_update) { create(:radio_assembled) }
+    let(:serial_number) { radio_to_update.serial_number }
+    let(:firmware_version) { radio_to_update.firmware_version }
+    let(:operator) { random_name }
+    let(:boxed) { true }
+
+    example "Update a radio by serial number" do
+      do_request
+      expect{ radio_to_update.reload }.to change{ radio_to_update.boxed }.from(false).to(true)
+
+      expect(status).to eq 200
+      data = JSON.parse(response_body)['data']
+
+      expect(data['firmware_version']).to eq(firmware_version)
+      expect(data['serial_number']).to eq(serial_number)
+      expect(data['operator']).to eq(operator)
+    end
+  end
+
   put "/shipments/:shipment_id/radios" do
     parameter :boxed, 'Boolean, is this radio boxed?', required: true
     parameter :serial_number, 'String, radio (speaker) serial number', required: true
@@ -108,7 +132,7 @@ resource "Radios" do
 
       expect(next_unboxed_radio.boxed).to be false
       expect(next_unboxed_radio.serial_number).to be nil
-     
+
       do_request
 
       expect(status).to eq 200
@@ -116,8 +140,8 @@ resource "Radios" do
 
       expect(data['boxed']).to be true
       expect(data['serial_number']).to eq(serial_number)
-      
-      next_unboxed_radio.reload 
+
+      next_unboxed_radio.reload
 
       expect(shipment.reload.radio.count).to be radios_in_shipment
       expect(next_unboxed_radio.shipment_id).to eq shipment_id
