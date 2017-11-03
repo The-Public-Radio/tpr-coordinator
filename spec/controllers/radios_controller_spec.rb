@@ -149,7 +149,6 @@ RSpec.describe RadiosController, type: :controller do
 
       it "returns an error when a radio is attempted to be attached to the shipment but that radio is not found" do
         new_attributes = {
-          serial_number: random_tpr_serial_number,
           boxed: true
         }
 
