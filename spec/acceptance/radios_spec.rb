@@ -120,9 +120,13 @@ resource "Radios" do
   put "/shipments/:shipment_id/radios" do
     parameter :boxed, 'Boolean, is this radio boxed?', required: true
     parameter :serial_number, 'String, radio (speaker) serial number', required: true
+    parameter :operator, 'String, Operator who boxed the radio', required: false
+    parameter :firmware_version, 'String, Firmware version of the radio', required: false
 
     let(:boxed) { true }
     let(:serial_number) { radio_assembled.serial_number }
+    let(:operator) { random_name }
+    let(:firmware_version) { 'firmware_v2' }
 
     example "Update a radio to be boxed and attached to a shipment" do
       shipment =  Shipment.find(shipment_id)
@@ -146,10 +150,10 @@ resource "Radios" do
       expect(shipment.reload.radio.count).to be radios_in_shipment
       expect(next_unboxed_radio.shipment_id).to eq shipment_id
       expect(next_unboxed_radio.serial_number).to eq assembled_radio.serial_number
-      expect(next_unboxed_radio.operator).to eq assembled_radio.operator
+      expect(next_unboxed_radio.operator).to eq operator
       expect(next_unboxed_radio.assembly_date).to eq assembled_radio.assembly_date
       expect(next_unboxed_radio.quality_control_status).to eq assembled_radio.quality_control_status
-      expect(next_unboxed_radio.firmware_version).to eq assembled_radio.firmware_version
+      expect(next_unboxed_radio.firmware_version).to eq firmware_version
       expect(next_unboxed_radio.boxed).to be true
       expect{ assembled_radio.reload }.to raise_error(ActiveRecord::RecordNotFound)
     end

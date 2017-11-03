@@ -92,7 +92,7 @@ class RadiosController < ApplicationController
     assembled_radio.destroy
     # Save next_unboxed_radio
     Rails.logger.debug{ "Updating radio: #{next_unboxed_radio.attributes} to: #{updated_attributes}" }
-    if next_unboxed_radio.update!(updated_attributes)
+    if next_unboxed_radio.update!(updated_attributes.merge(radio_params))
       api_response(next_unboxed_radio.reload)
     else
       Rails.logger.debug{ "Radio was not able to be saved!" }
