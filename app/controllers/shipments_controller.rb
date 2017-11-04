@@ -38,7 +38,7 @@ class ShipmentsController < ApplicationController
     # Check priority, default to economy
     if params['shipment']['shipment_priority'].nil? || params['shipment']['shipment_priority'].try(:empty?)
       @shipment.shipment_priority = 'economy'
-    else 
+    else
       @shipment.shipment_priority = params['shipment']['shipment_priority']
     end
 
@@ -104,8 +104,18 @@ class ShipmentsController < ApplicationController
   end
 
   def next_label_created_shipment
-    @shipment = Shipment.all.order(:priority_processing, :created_at).select do |s| 
-      s.shipment_status == 'label_created' && %w{other kickstarter squarespace uncommon_goods}.include?(s.order.order_source)
+    label_created_shipments = Shipment.where(shipment_status: 'label_created')
+    if label_created_shipments.where(priority_processing: true).any?
+      label_created_shipments = label_created_shipments.order(:priority_processing)
+    end
+
+    label_created_shipments = label_created_shipments.order(:created_at)
+
+    @shipment = label_created_shipments.select do |s|
+      has_radios = s.radio.any?
+      processable_order_source =  %w{other kickstarter squarespace uncommon_goods}.include?(s.order.order_source)
+
+      has_radios && processable_order_source
     end[0]
     api_response(@shipment)
   end
@@ -152,7 +162,7 @@ class ShipmentsController < ApplicationController
 
     def usps_service_level
       if @order.country != 'US'
-         usps_service_level_international 
+         usps_service_level_international
       else
         case @shipment.shipment_priority
         when nil || 'economy'
