@@ -4,7 +4,7 @@ describe "rake orders:import_orders_from_email", type: :task do
     expect(task.prerequisites).to include "environment"
   end
 
-  context 'when checking gmail' do
+  context 'from the tprorder@gmail.com gmail account' do
 
     # Stub gmail inbox
     let(:stub_gmail_inbox) { double('inbox') }
@@ -13,7 +13,7 @@ describe "rake orders:import_orders_from_email", type: :task do
     # Stub attachment
     let(:stub_attachment) { double('attachment') }
 
-    it 'connects to the gmail api, loads unread emails, decodes and imports any attachments' do
+    it 'imports generic formated csv attachments' do
         email = stub_email('gmail.com')
 
         assert_gmail_connect
@@ -24,7 +24,7 @@ describe "rake orders:import_orders_from_email", type: :task do
         expect{ task.execute }.to change(Order, :count).by(1)
     end
 
-    it 'imports from ucg formated csv' do
+    it 'imports ucg formated csv attachemnts' do
         email = stub_email('ucg.com')
 
         assert_gmail_connect
