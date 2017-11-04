@@ -14,7 +14,7 @@ namespace :orders do
 		  email.message.attachments.each do |a|
   			Rails.logger.info("Reading attachments")
 		    begin
-		    	csv = CSV.read(a)
+		    	csv = CSV.read(a.decode)
 		    rescue Exception => e
 		    	Rails.logger.error('Email attachment is not a CSV!')
 		    	next
@@ -82,9 +82,5 @@ namespace :orders do
 
   def login_to_gmail
   	Gmail.connect!(ENV['GMAIL_USERNAME'], ENV['GMAIL_PASSWORD'])
-  end
-
-  def order_processing_email
-  	ENV['ORDER_PROCESSING_EMAIL']
   end
 end
