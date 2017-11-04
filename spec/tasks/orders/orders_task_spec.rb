@@ -4,34 +4,42 @@ describe "rake orders:import_orders_from_email", type: :task do
     expect(task.prerequisites).to include "environment"
   end
 
-  it "checks gmail for any unread mssages" do
-    username = ENV['GMAIL_USERNAME']
-    password = ENV['GMAIL_PASSWORD']
-    orders_email = ENV['ORDER_PROCESSING_EMAIL']
+  context 'when checking gmail' do
 
-    gmail_stub_message = {}
-    stub_order_csv = CSV.new('test,csv')
+    # Load stub order csv
+    let(:stub_order_csv) { File.read('spec/fixtures/generic_orders.csv') }
+    # Stub email attachment
+    let(:stub_attachment) { double('attachment') }
+    # Stub gmail inbox
+    let(:stub_gmail_inbox) { double('inbox') }
+    # Stub gmail client
+    let(:stub_gmail_client) { double('gmail', inbox: stub_gmail_inbox ) }
+    # Stub email
+    let(:stub_message) { double('message', attachments: [stub_order_csv]) }
 
-    expect(Gmail).to receive(:connect!).with(username, password).and_return
+    # Stub emails
+    let(:stub_email) { double('email', message: stub_message,
+        from: [double('from', host: 'ucg.com')], read: true
+        ) }
 
-    # expect_any_instance_of(Gmail::Mailbox).to receive(:find).with(:unread, from: orders_email).once
-    # returns array of Mail::Message
-    # expect_any_instance_of(Mail::Message).to receive(:attachments)
+    it 'connects to the gmail api, loads unread emails, decodes and imports any attachments' do
+        # Grab configuration
+        username = ENV['GMAIL_USERNAME']
+        password = ENV['GMAIL_PASSWORD']
 
-    expect_any_instance_of(Mail::Body).to receive(:decode).and_return(stub_order_csv).once
+        # Assert and return gmail client
+        expect(Gmail).to receive(:connect!).with(username, password).and_return(stub_gmail_client)
+        # Assert and return emails
+        expect(Gmail).to receive(:connect!).with(username, password).and_return(stub_gmail_client)
+        expect(stub_gmail_inbox).to receive(:find).with(:unread).and_return([stub_email])
+        # Assert and return decoded attachment (csv)
+        expect(stub_attachment).to receive(:decode).and_return(stub_order_csv).once
+        # Assert marked as read after import
+        # TODO: Verify this return value
+        # TODO: This should be read! not read
+        expect(stub_email).to receive(:read).and_return(true)
 
-    # a.body.decoded
-
-    expect_any_instance_of(Gmail::Message).to receive(:read!).once
-
-    # Returns array of Mail::Part 
-    # email.message.attachments.each do |f|
-    #   
-    # end
-    # 
-    # email.read!
-    # 
-
-    task.execute
+        task.execute
+    end
   end
 end

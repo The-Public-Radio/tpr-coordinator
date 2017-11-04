@@ -30,18 +30,18 @@ namespace :orders do
 		    end
 		    create_orders(parsed_csv)
 		  end
-		  email.read!
+		  email.read
 		end
   end
 
   def parse_ucg_csv(csv)
 		# Headers are ?
-  	
+
   end
 
 	def parse_generic_csv(csv)
 		# Headers are Name, Email, Address 1, Address 2, City, State, Postal Code, Country, Phone Number, Radio, Radio, Radio
-		
+
 		orders = []
 		csv.each do |order|
 			order_params = {
@@ -55,7 +55,7 @@ namespace :orders do
 			  postal_code: order['Postal Code'],
 			  country: order['Country'],
 			  phone: order['Phone Number'].nil? ? '' : order['Phone Number']
-			}	
+			}
 
 			frequencies = []
 
