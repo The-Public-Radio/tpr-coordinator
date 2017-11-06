@@ -34,8 +34,25 @@ namespace :orders do
   end
 
   def parse_ucg_csv(csv)
-		# Headers are ?
-
+    # TODO: Check this format with an UCG order csv
+		orders = []
+    map_order_csv(csv).each do |order|
+      order_params = {
+        name: order['Name'],
+        order_source: 'UCG',
+        email: order['Email'],
+        street_address_1: order['Address 1'],
+        street_address_2: order['Address 2'],
+        city: order['City'],
+        state: order['State'],
+        postal_code: order['Postal Code'],
+        country: order['Country'],
+        phone: order['Phone Number'].nil? ? '' : order['Phone Number'],
+        frequencies: order['Radio'].compact
+      }
+      orders << order_params
+    end
+    orders
   end
 
 	def parse_generic_csv(csv)
@@ -81,8 +98,8 @@ namespace :orders do
   end
 
 	def create_orders(orders)
-		orders.each do |order|
-			OrderController.new.create(order)
+		orders.each do |order_params|
+			OrdersController.new.create_order_with_radios(order_params)
 		end
 	end
 
