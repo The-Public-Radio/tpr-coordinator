@@ -14,6 +14,7 @@ describe "rake orders:import_orders_from_email", type: :task do
     let(:stub_attachment) { double('attachment') }
 
     it 'imports generic formated csv attachments' do
+        ENV['GENERIC_ORDER_PROCESSING_FROM_EMAIL_WHITELIST'] = 'gmail.com'
         email = stub_email('gmail.com')
 
         assert_gmail_connect
@@ -21,7 +22,9 @@ describe "rake orders:import_orders_from_email", type: :task do
         assert_attachment_decode('generic_orders')
         assert_email_read(email)
 
-        expect{ task.execute }.to change(Order, :count).by(1)
+        expect{ task.execute }.to change(Order, :count).by(4)
+        expect(Shipment, :count).to change.by(5)
+        expect(Radio, :count).to change.by(10)
     end
 
     it 'imports ucg formated csv attachemnts' do
