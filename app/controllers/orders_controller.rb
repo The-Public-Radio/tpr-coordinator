@@ -25,7 +25,7 @@ class OrdersController < ApplicationController
     end
 
     if @order.save
-      make_shipments_for_order(frequency_hash) unless frequency_hash.nil?
+      make_shipments_for_internet_order(frequency_hash) unless frequency_hash.nil?
       render json: @order, status: :created, location: @order
     else
       render json: @order.errors, status: :unprocessable_entity
@@ -46,15 +46,24 @@ class OrdersController < ApplicationController
     @order.destroy
   end
 
+  def make_queue_order_with_radios(working_order_params)
+    frequencies = working_order_params.delete(:frequencies)
+    @order = Order.new(working_order_params)
+    @order.country = 'US' if working_order_params[:country].nil?
+    @order.save
+
+    make_shipments_for_queue_order({ @order.country => frequencies })
+  end
+
   private
 
-    def make_orders_with_radios(working_order_params)
-      @order = Order.new(working_order_params)
-
-
+    def make_shipments_for_queue_order(frequency_hash)
+      frequency_hash.each do |country_code,frequencies|
+        split_frequencies_into_shipments(country_code,frequencies)
+      end
     end
 
-    def make_shipments_for_order(frequency_hash)
+    def make_shipments_for_internet_order(frequency_hash)
       frequency_hash.each do |country_code,frequencies|
         split_frequencies_into_shipments(country_code,frequencies) if !params['frequencies'].nil?
       end
@@ -74,32 +83,8 @@ class OrdersController < ApplicationController
         frequencies_by_shipment << frequencies
       end
 
-      # TODO: Don't use anti-paradigms
-
       frequencies_by_shipment.each do |frequencies|
-        controller = ShipmentsController.new
-      #   controller.request = {
-      #     parameters: {
-      #     'shipment' => {
-      #       frequencies: frequencies,
-      #       order_id: @order.id
-      #       }
-      #     }
-      #   }
-
-        # default to economy
-        shipment_priority = params['shipment_priority'].nil? ? 'economy' : params['shipment_priority']
-
-        shipment = Shipment.create(order_id: @order.id, shipment_priority: shipment_priority )
-        shipment.save
-        frequencies.each do |frequency|
-          Radio.create(frequency: frequency, shipment_id: shipment.id, country_code: country_code, boxed: false).save
-        end
-
-        shipment.tracking_number = controller.shipping_tracking_number(shipment)
-        shipment.label_data = controller.shipping_label_data(shipment)
-        shipment.shipment_status = 'label_created'
-        shipment.save
+        controller = ShipmentsController.new.create_shipment_from_order(params, frequencies, @order)
       end
     end
 

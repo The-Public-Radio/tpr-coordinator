@@ -27,29 +27,8 @@ class ShipmentsController < ApplicationController
   # POST /shipments.json
   def create
     @shipment = Shipment.new(shipment_params)
-    @shipment.save
 
-    if !params['shipment']['frequencies'].nil?
-      params['shipment']['frequencies'].each do |frequency|
-        Radio.create(frequency: frequency, boxed: false, shipment_id: @shipment.id).save!
-      end
-    end
-
-    # Check priority, default to economy
-    if params['shipment']['shipment_priority'].nil? || params['shipment']['shipment_priority'].try(:empty?)
-      @shipment.shipment_priority = 'economy'
-    else
-      @shipment.shipment_priority = params['shipment']['shipment_priority']
-    end
-
-    # Create tracking number and store base64 encoded label pdf data
-    if @shipment.tracking_number.nil?
-      Rails.logger.info('No tracking number provided for new shipment')
-      @shipment.tracking_number = shipping_tracking_number
-      @shipment.shipment_status = 'label_created'
-      @shipment.label_data = shipping_label_data
-      @shipment.label_url = shipping_label_url
-    end
+    set_up_shipment_defaults
 
     if @shipment.save
       api_response(@shipment, :created)
@@ -100,6 +79,7 @@ class ShipmentsController < ApplicationController
   end
 
   def shipping_label_creation_response(shipment)
+    find_order(shipment)
     @shipping_label_creation_response ||= create_shipping_label(shipment)
   end
 
@@ -131,15 +111,69 @@ class ShipmentsController < ApplicationController
     render json: response, status: :ok
   end
 
+  def create_shipment_from_order(parameters, frequencies, order)
+    # default to economy
+    shipment_priority = parameters['shipment_priority'].nil? ? 'economy' : parameters['shipment_priority']
+
+    @shipment = Shipment.new(order_id: order.id)
+
+    # make parameters go into params so defaults can be set correctly
+    
+    params['shipment']['frequencies'] = frequencies
+    binding.pry
+
+    set_up_shipment_defaults
+
+    # shipment = Shipment.create(order_id: @order.id, shipment_priority: shipment_priority )
+    # shipment.save
+    # frequencies.each do |frequency|
+    #   Radio.create(frequency: frequency, shipment_id: shipment.id, country_code: country_code, boxed: false).save
+    # end
+  end
+
   private
     attr_accessor :shipment, :shipment_size
+
+    def set_up_shipment_defaults
+      if !@order.nil?
+        @order = find_order(@shipment)
+      else
+        # Make sure there's a country code
+        @order = Order.new(country: 'US')
+      end
+
+      if !params['shipment']['frequencies'].nil?
+        @shipment.save # must save shipment to have an id to associate radios to
+        params['shipment']['frequencies'].each do |frequency|
+          Radio.create(frequency: frequency, boxed: false, country_code: @order.country, shipment_id: @shipment.id).save!
+        end
+      end
+
+      # Check priority, default to economy
+      if params['shipment']['shipment_priority'].nil? || params['shipment']['shipment_priority'].try(:empty?)
+        @shipment.shipment_priority = 'economy'
+      else
+        @shipment.shipment_priority = params['shipment']['shipment_priority']
+      end
+
+      # Create tracking number and store base64 encoded label pdf data
+      if @shipment.tracking_number.nil?
+        Rails.logger.info('No tracking number provided for new shipment')
+        @shipment.tracking_number = shipping_tracking_number
+        @shipment.shipment_status = 'label_created'
+        @shipment.label_data = shipping_label_data
+        @shipment.label_url = shipping_label_url
+      end
+      @shipment.save
+    end
+
+    def find_order(shipment)
+      @order = Order.find(shipment.order_id)
+    end
 
     def create_shipping_label(shipment)
       @shipment = shipment
       Rails.logger.info("Creating shipping label for shipment #{shipment.id}")
-
-      @order = Order.find(shipment.order_id)
-      Rails.logger.debug("Order: #{@order}")
 
       Shippo::API.token = ENV['SHIPPO_TOKEN']
 

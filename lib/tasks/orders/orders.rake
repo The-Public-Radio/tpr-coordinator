@@ -99,7 +99,7 @@ namespace :orders do
 
 	def create_orders(orders)
 		orders.each do |order_params|
-			OrdersController.new.create_order_with_radios(order_params)
+			OrdersController.new.make_queue_order_with_radios(order_params)
 		end
 	end
 
