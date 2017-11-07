@@ -18,9 +18,7 @@ class OrdersController < ApplicationController
 
   # POST /orders
   def create
-    frequency_hash = params['frequencies'] if !params['frequencies'].nil?
-
-    @order = Order.new(order_params)
+    make_orders_with_radios(order_params) if !params['frequencies'].nil?
 
     if order_params[:country].nil?
       @order.country = 'US'
@@ -50,6 +48,12 @@ class OrdersController < ApplicationController
 
   private
 
+    def make_orders_with_radios(working_order_params)
+      @order = Order.new(working_order_params)
+
+
+    end
+
     def make_shipments_for_order(frequency_hash)
       frequency_hash.each do |country_code,frequencies|
         split_frequencies_into_shipments(country_code,frequencies) if !params['frequencies'].nil?
@@ -61,7 +65,7 @@ class OrdersController < ApplicationController
 
       if frequencies.count > 3
         num_radios_in_last_shipment = frequencies.count % 3
-        frequencies_by_shipment << frequencies.pop(num_radios_in_last_shipment) 
+        frequencies_by_shipment << frequencies.pop(num_radios_in_last_shipment)
 
         (frequencies.count / 3 ).times do
           frequencies_by_shipment << frequencies.pop(3)
@@ -74,15 +78,15 @@ class OrdersController < ApplicationController
 
       frequencies_by_shipment.each do |frequencies|
         controller = ShipmentsController.new
-      #   controller.request = { 
+      #   controller.request = {
       #     parameters: {
       #     'shipment' => {
-      #       frequencies: frequencies, 
+      #       frequencies: frequencies,
       #       order_id: @order.id
       #       }
       #     }
       #   }
-       
+
         # default to economy
         shipment_priority = params['shipment_priority'].nil? ? 'economy' : params['shipment_priority']
 

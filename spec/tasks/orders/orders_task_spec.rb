@@ -4,34 +4,72 @@ describe "rake orders:import_orders_from_email", type: :task do
     expect(task.prerequisites).to include "environment"
   end
 
-  it "checks gmail for any unread mssages" do
-    username = ENV['GMAIL_USERNAME']
-    password = ENV['GMAIL_PASSWORD']
-    orders_email = ENV['ORDER_PROCESSING_EMAIL']
+  context 'from the tprorder@gmail.com gmail account' do
 
-    gmail_stub_message = {}
-    stub_order_csv = CSV.new('test,csv')
+    # Stub gmail inbox
+    let(:stub_gmail_inbox) { double('inbox') }
+    # Stub gmail client
+    let(:stub_gmail_client) { double('gmail', inbox: stub_gmail_inbox ) }
+    # Stub attachment
+    let(:stub_attachment) { double('attachment') }
 
-    expect(Gmail).to receive(:connect!).with(username, password).and_return
+    it 'imports generic formated csv attachments' do
+        ENV['GENERIC_ORDER_PROCESSING_FROM_EMAIL_WHITELIST'] = 'gmail.com'
+        email = stub_email('gmail.com')
 
-    # expect_any_instance_of(Gmail::Mailbox).to receive(:find).with(:unread, from: orders_email).once
-    # returns array of Mail::Message
-    # expect_any_instance_of(Mail::Message).to receive(:attachments)
+        assert_gmail_connect
+        assert_inbox_find(email)
+        assert_attachment_decode('generic_orders')
+        assert_email_read(email)
 
-    expect_any_instance_of(Mail::Body).to receive(:decode).and_return(stub_order_csv).once
+        expect{ task.execute }.to change(Order, :count).by(4)
+        expect(Shipment, :count).to change.by(5)
+        expect(Radio, :count).to change.by(10)
+    end
 
-    # a.body.decoded
+    it 'imports ucg formated csv attachemnts' do
+        email = stub_email('ucg.com')
 
-    expect_any_instance_of(Gmail::Message).to receive(:read!).once
+        assert_gmail_connect
+        assert_inbox_find(email)
+        assert_attachment_decode('ucg_orders')
+        assert_email_read(email)
 
-    # Returns array of Mail::Part 
-    # email.message.attachments.each do |f|
-    #   
-    # end
-    # 
-    # email.read!
-    # 
+        expect{ task.execute }.to change(Order, :count).by(1)
+    end
 
-    task.execute
+    def assert_gmail_connect
+        # Grab configuration
+        username = ENV['GMAIL_USERNAME']
+        password = ENV['GMAIL_PASSWORD']
+
+        # Assert and return gmail client
+        expect(Gmail).to receive(:connect!).with(username, password).and_return(stub_gmail_client)
+    end
+
+    def assert_inbox_find(stub_specific_email)
+        # Assert and return emails
+        expect(stub_gmail_inbox).to receive(:find).with(:unread).and_return([stub_specific_email])
+    end
+
+    def assert_attachment_decode(fixture_name)
+        order_csv_fixture = File.read("spec/fixtures/#{fixture_name}.csv")
+        # Assert and return decoded attachment (csv)
+        expect(stub_attachment).to receive(:decode).and_return(order_csv_fixture)
+    end
+
+    def assert_email_read(stub_email)
+        # Assert marked as read after import
+        # TODO: Verify this return value
+        # TODO: This should be read! not read
+        expect(stub_email).to receive(:read).and_return(true)
+    end
+
+    def stub_email(host)
+        stub_message = double('message', attachments: [stub_attachment])
+
+        @stub_email ||= double('email', message: stub_message,
+            from: [double('from', host: host)], read: true)
+    end
   end
 end
