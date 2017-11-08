@@ -28,7 +28,7 @@ class ShipmentsController < ApplicationController
   def create
     @shipment = Shipment.new(shipment_params)
 
-    set_up_shipment_defaults
+    set_up_default_shipment
 
     if @shipment.save
       api_response(@shipment, :created)
@@ -73,7 +73,7 @@ class ShipmentsController < ApplicationController
   end
 
   def shipping_label_data(shipment = @shipment)
-     label_url = shipping_label_creation_response(shipment).label_url
+     label_url = shipping_label_url
      shipping_label = HTTParty.get(label_url).body
      @shipping_label_data = Base64.strict_encode64(shipping_label)
   end
@@ -111,30 +111,16 @@ class ShipmentsController < ApplicationController
     render json: response, status: :ok
   end
 
-  def create_shipment_from_order(parameters, frequencies, order)
-    # default to economy
-    shipment_priority = parameters['shipment_priority'].nil? ? 'economy' : parameters['shipment_priority']
-
+  def create_shipment_from_order(order, frequencies, shipment_priority = nil)
     @shipment = Shipment.new(order_id: order.id)
 
-    # make parameters go into params so defaults can be set correctly
-    
-    params['shipment']['frequencies'] = frequencies
-    binding.pry
-
-    set_up_shipment_defaults
-
-    # shipment = Shipment.create(order_id: @order.id, shipment_priority: shipment_priority )
-    # shipment.save
-    # frequencies.each do |frequency|
-    #   Radio.create(frequency: frequency, shipment_id: shipment.id, country_code: country_code, boxed: false).save
-    # end
+    set_up_default_shipment(frequencies, shipment_priority)
   end
 
   private
     attr_accessor :shipment, :shipment_size
 
-    def set_up_shipment_defaults
+    def set_up_default_shipment(frequencies = params['shipment']['frequencies'], shipment_priority = params['shipment']['shipment_priority'])
       if !@order.nil?
         @order = find_order(@shipment)
       else
@@ -142,19 +128,15 @@ class ShipmentsController < ApplicationController
         @order = Order.new(country: 'US')
       end
 
-      if !params['shipment']['frequencies'].nil?
+      if !frequencies.nil?
         @shipment.save # must save shipment to have an id to associate radios to
-        params['shipment']['frequencies'].each do |frequency|
+        frequencies.each do |frequency|
           Radio.create(frequency: frequency, boxed: false, country_code: @order.country, shipment_id: @shipment.id).save!
         end
       end
 
       # Check priority, default to economy
-      if params['shipment']['shipment_priority'].nil? || params['shipment']['shipment_priority'].try(:empty?)
-        @shipment.shipment_priority = 'economy'
-      else
-        @shipment.shipment_priority = params['shipment']['shipment_priority']
-      end
+      @shipment.shipment_priority = 'economy' if shipment_priority.nil?
 
       # Create tracking number and store base64 encoded label pdf data
       if @shipment.tracking_number.nil?

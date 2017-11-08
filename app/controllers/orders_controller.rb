@@ -18,11 +18,13 @@ class OrdersController < ApplicationController
 
   # POST /orders
   def create
-    make_orders_with_radios(order_params) if !params['frequencies'].nil?
+    @order = Order.new(order_params)
 
     if order_params[:country].nil?
       @order.country = 'US'
     end
+
+    frequency_hash = params['frequencies']
 
     if @order.save
       make_shipments_for_internet_order(frequency_hash) unless frequency_hash.nil?
@@ -47,9 +49,10 @@ class OrdersController < ApplicationController
   end
 
   def make_queue_order_with_radios(working_order_params)
+    @working_order_params = working_order_params
     frequencies = working_order_params.delete(:frequencies)
-    @order = Order.new(working_order_params)
-    @order.country = 'US' if working_order_params[:country].nil?
+    @order = Order.new(@working_order_params)
+    @order.country = 'US' if @working_order_params[:country].nil?
     @order.save
 
     make_shipments_for_queue_order({ @order.country => frequencies })
@@ -58,7 +61,7 @@ class OrdersController < ApplicationController
   private
 
     def make_shipments_for_queue_order(frequency_hash)
-      frequency_hash.each do |country_code,frequencies|
+      frequency_hash.each do |country_code, frequencies|
         split_frequencies_into_shipments(country_code,frequencies)
       end
     end
@@ -69,7 +72,7 @@ class OrdersController < ApplicationController
       end
     end
 
-    def split_frequencies_into_shipments(country_code,frequencies)
+    def split_frequencies_into_shipments(country_code, frequencies)
       frequencies_by_shipment = []
 
       if frequencies.count > 3
@@ -83,8 +86,10 @@ class OrdersController < ApplicationController
         frequencies_by_shipment << frequencies
       end
 
+      shipment_priority = @working_order_params.nil? ? params['shipment_priority'] : @working_order_params['shipment_priority']
+
       frequencies_by_shipment.each do |frequencies|
-        controller = ShipmentsController.new.create_shipment_from_order(params, frequencies, @order)
+        controller = ShipmentsController.new.create_shipment_from_order(@order, frequencies, shipment_priority)
       end
     end
 
