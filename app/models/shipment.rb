@@ -11,7 +11,7 @@ class Shipment < ApplicationRecord
   validates :tracking_number, tracking_number: true, allow_nil: true  #, uniqueness: true
   validates_inclusion_of :shipment_status, in: %w(created label_created label_printed shipped boxed transit delivered failure returned unknown), 
     allow_nil: true, allow_blank: true
-  validates_inclusion_of :shipment_priority, in: %w(economy priority express)
+  validates_inclusion_of :shipment_priority, in: %w(economy priority express), allow_nil: true
 
   def next_unboxed_radio
     self.radio.order(:created_at).select{ |r| r.boxed == false }[0]

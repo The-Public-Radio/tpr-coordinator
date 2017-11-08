@@ -115,6 +115,7 @@ class ShipmentsController < ApplicationController
     @shipment = Shipment.new(order_id: order.id)
 
     set_up_default_shipment(frequencies, shipment_priority)
+    @shipment.save!
   end
 
   private
@@ -136,7 +137,7 @@ class ShipmentsController < ApplicationController
       end
 
       # Check priority, default to economy
-      @shipment.shipment_priority = 'economy' if shipment_priority.nil?
+      @shipment.shipment_priority = shipment_priority.nil? ? 'economy' : shipment_priority
 
       # Create tracking number and store base64 encoded label pdf data
       if @shipment.tracking_number.nil?
@@ -146,7 +147,6 @@ class ShipmentsController < ApplicationController
         @shipment.label_data = shipping_label_data
         @shipment.label_url = shipping_label_url
       end
-      @shipment.save
     end
 
     def find_order(shipment)
