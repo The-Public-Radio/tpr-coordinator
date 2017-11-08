@@ -1,4 +1,6 @@
-describe "rake orders:import_orders_from_email", type: :task do
+require "rails_helper"
+
+describe "orders:import_orders_from_email", type: :rake do
 
   it "preloads the Rails environment" do
     expect(task.prerequisites).to include "environment"
@@ -13,6 +15,12 @@ describe "rake orders:import_orders_from_email", type: :task do
     # Stub attachment
     let(:stub_attachment) { double('attachment') }
 
+    # Load order fixtures
+    # Generic order fixture
+    let(:generic_order_fixture)  { load_order_fixture('generic_orders') }
+    # UCG order fixture
+    let(:ucg_order_fixture)  { load_order_fixture('ucg_orders') }
+
     it 'imports generic formated csv attachments' do
         ENV['GENERIC_ORDER_PROCESSING_FROM_EMAIL_WHITELIST'] = 'gmail.com'
         email = stub_email('gmail.com')
@@ -22,9 +30,27 @@ describe "rake orders:import_orders_from_email", type: :task do
         assert_attachment_decode('generic_orders')
         assert_email_read(email)
 
-        expect{ task.execute }.to change(Order, :count).by(4)
-        expect(Shipment, :count).to change.by(5)
-        expect(Radio, :count).to change.by(10)
+        unpack_order_csv(generic_order_fixture).each do |test_order|
+            order_params = {
+                name: test_order['Name'],
+                order_source: "other",
+                email: test_order['Email'],
+                street_address_1: test_order['Address 1'],
+                street_address_2: test_order['Address 2'],
+                city: test_order['City'],
+                state: test_order['State'],
+                postal_code: test_order['Postal Code'],
+                country: test_order['Country'],
+                phone: test_order['Phone Number'],
+                frequencies: test_order['Radio']
+            }
+
+            stub_controller = double('orders_controller', make_queue_order_with_radios: nil )
+            expect(OrdersController).to receive(:new).and_return(stub_controller)
+            expect(stub_controller).to receive(:make_queue_order_with_radios).with(order_params)
+        end
+
+        task.execute
     end
 
     it 'imports ucg formated csv attachemnts' do
@@ -58,18 +84,35 @@ describe "rake orders:import_orders_from_email", type: :task do
         expect(stub_attachment).to receive(:decode).and_return(order_csv_fixture)
     end
 
-    def assert_email_read(stub_email)
+    def assert_email_read(email)
         # Assert marked as read after import
         # TODO: Verify this return value
         # TODO: This should be read! not read
-        expect(stub_email).to receive(:read).and_return(true)
+        expect(email).to receive(:read).and_return(true)
+    end
+
+    def load_order_fixture(fixture_name)
+        CSV.read("spec/fixtures/#{fixture_name}.csv")
     end
 
     def stub_email(host)
         stub_message = double('message', attachments: [stub_attachment])
 
-        @stub_email ||= double('email', message: stub_message,
+        @stub_email = double('email', message: stub_message,
             from: [double('from', host: host)], read: true)
+    end
+
+    def unpack_order_csv(csv)
+        headers = csv.shift
+        orders = []
+        csv.each do |order|
+            hash = {}
+            headers.each_with_index do |header,i|
+                hash[header] = order[i]
+            end
+            orders << hash 
+        end
+        orders
     end
   end
 end
