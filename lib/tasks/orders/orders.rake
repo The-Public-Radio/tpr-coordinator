@@ -107,6 +107,7 @@ namespace :orders do
 	def create_orders(orders)
     Rails.logger.info("Creating #{orders.count} orders")
 		orders.each do |order_params|
+      next unless Order.find_by_name(order_params[:name]).nil?
 			OrdersController.new.make_queue_order_with_radios(order_params)
 		end
 	end
