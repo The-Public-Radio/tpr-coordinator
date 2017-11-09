@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171109030850) do
+ActiveRecord::Schema.define(version: 20171109043927) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -30,6 +30,7 @@ ActiveRecord::Schema.define(version: 20171109030850) do
     t.string "name"
     t.boolean "invoiced"
     t.string "reference_number"
+    t.string "comments"
   end
 
   create_table "radios", force: :cascade do |t|
