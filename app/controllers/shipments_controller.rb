@@ -166,7 +166,12 @@ class ShipmentsController < ApplicationController
       }
       Rails.logger.debug("Shipping label create options: #{shippo_options}")
 
-      transaction = Shippo::Transaction.create(shippo_options)
+      begin
+        transaction = Shippo::Transaction.create(shippo_options)
+      rescue RestClient::BadRequest => e
+        Rails.logger.error("Bad request to the Shippo api: #{e}")
+        Rails.logger.error("Returned transaction: #{transaction}")
+      end
 
       if transaction["status"] != "SUCCESS"
         Rails.logger.error(transaction.messages)
