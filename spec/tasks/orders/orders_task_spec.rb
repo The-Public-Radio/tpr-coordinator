@@ -108,7 +108,16 @@ describe "orders:import_orders_from_email", type: :rake do
         csv.each do |order|
             hash = {}
             headers.each_with_index do |header,i|
-                hash[header] = order[i]
+                # don't include empty values from the csv
+                next if order[i].nil?
+                # If a radio frequency put in an array
+                if header.include?('Radio')
+                    # initalize radio array if it's nil
+                    hash[header] = [] if hash[header].nil?
+                    hash[header] << order[i]
+                else
+                    hash[header] = order[i]
+                end
             end
             orders << hash 
         end
