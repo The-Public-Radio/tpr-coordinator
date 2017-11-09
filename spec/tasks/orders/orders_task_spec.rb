@@ -49,6 +49,9 @@ describe "orders:import_orders_from_email", type: :rake do
             stub_controller = double('orders_controller', make_queue_order_with_radios: nil )
             expect(OrdersController).to receive(:new).and_return(stub_controller)
             expect(stub_controller).to receive(:make_queue_order_with_radios).with(order_params)
+            # TODO: Test end state expectations: order count changed
+            # expect(OrdersController).to receive(:make_queue_order_with_radios).with(order_params).and_call_original
+            # expect{ task.execute }.to change(Order, :count).by(4)
         end
 
         task.execute

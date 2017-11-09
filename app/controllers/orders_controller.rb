@@ -51,6 +51,7 @@ class OrdersController < ApplicationController
   def make_queue_order_with_radios(working_order_params)
     @working_order_params = working_order_params
     frequencies = working_order_params.delete(:frequencies)
+    @shipment_priority = working_order_params.delete(:shipment_priority)
     @order = Order.new(@working_order_params)
     @order.country = 'US' if @working_order_params[:country].nil?
     @order.save
@@ -86,7 +87,7 @@ class OrdersController < ApplicationController
         frequencies_by_shipment << frequencies
       end
 
-      shipment_priority = @working_order_params.nil? ? params['shipment_priority'] : @working_order_params['shipment_priority']
+      shipment_priority = @shipment_priority.nil? ? params['shipment_priority'] : @shipment_priority
 
       frequencies_by_shipment.each do |frequencies|
         controller = ShipmentsController.new.create_shipment_from_order(@order, frequencies, shipment_priority)
