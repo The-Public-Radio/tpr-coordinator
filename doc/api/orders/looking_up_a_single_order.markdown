@@ -11,7 +11,7 @@
 
 #### Route
 
-<pre>GET /orders/2549</pre>
+<pre>GET /orders/320</pre>
 
 ### Response
 
@@ -26,15 +26,17 @@
 #### Body
 
 <pre>{
-  "id": 2549,
-  "name": "Chelsea Stehr",
+  "id": 320,
+  "name": "Lisa Wunsch",
   "order_source": "kickstarter",
-  "email": "ChelseaStehr@gmail.com",
+  "email": "LisaWunsch@gmail.com",
   "street_address_1": "123 West 9th St.",
   "street_address_2": "Apt 4",
   "city": "Brooklyn",
   "state": "NY",
   "postal_code": "11221",
   "country": "US",
-  "phone": "123-321-1231"
+  "phone": "123-321-1231",
+  "invoiced": false,
+  "reference_number": null
 }</pre>

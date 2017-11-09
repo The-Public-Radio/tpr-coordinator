@@ -2,7 +2,7 @@
 
 ## Find a shipments that are attached to an order
 
-### GET /shipments?order_id=1
+### GET /shipments?order_id=:order_id
 ### Request
 
 #### Headers
@@ -11,11 +11,11 @@
 
 #### Route
 
-<pre>GET /shipments?order_id=1</pre>
+<pre>GET /shipments?order_id=348</pre>
 
 #### Query Parameters
 
-<pre>order_id: 1</pre>
+<pre>order_id: 348</pre>
 
 ### Response
 
@@ -32,20 +32,26 @@
 <pre>{
   "data": [
     {
-      "id": 2588,
-      "tracking_number": "93748896910904960041061097",
+      "id": 361,
+      "tracking_number": "93748896910904960079523789",
       "ship_date": null,
       "shipment_status": null,
-      "order_id": 2573,
-      "label_data": null
+      "order_id": 348,
+      "label_data": null,
+      "priority_processing": null,
+      "label_url": null,
+      "shipment_priority": "economy"
     },
     {
-      "id": 2589,
-      "tracking_number": "93748896910904960041061097",
+      "id": 362,
+      "tracking_number": "93748896910904960079523789",
       "ship_date": null,
       "shipment_status": null,
-      "order_id": 2573,
-      "label_data": null
+      "order_id": 348,
+      "label_data": null,
+      "priority_processing": null,
+      "label_url": null,
+      "shipment_priority": "economy"
     }
   ],
   "errors": [
