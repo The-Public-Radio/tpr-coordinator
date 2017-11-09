@@ -10,6 +10,7 @@ FactoryGirl.define do
     phone '123-321-1231'
     order_source 'other'
     email { "#{name.split(' ').join}@gmail.com" }
+    invoiced false
     
     factory :kickstarter, class: Order do
       order_source "kickstarter"
@@ -25,8 +26,15 @@ FactoryGirl.define do
         create_list(:shipment, 2, :order => order)
       end
     end
+    factory :uncommon_goods, class: Order do
+      invoiced true
+      order_source "uncommon_goods"
+      after :create do |order|
+        create_list(:shipment, 2, :order => order)
+      end
+    end
   end
-
+  
   factory :international_order, class: Order do
     name random_name
     street_address_1 "123 West 9th St."

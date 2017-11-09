@@ -104,7 +104,6 @@ RSpec.describe ShipmentsController, type: :controller do
       end
 
       it "defaults to economy shipment priority" do
-        valid_attributes['shipment_priority'] = nil
         post :create, params: { order_id: order_id, shipment: valid_attributes }, session: valid_session
         body = JSON.parse(response.body)['data']
         

@@ -58,6 +58,7 @@ group :development, :test do
   gem 'webmock'
   gem 'timecop'
   gem 'simplecov'
+  gem 'fantaskspec'
 end
 
 group :development do

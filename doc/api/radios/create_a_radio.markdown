@@ -26,7 +26,7 @@
 
 #### Body
 
-<pre>{"pcb_version":"1","serial_number":"TPRv2.0_1_88948","operator":"Astrid Haag","country_code":"US"}</pre>
+<pre>{"pcb_version":"1","serial_number":"TPRv2.0_1_67508","operator":"Lavern Parker Jr.","country_code":"US"}</pre>
 
 ### Response
 
@@ -42,12 +42,12 @@
 
 <pre>{
   "data": {
-    "id": 2584,
+    "id": 402,
     "frequency": null,
     "pcb_version": "1",
-    "serial_number": "TPRv2.0_1_88948",
-    "assembly_date": "2017-10-09",
-    "operator": "Astrid Haag",
+    "serial_number": "TPRv2.0_1_67508",
+    "assembly_date": "2017-11-08",
+    "operator": "Lavern Parker Jr.",
     "shipment_id": null,
     "boxed": false,
     "country_code": "US",

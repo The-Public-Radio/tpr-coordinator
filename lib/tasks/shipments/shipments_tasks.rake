@@ -1,5 +1,5 @@
 namespace :shipments do
-  desc "TODO"
+  desc "Shipment tasks"
   task check_shipment_status: :environment do
   	# Find all shipments that are boxed in batches
   	# TODO refactor to use .find_in_batches(batch_size: 100)

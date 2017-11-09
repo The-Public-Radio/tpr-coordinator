@@ -11,7 +11,7 @@
 
 #### Route
 
-<pre>GET /radios/2576</pre>
+<pre>GET /radios/394</pre>
 
 ### Response
 
@@ -27,13 +27,13 @@
 
 <pre>{
   "data": {
-    "id": 2576,
-    "frequency": "83.8",
+    "id": 394,
+    "frequency": "95.8",
     "pcb_version": "PR9026",
-    "serial_number": "TPRv2.0_1_15920",
-    "assembly_date": "2017-10-09 23:38:07 -0400",
-    "operator": "Edna Windler",
-    "shipment_id": 2567,
+    "serial_number": "TPRv2.0_1_65093",
+    "assembly_date": "2017-11-08 23:49:17 -0500",
+    "operator": "Ashlee Senger",
+    "shipment_id": 334,
     "boxed": true,
     "country_code": "US",
     "firmware_version": "firmware_v1",
