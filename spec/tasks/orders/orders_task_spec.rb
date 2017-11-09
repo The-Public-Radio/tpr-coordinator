@@ -105,7 +105,7 @@ describe "orders:import_orders_from_email", type: :rake do
     def assert_attachment_decode(fixture_name)
         order_csv_fixture = File.read("spec/fixtures/#{fixture_name}.csv")
         # Assert and return decoded attachment (csv)
-        expect(stub_attachment).to receive(:decode).and_return(order_csv_fixture)
+        expect(stub_attachment).to receive(:decoded).and_return(order_csv_fixture)
     end
 
     def assert_email_read(email)

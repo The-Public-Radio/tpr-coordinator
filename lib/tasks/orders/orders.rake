@@ -15,7 +15,7 @@ namespace :orders do
 		  email.message.attachments.each do |a|
   			Rails.logger.info("Reading attachments")
 		    begin
-		    	csv = CSV.parse(a.decode)
+		    	csv = CSV.parse(a.decoded)
 		    rescue MalformedCSVError => e
 		    	Rails.logger.error('Email attachment is not a CSV!')
 		    	next
@@ -36,6 +36,7 @@ namespace :orders do
   end
 
   def parse_ucg_csv(csv)
+    Rails.logger.info("Parsing uncommon_goods csv")
 		orders = []
     map_order_csv(csv).each do |order|
       order_params = {
@@ -60,6 +61,7 @@ namespace :orders do
   end
 
 	def parse_generic_csv(csv)
+    Rails.logger.info("Parsing generic csv")
 		orders = []
 		map_order_csv(csv).each do |order|
 			order_params = {
@@ -103,6 +105,7 @@ namespace :orders do
   end
 
 	def create_orders(orders)
+    Rails.logger.info("Creating #{orders.count} orders")
 		orders.each do |order_params|
 			OrdersController.new.make_queue_order_with_radios(order_params)
 		end
