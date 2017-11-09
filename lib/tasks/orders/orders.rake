@@ -36,21 +36,23 @@ namespace :orders do
   end
 
   def parse_ucg_csv(csv)
-    # TODO: Check this format with an UCG order csv
 		orders = []
     map_order_csv(csv).each do |order|
       order_params = {
-        name: order['Name'],
-        order_source: 'UCG',
+        name: order['customer_name'],
+        order_source: "uncommon_goods",
         email: order['Email'],
-        street_address_1: order['Address 1'],
-        street_address_2: order['Address 2'],
-        city: order['City'],
-        state: order['State'],
-        postal_code: order['Postal Code'],
-        country: order['Country'],
-        phone: order['Phone Number'].nil? ? '' : order['Phone Number'],
-        frequencies: order['Radio'].compact
+        street_address_1: order['st_address_line1'],
+        street_address_2: order['st_address_line2'],
+        city: order['city'],
+        state: order['state'],
+        postal_code: order['zipcode'],
+        country: 'US', # they only ship to US
+        phone: order['Phone Number'],
+        reference_number: order['order_id'], # UCG order_id
+        shipment_priority: shipment_priority_mapping(order['shipping_upgrade']),
+        comments: order['giftmessage'],
+        frequencies: order['Custom_Info'].split('/^ ')[1]
       }
       orders << order_params
     end
@@ -71,6 +73,7 @@ namespace :orders do
 			  postal_code: order['Postal Code'],
 			  country: order['Country'],
 			  phone: order['Phone Number'].nil? ? '' : order['Phone Number'],
+        shipment_priority: order['Shipment Priority'],
         frequencies: order['Radio'].compact
 			}
 			orders << order_params
@@ -104,6 +107,16 @@ namespace :orders do
 			OrdersController.new.make_queue_order_with_radios(order_params)
 		end
 	end
+
+  def shipment_priority_mapping(priority_string)
+    if priority_string.include?('Economy')
+        'economy'
+    elsif priority_string.include?('Express')
+        'express'
+    elsif priority_string.include?('Prefered') || priority_string.include?('Priority')
+        'priority'
+      end
+    end
 
 	def generic_from_email_whitelist
 		ENV['GENERIC_ORDER_PROCESSING_FROM_EMAIL_WHITELIST']
