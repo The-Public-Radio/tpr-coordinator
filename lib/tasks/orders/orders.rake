@@ -21,11 +21,10 @@ namespace :orders do
 		    	next
 		    end
 
-		    host = email.from[0].host
-		    if host == 'ucg.com'
+		    if csv[0].eql?(uncommon_goods_headers)
 		    	# Process ucg order formated CSV
 		    	parsed_csv = parse_ucg_csv(csv)
-		    elsif generic_from_email_whitelist.include?(host)
+		    elsif csv[0].eql?(generic_csv_headers)
 		    	# Process generic order formated CSV
 		    	parsed_csv = parse_generic_csv(csv)
 		    end
@@ -33,6 +32,14 @@ namespace :orders do
 		  end
 		  email.read
 		end
+  end
+
+  def generic_csv_headers
+    ["Name", "Email", "Address 1", "Address 2", "City", "State", "Postal Code", "Country", "Phone Number", "Shipment Priority", "Radio", "Radio", "Radio", "Radio", "Radio", "Radio", "Radio", "Radio", "Radio"]
+  end
+
+  def uncommon_goods_headers
+     ["date_created", "expected_ship_date", "order_id", "quantity", "sku", "vendor_name", "item_name", "customer_name", "st_address_line1", "st_address_line2", "city", "state", "zipcode", "shipping_upgrade", "shipment_id", "external_order_id", "bill_first_name", "bill_last_name", "bill_address1", "bill_address2", "bill_city", "bill_zip", "bill_phonenum", "bill_company", "bill_state", "giftmessage", "Custom_Info"]
   end
 
   def parse_ucg_csv(csv)
@@ -122,8 +129,8 @@ namespace :orders do
         'express'
     elsif priority_string.include?('Prefered') || priority_string.include?('Priority')
         'priority'
-      end
     end
+  end
 
 	def generic_from_email_whitelist
 		ENV['GENERIC_ORDER_PROCESSING_FROM_EMAIL_WHITELIST']
