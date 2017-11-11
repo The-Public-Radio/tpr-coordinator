@@ -48,8 +48,13 @@ RSpec.describe Order, type: :model do
   end
 
   it 'is not valid without an email' do
-  	model.email = nil
+  	model.email = ''
   	expect(model).to_not be_valid
+  end
+
+  it 'is valid with a nil email' do
+    model.email = nil
+    expect(model).to be_valid
   end
 
   it 'is not valid without a correctly formated email' do

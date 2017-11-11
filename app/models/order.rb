@@ -3,6 +3,6 @@ class Order < ApplicationRecord
 
 	validates_presence_of :name
 	validates_inclusion_of :order_source, in: %w{squarespace kickstarter uncommon_goods other WBEZ warranty KUER}
-	validates_email_format_of :email, message: 'formated incorrectly'
+	validates_email_format_of :email, message: 'formated incorrectly', allow_nil: true
 
 end
