@@ -79,7 +79,6 @@ class ShipmentsController < ApplicationController
   end
 
   def shipping_label_creation_response(shipment)
-    find_order(shipment)
     @shipping_label_creation_response ||= create_shipping_label(shipment)
   end
 
@@ -113,6 +112,7 @@ class ShipmentsController < ApplicationController
 
   def create_shipment_from_order(order, frequencies, shipment_priority = nil)
     @shipment = Shipment.new(order_id: order.id)
+    @order = order
 
     set_up_default_shipment(frequencies, shipment_priority)
     @shipment.save!
@@ -123,12 +123,13 @@ class ShipmentsController < ApplicationController
 
     def set_up_default_shipment(frequencies = params['shipment']['frequencies'], shipment_priority = params['shipment']['shipment_priority'])
       if !@order.nil?
-        @order = find_order(@shipment)
+        find_order(@shipment)
       else
         # Make sure there's a country code
         @order = Order.new(country: 'US')
       end
 
+      # Create radios for shipment
       if !frequencies.nil?
         @shipment.save # must save shipment to have an id to associate radios to
         frequencies.each do |frequency|
@@ -154,7 +155,7 @@ class ShipmentsController < ApplicationController
     end
 
     def create_shipping_label(shipment)
-      @shipment = shipment
+      find_order(shipment)
       Rails.logger.info("Creating shipping label for shipment #{shipment.id}")
 
       Shippo::API.token = ENV['SHIPPO_TOKEN']
