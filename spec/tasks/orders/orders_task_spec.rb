@@ -115,7 +115,7 @@ describe "orders:import_orders_from_email", type: :rake do
         # Assert marked as read after import
         # TODO: Verify this return value
         # TODO: This should be read! not read
-        expect(email).to receive(:read).and_return(true)
+        expect(email).to receive(:read!).and_return(true)
     end
 
     def load_order_fixture(fixture_name)

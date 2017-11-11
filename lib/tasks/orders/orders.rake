@@ -30,7 +30,7 @@ namespace :orders do
 		    end
 		    create_orders(parsed_csv)
 		  end
-		  email.read
+		  email.read!
 		end
   end
 
