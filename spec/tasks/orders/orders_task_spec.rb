@@ -43,7 +43,7 @@ describe "orders:import_orders_from_email", type: :rake do
                 country: test_order['Country'],
                 phone: test_order['Phone Number'].nil? ? '' : test_order['Phone Number'],
                 shipment_priority: test_order['Shipment Priority'],
-                frequencies: test_order['Radio']
+                frequencies: [test_order['Radio']]
             }
 
             stub_controller = double('orders_controller', make_queue_order_with_radios: nil )
@@ -80,7 +80,7 @@ describe "orders:import_orders_from_email", type: :rake do
                 reference_number: test_order['order_id'], # UCG order_id
                 shipment_priority: shipment_priority_mapping(test_order['shipping_upgrade']),
                 comments: test_order['giftmessage'],
-                frequencies: test_order['Custom_Info'].split('/^')[1]
+                frequencies: [test_order['Custom_Info'].split('/^')[1]]
             }
 
             stub_controller = double('orders_controller', make_queue_order_with_radios: nil )

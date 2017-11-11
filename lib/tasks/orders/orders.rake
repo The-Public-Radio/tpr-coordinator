@@ -60,7 +60,7 @@ namespace :orders do
         reference_number: order['order_id'], # UCG order_id
         shipment_priority: shipment_priority_mapping(order['shipping_upgrade']),
         comments: order['giftmessage'],
-        frequencies: order['Custom_Info'].split('/^')[1]
+        frequencies: [order['Custom_Info'].split('/^')[1]]
       }
       orders << order_params
     end
@@ -83,7 +83,7 @@ namespace :orders do
 			  country: order['Country'],
 			  phone: order['Phone Number'].nil? ? '' : order['Phone Number'],
         shipment_priority: order['Shipment Priority'],
-        frequencies: order['Radio'].compact
+        frequencies: [order['Radio'].compact]
 			}
 			orders << order_params
 		end
