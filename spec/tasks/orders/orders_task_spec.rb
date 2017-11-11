@@ -74,13 +74,13 @@ describe "orders:import_orders_from_email", type: :rake do
                 street_address_2: test_order['st_address_line2'],
                 city: test_order['city'],
                 state: test_order['state'],
-                postal_code: test_order['zipcode'],
+                postal_code: test_order['postal_code'],
                 country: 'US', # they only ship to US
-                phone: test_order['Phone Number'],
+                phone: test_order['bill_phonenum'],
                 reference_number: test_order['order_id'], # UCG order_id
                 shipment_priority: shipment_priority_mapping(test_order['shipping_upgrade']),
                 comments: test_order['giftmessage'],
-                frequencies: test_order['Custom_Info'].split('/^ ')[1]
+                frequencies: test_order['Custom_Info'].split('/^')[1]
             }
 
             stub_controller = double('orders_controller', make_queue_order_with_radios: nil )
@@ -130,7 +130,7 @@ describe "orders:import_orders_from_email", type: :rake do
     end
 
     def shipment_priority_mapping(priority_string)
-        if priority_string.include?('Economy')
+        if priority_string.include?('Economy') || priority_string.include?('Standard') 
             'economy'
         elsif priority_string.include?('Express')
             'express'

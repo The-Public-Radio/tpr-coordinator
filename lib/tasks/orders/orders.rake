@@ -39,7 +39,7 @@ namespace :orders do
   end
 
   def uncommon_goods_headers
-     ["date_created", "expected_ship_date", "order_id", "quantity", "sku", "vendor_name", "item_name", "customer_name", "st_address_line1", "st_address_line2", "city", "state", "zipcode", "shipping_upgrade", "shipment_id", "external_order_id", "bill_first_name", "bill_last_name", "bill_address1", "bill_address2", "bill_city", "bill_zip", "bill_phonenum", "bill_company", "bill_state", "giftmessage", "Custom_Info"]
+     ["date_created", "expected_ship_date", "order_id", "quantity", "sku", "vendor_name", "item_name", "customer_name", "st_address_line1", "st_address_line2", "city", "state", "postal_code", "shipping_upgrade", "shipment_id", "external_order_id", "bill_first_name", "bill_last_name", "bill_address1", "bill_address2", "bill_city", "bill_zip", "bill_phonenum", "bill_company", "bill_code", "giftmessage", "Custom_Info"]
   end
 
   def parse_ucg_csv(csv)
@@ -54,13 +54,13 @@ namespace :orders do
         street_address_2: order['st_address_line2'],
         city: order['city'],
         state: order['state'],
-        postal_code: order['zipcode'],
+        postal_code: order['postal_code'],
         country: 'US', # they only ship to US
-        phone: order['Phone Number'],
+        phone: order['bill_phonenum'],
         reference_number: order['order_id'], # UCG order_id
         shipment_priority: shipment_priority_mapping(order['shipping_upgrade']),
         comments: order['giftmessage'],
-        frequencies: order['Custom_Info'].split('/^ ')[1]
+        frequencies: order['Custom_Info'].split('/^')[1]
       }
       orders << order_params
     end
@@ -123,7 +123,7 @@ namespace :orders do
 	end
 
   def shipment_priority_mapping(priority_string)
-    if priority_string.include?('Economy')
+    if priority_string.include?('Economy') || priority_string.include?('Standard') 
         'economy'
     elsif priority_string.include?('Express')
         'express'
