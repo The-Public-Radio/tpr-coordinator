@@ -54,7 +54,7 @@ class OrdersController < ApplicationController
     @shipment_priority = working_order_params.delete(:shipment_priority)
     @order = Order.new(@working_order_params)
     @order.country = 'US' if @working_order_params[:country].nil?
-    @order.save
+    @order.save!
 
     make_shipments_for_queue_order({ @order.country => frequencies })
   end
