@@ -134,7 +134,7 @@ describe "orders:import_orders_from_email", type: :rake do
             'economy'
         elsif priority_string.include?('Express')
             'express'
-        elsif priority_string.include?('Prefered') || priority_string.include?('Priority')
+        elsif priority_string.include?('Preferred') || priority_string.include?('Priority')
             'priority'
         end
     end

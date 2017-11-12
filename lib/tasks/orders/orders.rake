@@ -118,6 +118,7 @@ namespace :orders do
         Rails.logger.info("Order already created for #{order_params[:name]}. Skipping.")
         next
       end
+      Rails.logger.info("Creating order with params:  #{order_params}.")
 			OrdersController.new.make_queue_order_with_radios(order_params)
 		end
 	end
@@ -127,7 +128,7 @@ namespace :orders do
         'economy'
     elsif priority_string.include?('Express')
         'express'
-    elsif priority_string.include?('Prefered') || priority_string.include?('Priority')
+    elsif priority_string.include?('Preferred') || priority_string.include?('Priority')
         'priority'
     end
   end
