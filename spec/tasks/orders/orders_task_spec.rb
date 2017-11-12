@@ -66,6 +66,12 @@ describe "orders:import_orders_from_email", type: :rake do
         assert_email_read(email)
 
         unpack_order_csv(ucg_order_fixture).each do |test_order|
+            frequency = test_order['Custom_Info'].split('/^')[1]
+            frequency_list = []
+            test_order['quantity'].to_i.times do
+                frequency_list << frequency
+            end
+
             order_params = {
                 name: test_order['customer_name'],
                 order_source: "uncommon_goods",
@@ -80,7 +86,7 @@ describe "orders:import_orders_from_email", type: :rake do
                 reference_number: test_order['order_id'], # UCG order_id
                 shipment_priority: shipment_priority_mapping(test_order['shipping_upgrade']),
                 comments: test_order['giftmessage'],
-                frequencies: [test_order['Custom_Info'].split('/^')[1]]
+                frequencies: frequency_list
             }
 
             stub_controller = double('orders_controller', make_queue_order_with_radios: nil )

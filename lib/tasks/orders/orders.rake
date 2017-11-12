@@ -46,6 +46,12 @@ namespace :orders do
     Rails.logger.info("Parsing uncommon_goods csv")
 		orders = []
     map_order_csv(csv).each do |order|
+      frequency = order['Custom_Info'].split('/^')[1]
+      frequency_list = []
+      order['quantity'].to_i.times do
+          frequency_list << frequency
+      end
+      
       order_params = {
         name: order['customer_name'],
         order_source: "uncommon_goods",
@@ -60,7 +66,7 @@ namespace :orders do
         reference_number: order['order_id'], # UCG order_id
         shipment_priority: shipment_priority_mapping(order['shipping_upgrade']),
         comments: order['giftmessage'],
-        frequencies: [order['Custom_Info'].split('/^')[1]]
+        frequencies: frequency_list
       }
       orders << order_params
     end
