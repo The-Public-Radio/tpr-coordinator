@@ -61,4 +61,10 @@ RSpec.describe Order, type: :model do
   	model.email = 'not an email@email'
   	expect(model).to_not be_valid
   end
+
+  it 'counts the number of radios in an order' do
+    order_id = create(:invoiced_false).id
+
+    expect(Order.num_radios_in_order(order_id)).to be 6
+  end
 end
