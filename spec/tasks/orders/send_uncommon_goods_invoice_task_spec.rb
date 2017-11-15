@@ -12,7 +12,7 @@ describe "orders:send_uncommon_goods_invoice", type: :rake do
 
         it 'sends an emails with an invoice csv to uncommon_goods' do
             # We only want to send orders that are in a 'boxed', 'transit', 'delivered'
-            email_to_send_invoice_to = ENV['UNCOMMON_GOODS_INVOICING_EMAIL']
+            email_to_send_invoice_to = ENV['UNCOMMON_GOODS_INVOICING_EMAILS']
 
             create_list(:invoiced_true, 2)
             orders_to_invoice = create_list(:invoiced_false, 3)
