@@ -37,7 +37,13 @@ namespace :orders do
       next unless o.shipments.select{ |s| %w{boxed transit delivered}.include?(s.shipment_status) }.any?
       orders_to_invoice << o
     end
-    orders_to_invoice
+
+    if !orders_to_invoice.any?
+      Rails.logger.info("No orders found to invoice. Exiting.")
+      exit
+    else
+      orders_to_invoice
+    end
   end
 
   def login_to_gmail
