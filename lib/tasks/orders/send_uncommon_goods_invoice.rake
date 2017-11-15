@@ -33,7 +33,7 @@ namespace :orders do
 
   def orders_to_invoice
     orders_to_invoice = []
-    Order.where("order_source = ? AND invoiced = ?", 'uncommon_goods', false).each do |o|
+    Order.where("order_source = ? AND invoiced = ?", 'uncommon_goods', nil).each do |o|
       next unless o.shipments.select{ |s| %w{boxed transit delivered}.include?(s.shipment_status) }.any?
       orders_to_invoice << o
     end
