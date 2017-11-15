@@ -3,13 +3,16 @@ require 'gmail'
 namespace :orders do
   desc "Orders tasks"
   task send_uncommon_goods_invoice: :environment do
+    Rails.logger.info("Preparing and sending Uncommon Goods invoice")
+
   	gmail_client = login_to_gmail
 
     email_to_send_invoice_to = ENV['UNCOMMON_GOODS_INVOICING_EMAILS'].split(',')
     today = Date.today.to_s
     invoice_file_name = "tpr_invoice_#{today.gsub('-','_')}.csv"
 
-  # TODO: Find a way to not write this to the file system
+    # TODO: Find a way to not write this to the file system
+    Rails.logger.info("Creating CSV")
     CSV.open(invoice_file_name, "w") do |csv|
         # Add headers to invoice csv
         csv << ['order_id', 'usps_tracking_number', 'cost_of_goods']
@@ -23,6 +26,7 @@ namespace :orders do
 
     # Send email
     email_to_send_invoice_to.each do |email_address|
+      Rails.logger.info("Sending invoice to #{email_address}")
       gmail_client.deliver do 
         to email_address
         subject "The Public Radio Invoice #{today}"
@@ -43,6 +47,7 @@ namespace :orders do
       Rails.logger.info("No orders found to invoice. Exiting.")
       exit
     else
+      Rails.logger.info("Found #{orders_to_invoice.count} orders to invoice")
       orders_to_invoice
     end
   end
