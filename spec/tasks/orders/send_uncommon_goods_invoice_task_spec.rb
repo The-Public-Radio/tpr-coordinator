@@ -21,7 +21,7 @@ describe "orders:send_uncommon_goods_invoice", type: :rake do
             # Add each order to invoice csv
             CSV.open(invoice_name, "w") do |csv|
                 # Add headers to invoice csv
-                csv <<  ['order_id', 'tracking_number', 'cost_of_goods']
+                csv <<  ['order_id', 'usps_tracking_number', 'cost_of_goods']
                 # Add each shipment to order
                 orders_to_invoice.each do |order|
                     order.shipments.each do |shipment|
@@ -36,10 +36,14 @@ describe "orders:send_uncommon_goods_invoice", type: :rake do
                 add_file: invoice_name
             }
 
+            deliver_mock = double('deliver')
+
             # Assertions
             assert_gmail_connect
-            expect(stub_gmail_client).to receive(:deliver).with(email_params).and_return(true)
+            expect(stub_gmail_client).to receive(:deliver).and_yield(deliver_mock).and_return(true)
             
+            expect(deliver_mock).to receive(:to).with(email_params[:to])
+
             task.execute
 
             File.delete(invoice_name)
