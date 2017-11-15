@@ -5,7 +5,7 @@ namespace :orders do
   task send_uncommon_goods_invoice: :environment do
   	gmail_client = login_to_gmail
 
-    email_to_send_invoice_to = ENV['UNCOMMON_GOODS_INVOICING_EMAILS']
+    email_to_send_invoice_to = ENV['UNCOMMON_GOODS_INVOICING_EMAILS'].split(',')
     today = Date.today.to_s
     invoice_file_name = "tpr_invoice_#{today.gsub('-','_')}.csv"
 
