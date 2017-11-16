@@ -33,22 +33,28 @@ namespace :orders do
         add_file invoice_file_name
       end
     end
+
+    # mark orders as invoiced
+    orders_to_invoice.each do |order|
+        order.invoiced = true
+        order.save
+    end
   end
 
   def orders_to_invoice
-    orders_to_invoice = []
+    orders = []
     Order.where(order_source: 'uncommon_goods').each do |o|
       next if o.invoiced
       next unless o.shipments.select{ |s| %w{boxed transit delivered}.include?(s.shipment_status) }.any?
-      orders_to_invoice << o
+      orders << o
     end
 
-    if !orders_to_invoice.any?
+    if !orders.any?
       Rails.logger.info("No orders found to invoice. Exiting.")
       exit
     else
       Rails.logger.info("Found #{orders_to_invoice.count} orders to invoice")
-      orders_to_invoice
+      @orders_to_invoice ||= orders
     end
   end
 

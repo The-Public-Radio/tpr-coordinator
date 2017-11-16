@@ -40,11 +40,17 @@ describe "orders:send_uncommon_goods_invoice", type: :rake do
 
             # Assertions
             assert_gmail_connect
+
             expect(stub_gmail_client).to receive(:deliver).and_yield(deliver_mock).and_return(true)
             
             expect(deliver_mock).to receive(:to).with(email_params[:to])
 
-            task.execute
+            # make sure all send orders are marked as invoiced: true
+            orders_to_invoice.each do |order|
+                expect{ order.reload }.to change{ order.invoiced }.from(nil).to(true)
+            end
+
+            task.execute 
 
             File.delete(invoice_name)
         end
