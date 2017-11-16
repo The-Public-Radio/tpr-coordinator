@@ -83,7 +83,7 @@ describe "orders:import_orders_from_email", type: :rake do
                 postal_code: test_order['postal_code'],
                 country: 'US', # they only ship to US
                 phone: test_order['bill_phonenum'],
-                reference_number: test_order['order_id'], # UCG order_id
+                reference_number: "#{test_order['order_id']},#{test_order['shipment_id']}", # UCG order_id
                 shipment_priority: shipment_priority_mapping(test_order['shipping_upgrade']),
                 comments: test_order['giftmessage'],
                 frequencies: frequency_list

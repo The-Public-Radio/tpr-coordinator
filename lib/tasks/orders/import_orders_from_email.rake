@@ -63,7 +63,7 @@ namespace :orders do
         postal_code: order['postal_code'],
         country: 'US', # they only ship to US
         phone: order['bill_phonenum'],
-        reference_number: order['order_id'], # UCG order_id
+        reference_number: "#{order['order_id']},#{order['shipment_id']}", # UCG order_id,shipment_id
         shipment_priority: shipment_priority_mapping(order['shipping_upgrade']),
         comments: order['giftmessage'],
         frequencies: frequency_list

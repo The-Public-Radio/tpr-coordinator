@@ -49,6 +49,10 @@ def random_frequency
   Random.new.rand(78.0..108.0).round(1)
 end
 
+def random_reference_number
+  Random.new.rand(9999999)
+end
+
 def load_fixture(path)
   File.read(path)
 end

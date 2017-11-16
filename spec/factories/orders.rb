@@ -29,6 +29,7 @@ FactoryGirl.define do
 
     factory :uncommon_goods, class: Order do
       order_source "uncommon_goods"
+      reference_number random_reference_number
       
       factory :invoiced_true, class: Order do
         invoiced true

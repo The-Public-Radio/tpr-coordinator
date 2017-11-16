@@ -17,14 +17,15 @@ namespace :orders do
     # TODO: Find a way to not write this to the file system
     Rails.logger.info("Creating CSV")
     CSV.open(invoice_file_name, "w") do |csv|
-        # Add headers to invoice csv
-        csv << ['order_id', 'usps_tracking_number', 'cost_of_goods']
-        # Add each shipment to order
-        orders.each do |order|
-            order.shipments.each do |shipment|
-                csv << [order.reference_number, shipment.tracking_number, 33.75 * shipment.radio.count]
-            end
+      # Add headers to invoice csv
+      csv << ['order_id', 'shipment_id', 'usps_tracking_number', 'cost_of_goods', 'shipping_handling_costs']
+      # Add each shipment to order
+      orders.each do |order|
+        order.shipments.each do |shipment|
+          ucg_order_id, ucg_shipment_id = order.reference_number.split(',')
+          csv << [ucg_order_id, ucg_shipment_id, shipment.tracking_number, 33.75 * shipment.radio.count, 5 * shipment.radio.count]
         end
+      end
     end
 
     # Send email

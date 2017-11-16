@@ -16,23 +16,25 @@ describe "orders:send_uncommon_goods_invoice", type: :rake do
 
             create_list(:invoiced_true, 2)
             orders_to_invoice = create_list(:invoiced_false, 3)
-            invoice_name = "Centerline Labs LLC Invoice #{today}.csv"
+            invoice_name = "Centerline Labs LLC Invoice #{Date.today}.csv"
 
             # Add each order to invoice csv
             CSV.open(invoice_name, "w") do |csv|
                 # Add headers to invoice csv
-                csv <<  ['order_id', 'usps_tracking_number', 'cost_of_goods']
+                csv <<  ['order_id', 'shipment_id', 'usps_tracking_number', 'cost_of_goods']
                 # Add each shipment to order
                 orders_to_invoice.each do |order|
                     order.shipments.each do |shipment|
-                        csv << [order.reference_number, shipment.tracking_number, 33.75 * shipment.radio.count]
+                        ucg_order_id, ucg_shipment_id = order.reference_number.split(',')
+                        csv << [ucg_order_id, ucg_shipment_id, shipment.tracking_number, 33.75 * shipment.radio.count]
                     end
                 end
             end
 
             email_params = {
+                from: 'billing@foo.com',
                 to: email_to_send_invoice_to,
-                subject: 'The Public Radio Invoice',
+                subject: "Centerline Labs LLC Invoice #{Date.today}",
                 add_file: invoice_name
             }
 
