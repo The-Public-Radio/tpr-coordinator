@@ -31,8 +31,9 @@ namespace :orders do
     email_to_send_invoice_to.each do |email_address|
       Rails.logger.info("Sending invoice to #{email_address}")
       gmail_client.deliver do 
+        from ENV['INVOICE_FROM_EMAIL_ADDRESS']
         to email_address
-        subject "The Public Radio Invoice #{today}"
+        subject "Centerline Labs LLC Invoice #{today}"
         add_file invoice_file_name
       end
     end

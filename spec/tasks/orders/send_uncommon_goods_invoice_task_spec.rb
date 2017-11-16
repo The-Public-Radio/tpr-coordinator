@@ -16,7 +16,7 @@ describe "orders:send_uncommon_goods_invoice", type: :rake do
 
             create_list(:invoiced_true, 2)
             orders_to_invoice = create_list(:invoiced_false, 3)
-            invoice_name = "tpr_invoice_#{Date.today.to_s.gsub('-','_')}.csv"
+            invoice_name = "Centerline Labs LLC Invoice #{Date.today.to_s.gsub('-','_')}.csv"
 
             # Add each order to invoice csv
             CSV.open(invoice_name, "w") do |csv|
