@@ -133,11 +133,15 @@ namespace :orders do
 	end
 
   def notify_of_import(count)
-    @gmail_client.deliver do 
-      to ENV['EMAILS_TO_NOTIFY_OF_IMPORT']
-      subject "TPR Coordinator: Import Complete #{Date.today}"
-      text_part do
-        body "Uncommon Goods import complete! There were #{count} orders imported today."
+    emails = ENV['EMAILS_TO_NOTIFY_OF_IMPORT'].split(',')
+    emails.each do |email|
+      Rails.logger.info("Notifying #{email} of successful import.")
+      @gmail_client.deliver do 
+        to email
+        subject "TPR Coordinator: Import Complete #{Date.today}"
+        text_part do
+          body "Uncommon Goods import complete! There were #{count} orders imported today."
+        end
       end
     end
   end

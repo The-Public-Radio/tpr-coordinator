@@ -35,6 +35,7 @@ ENV['GMAIL_USERNAME'] = 'gmail_test_user'
 ENV['GMAIL_PASSWORD'] = 'gmail_test_password'
 ENV['UNCOMMON_GOODS_INVOICING_EMAILS'] = 'orders@ucg.com,foo@bar.com'
 ENV['INVOICE_FROM_EMAIL_ADDRESS'] = 'billing@foo.com'
+ENV['EMAILS_TO_NOTIFY_OF_IMPORT'] = 'testnotify@foo.com'
 
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate
