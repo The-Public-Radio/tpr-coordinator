@@ -45,12 +45,12 @@ describe "orders:send_uncommon_goods_invoice", type: :rake do
             
             expect(deliver_mock).to receive(:to).with(email_params[:to])
 
+            task.execute 
+
             # make sure all send orders are marked as invoiced: true
             orders_to_invoice.each do |order|
-                expect{ order.reload }.to change{ order.invoiced }.from(nil).to(true)
+                expect{ order.reload }.to change{ order.invoiced }.from(false).to(true)
             end
-
-            task.execute 
 
             File.delete(invoice_name)
         end

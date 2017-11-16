@@ -11,13 +11,16 @@ namespace :orders do
     today = Date.today.to_s
     invoice_file_name = "tpr_invoice_#{today.gsub('-','_')}.csv"
 
+    # load orders
+    orders = orders_to_invoice
+
     # TODO: Find a way to not write this to the file system
     Rails.logger.info("Creating CSV")
     CSV.open(invoice_file_name, "w") do |csv|
         # Add headers to invoice csv
         csv << ['order_id', 'usps_tracking_number', 'cost_of_goods']
         # Add each shipment to order
-        orders_to_invoice.each do |order|
+        orders.each do |order|
             order.shipments.each do |shipment|
                 csv << [order.reference_number, shipment.tracking_number, 33.75 * shipment.radio.count]
             end
@@ -35,9 +38,9 @@ namespace :orders do
     end
 
     # mark orders as invoiced
-    orders_to_invoice.each do |order|
-        order.invoiced = true
-        order.save
+    orders.each do |order|
+      order.invoiced = true
+      order.save
     end
   end
 
@@ -53,8 +56,8 @@ namespace :orders do
       Rails.logger.info("No orders found to invoice. Exiting.")
       exit
     else
-      Rails.logger.info("Found #{orders_to_invoice.count} orders to invoice")
-      @orders_to_invoice ||= orders
+      Rails.logger.info("Found #{orders.count} orders to invoice")
+      orders
     end
   end
 
