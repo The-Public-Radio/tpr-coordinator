@@ -9,7 +9,7 @@ namespace :orders do
 
     email_to_send_invoice_to = ENV['UNCOMMON_GOODS_INVOICING_EMAILS'].split(',')
     today = Date.today.to_s
-    invoice_file_name = "tpr_invoice_#{today.gsub('-','_')}.csv"
+    invoice_file_name = "Centerline Labs LLC Invoice #{today}.csv"
 
     # load orders
     orders = orders_to_invoice
