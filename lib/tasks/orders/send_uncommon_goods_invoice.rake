@@ -18,12 +18,13 @@ namespace :orders do
     Rails.logger.info("Creating CSV")
     CSV.open(invoice_file_name, "w") do |csv|
       # Add headers to invoice csv
-      csv << ['order_id', 'shipment_id', 'usps_tracking_number', 'cost_of_goods', 'shipping_handling_costs']
+      csv << ['order_id', 'shipment_id', 'usps_tracking_number', 'quantity','cost_of_goods', 'shipping_handling_costs']
       # Add each shipment to order
       orders.each do |order|
         order.shipments.each do |shipment|
           ucg_order_id, ucg_shipment_id = order.reference_number.split(',')
-          csv << [ucg_order_id, ucg_shipment_id, shipment.tracking_number, 33.75 * shipment.radio.count, 5 * shipment.radio.count]
+          num_radios = shipment.radio.count
+          csv << [ucg_order_id, ucg_shipment_id, shipment.tracking_number, num_radios,  33.75 * num_radios, 0]
         end
       end
     end

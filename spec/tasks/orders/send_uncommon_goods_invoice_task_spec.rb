@@ -21,12 +21,13 @@ describe "orders:send_uncommon_goods_invoice", type: :rake do
             # Add each order to invoice csv
             CSV.open(invoice_name, "w") do |csv|
                 # Add headers to invoice csv
-                csv <<  ['order_id', 'shipment_id', 'usps_tracking_number', 'cost_of_goods']
+                csv <<  ['order_id', 'shipment_id', 'usps_tracking_number', 'quantity', 'cost_of_goods', 'shipping_handling_costs']
                 # Add each shipment to order
                 orders_to_invoice.each do |order|
                     order.shipments.each do |shipment|
                         ucg_order_id, ucg_shipment_id = order.reference_number.split(',')
-                        csv << [ucg_order_id, ucg_shipment_id, shipment.tracking_number, 33.75 * shipment.radio.count]
+                        num_radios = shipment.radio.count
+                        csv << [ucg_order_id, ucg_shipment_id, shipment.tracking_number, num_radios, 33.75 * num_radios, 0]
                     end
                 end
             end
