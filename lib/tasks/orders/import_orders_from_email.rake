@@ -3,11 +3,12 @@ require 'gmail'
 namespace :orders do
   desc "Orders tasks"
   task import_orders_from_email: :environment do
-  	gmail_client = login_to_gmail
+  	@gmail_client = login_to_gmail
 
   	# load unread emails from ucg
-  	emails = gmail_client.inbox.find(:unread)
+  	emails = @gmail_client.inbox.find(:unread)
 
+    order_count = 0
   	# For each email, get the attachments and pase them into orders
   	Rails.logger.info("Processing #{emails.count} emails from order mailbox #{ENV['GMAIL_USERNAME']}")
   	emails.each_with_index do |email,i|
@@ -29,8 +30,10 @@ namespace :orders do
 		    	parsed_csv = parse_generic_csv(csv)
 		    end
 		    create_orders(parsed_csv)
+        order_count += parsed_csv.count
 		  end
 		  email.read!
+      notify_of_import(order_count)
 		end
   end
 
@@ -128,6 +131,16 @@ namespace :orders do
 			OrdersController.new.make_queue_order_with_radios(order_params)
 		end
 	end
+
+  def notify_of_import(count)
+    @gmail_client.deliver do 
+      to ENV['EMAILS_TO_NOTIFY_OF_IMPORT']
+      subject "TPR Coordinator: Import Complete #{Date.today}"
+      text_part do
+        body "Uncommon Goods import complete! There were #{count} orders imported today."
+      end
+    end
+  end
 
   def shipment_priority_mapping(priority_string)
     if priority_string.include?('Economy') || priority_string.include?('Standard') 

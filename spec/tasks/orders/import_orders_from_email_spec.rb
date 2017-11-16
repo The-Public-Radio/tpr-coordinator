@@ -54,6 +54,9 @@ describe "orders:import_orders_from_email", type: :rake do
             # expect{ task.execute }.to change(Order, :count).by(4)
         end
 
+        # TODO: Add expectation for parameters
+        expect(stub_gmail_client).to receive(:deliver)
+
         task.execute
     end
 
@@ -93,6 +96,9 @@ describe "orders:import_orders_from_email", type: :rake do
             expect(OrdersController).to receive(:new).and_return(stub_controller)
             expect(stub_controller).to receive(:make_queue_order_with_radios).with(order_params)
         end
+
+        # TODO: Add expectation for parameters
+        expect(stub_gmail_client).to receive(:deliver)
 
         task.execute
     end
