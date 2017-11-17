@@ -49,6 +49,8 @@ namespace :orders do
     Rails.logger.info("Parsing uncommon_goods csv")
 		orders = []
     map_order_csv(csv).each do |order|
+      Rails.logger.debug("Mapping order: #{order}")
+
       frequency = order['Custom_Info'].split('/^')[1]
       frequency_list = []
       order['quantity'].to_i.times do
