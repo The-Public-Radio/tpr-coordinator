@@ -1,6 +1,9 @@
 require 'gmail'
+# require 'app/helpers/task_helper'
 
 namespace :orders do
+  include TaskHelper
+
   desc "Orders tasks"
   task send_uncommon_goods_invoice: :environment do
     Rails.logger.info("Preparing and sending Uncommon Goods invoice")
@@ -24,7 +27,8 @@ namespace :orders do
         order.shipments.each do |shipment|
           ucg_order_id, ucg_shipment_id = order.reference_number.split(',')
           num_radios = shipment.radio.count
-          csv << [ucg_order_id, ucg_shipment_id, shipment.tracking_number, num_radios,  33.75 * num_radios, 0]
+          shipping_and_handling = TaskHelper.calculate_shipping_and_handling(num_radios, shipment.shipment_priority)
+          csv << [ucg_order_id, ucg_shipment_id, shipment.tracking_number, num_radios,  33.75 * num_radios, shipping_and_handling]
         end
       end
     end

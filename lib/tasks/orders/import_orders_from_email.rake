@@ -1,6 +1,8 @@
 require 'gmail'
 
 namespace :orders do
+  include TaskHelper
+  
   desc "Orders tasks"
   task import_orders_from_email: :environment do
   	@gmail_client = login_to_gmail
@@ -51,7 +53,12 @@ namespace :orders do
     map_order_csv(csv).each do |order|
       Rails.logger.debug("Mapping order: #{order}")
 
-      frequency = order['Custom_Info'].split('/^')[1]
+      begin
+        frequency = order['Custom_Info'].split('/^')[1]
+      rescue NoMethodError => e
+        Rails.logger.error("Frequency field is missing or malformed: #{order['Custom_Info']}")
+        raise e
+      end
       frequency_list = []
       order['quantity'].to_i.times do
           frequency_list << frequency
@@ -151,10 +158,10 @@ namespace :orders do
   def shipment_priority_mapping(priority_string)
     if priority_string.include?('Economy') || priority_string.include?('Standard') 
         'economy'
-    elsif priority_string.include?('Express')
-        'express'
     elsif priority_string.include?('Preferred') || priority_string.include?('Priority')
         'priority'
+    elsif priority_string.include?('Express') || priority_string.include?('Expedited')
+        'express'
     end
   end
 
