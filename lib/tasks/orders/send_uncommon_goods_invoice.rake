@@ -8,7 +8,7 @@ namespace :orders do
   task send_uncommon_goods_invoice: :environment do
     Rails.logger.info("Preparing and sending Uncommon Goods invoice")
 
-  	gmail_client = login_to_gmail
+  	gmail_client = TaskHelper.gmail_client
 
     email_to_send_invoice_to = ENV['UNCOMMON_GOODS_INVOICING_EMAILS'].split(',')
     today = Date.today.to_s
@@ -36,12 +36,13 @@ namespace :orders do
     # Send email
     email_to_send_invoice_to.each do |email_address|
       Rails.logger.info("Sending invoice to #{email_address}")
-      gmail_client.deliver do 
-        from ENV['INVOICE_FROM_EMAIL_ADDRESS']
-        to email_address
-        subject "Centerline Labs LLC Invoice #{today}"
-        add_file invoice_file_name
-      end
+      email_params = {
+        to: email_address,
+        subject: "Centerline Labs LLC Invoice #{today}",
+        add_file: invoice_file_name
+      }
+
+      TaskHelper.send_email(email_params)
     end
 
     # mark orders as invoiced
@@ -66,9 +67,5 @@ namespace :orders do
       Rails.logger.info("Found #{orders.count} orders to invoice")
       orders
     end
-  end
-
-  def login_to_gmail
-  	Gmail.connect!(ENV['GMAIL_USERNAME'], ENV['GMAIL_PASSWORD'])
   end
 end

@@ -155,16 +155,6 @@ namespace :orders do
     end
   end
 
-  def shipment_priority_mapping(priority_string)
-    if priority_string.include?('Economy') || priority_string.include?('Standard') 
-        'economy'
-    elsif priority_string.include?('Preferred') || priority_string.include?('Priority')
-        'priority'
-    elsif priority_string.include?('Express') || priority_string.include?('Expedited')
-        'express'
-    end
-  end
-
 	def generic_from_email_whitelist
 		ENV['GENERIC_ORDER_PROCESSING_FROM_EMAIL_WHITELIST']
 	end
