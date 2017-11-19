@@ -72,12 +72,6 @@ class ShipmentsController < ApplicationController
     @shipping_label_url ||= shipping_label_creation_response(shipment).label_url
   end
 
-  def shipping_label_data(shipment = @shipment)
-     label_url = shipping_label_url
-     shipping_label = HTTParty.get(label_url).body
-     @shipping_label_data = Base64.strict_encode64(shipping_label)
-  end
-
   def shipping_label_creation_response(shipment)
     @shipping_label_creation_response ||= create_shipping_label(shipment)
   end
@@ -140,12 +134,11 @@ class ShipmentsController < ApplicationController
       # Check priority, default to economy
       @shipment.shipment_priority = shipment_priority.nil? ? 'economy' : shipment_priority
 
-      # Create tracking number and store base64 encoded label pdf data
+      # Create tracking number and label_url
       if @shipment.tracking_number.nil?
         Rails.logger.info('No tracking number provided for new shipment')
         @shipment.tracking_number = shipping_tracking_number
         @shipment.shipment_status = 'label_created'
-        @shipment.label_data = shipping_label_data
         @shipment.label_url = shipping_label_url
       end
     end

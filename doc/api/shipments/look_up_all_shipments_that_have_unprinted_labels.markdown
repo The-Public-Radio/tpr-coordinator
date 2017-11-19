@@ -39,23 +39,21 @@
 <pre>{
   "data": [
     {
-      "id": 344,
-      "tracking_number": "93748896910904960079523789",
+      "id": 54,
+      "tracking_number": "93748896910904960011677211",
       "ship_date": null,
       "shipment_status": "label_created",
-      "order_id": 334,
-      "label_data": "label_data_fixture",
+      "order_id": 35,
       "priority_processing": null,
       "label_url": "https://shippo-delivery-east.s3.amazonaws.com/some_label.pdf",
       "shipment_priority": "economy"
     },
     {
-      "id": 345,
-      "tracking_number": "93748896910904960079523789",
+      "id": 55,
+      "tracking_number": "93748896910904960011677211",
       "ship_date": null,
       "shipment_status": "label_created",
-      "order_id": 335,
-      "label_data": "label_data_fixture",
+      "order_id": 36,
       "priority_processing": null,
       "label_url": "https://shippo-delivery-east.s3.amazonaws.com/some_label.pdf",
       "shipment_priority": "economy"

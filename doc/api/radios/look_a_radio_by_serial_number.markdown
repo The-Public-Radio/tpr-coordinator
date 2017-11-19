@@ -18,11 +18,11 @@
 
 #### Route
 
-<pre>GET /radios?serial_number=TPRv2.0_1_65093</pre>
+<pre>GET /radios?serial_number=TPRv2.0_1_89993</pre>
 
 #### Query Parameters
 
-<pre>serial_number: TPRv2.0_1_65093</pre>
+<pre>serial_number: TPRv2.0_1_89993</pre>
 
 ### Response
 
@@ -38,13 +38,13 @@
 
 <pre>{
   "data": {
-    "id": 398,
-    "frequency": "95.8",
+    "id": 55,
+    "frequency": "100.2",
     "pcb_version": "PR9026",
-    "serial_number": "TPRv2.0_1_65093",
-    "assembly_date": "2017-11-08 23:49:17 -0500",
-    "operator": "Ashlee Senger",
-    "shipment_id": 336,
+    "serial_number": "TPRv2.0_1_89993",
+    "assembly_date": "2017-11-19 17:53:00 -0500",
+    "operator": "Kristian Mertz MD",
+    "shipment_id": 46,
     "boxed": true,
     "country_code": "US",
     "firmware_version": "firmware_v1",

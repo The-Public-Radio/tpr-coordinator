@@ -23,7 +23,7 @@
 
 #### Body
 
-<pre>{"tracking_number":"93748896910904960079523789","shipment_status":"label_created"}</pre>
+<pre>{"tracking_number":"93748896910904960011677211","shipment_status":"label_created"}</pre>
 
 ### Response
 
@@ -39,12 +39,11 @@
 
 <pre>{
   "data": {
-    "id": 356,
-    "tracking_number": "93748896910904960079523789",
+    "id": 66,
+    "tracking_number": "93748896910904960011677211",
     "ship_date": null,
     "shipment_status": "label_created",
-    "order_id": 346,
-    "label_data": null,
+    "order_id": 47,
     "priority_processing": null,
     "label_url": null,
     "shipment_priority": "economy"
