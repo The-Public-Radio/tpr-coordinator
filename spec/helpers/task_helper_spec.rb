@@ -88,15 +88,15 @@ RSpec.describe TaskHelper, type: :helper do
       let(:subject) { 'test subject' }
       let(:body) { 'test body' }
       let(:attachment) { 'test/csv.csv' }
+      let(:email) { double('email') }
       let(:email_params) do
       	email_params = {
 					to: to,
   				subject: subject,
   				body: body,
-  				attachment: attachment
+  				add_file: attachment
   			}
       end
-      let(:email) { double('email') }
 
   		it 'composes and sends emails from parameters' do  			
   			expect(Gmail).to receive(:connect!).and_return(stub_gmail_client)
@@ -112,10 +112,54 @@ RSpec.describe TaskHelper, type: :helper do
   			expect(email).to receive(:to).with(to)
   			expect(email).to receive(:subject).with(subject)
   			expect(email).to receive(:body).with(body)
-  			expect(email).to receive(:attachment).with(attachment)
+  			expect(email).to receive(:add_file).with(attachment)
 
   			helper.compose_email(email_params)
   		end
   	end
+  end
+
+  context 'returns a shipment_priority of' do
+  	context 'economy' do
+	  	let(:priority) { 'economy' }
+
+	  	it 'when given Standard' do
+	  		returned_priority = shipment_priority_mapping('Standard and stuff')
+	  		expect(returned_priority).to eq priority
+	  	end
+
+	  	it 'when given Economy' do
+	  		returned_priority = shipment_priority_mapping('stuff and Economy')
+	  		expect(returned_priority).to eq priority
+	  	end
+	  end
+
+	  context 'priority' do
+	  	let(:priority) { 'priority' }
+
+	  	it 'when given Preferred' do
+	  		returned_priority = shipment_priority_mapping('Preferred')
+	  		expect(returned_priority).to eq priority
+	  	end
+
+	  	it 'when given Priority' do
+	  		returned_priority = shipment_priority_mapping('Priority')
+	  		expect(returned_priority).to eq priority
+	  	end
+	  end
+
+	  context 'express' do
+	  	let(:priority) { 'express' }
+
+	  	it 'when given Express' do
+	  		returned_priority = shipment_priority_mapping('Express')
+	  		expect(returned_priority).to eq priority
+	  	end
+
+	  	it 'when given Expedited' do
+	  		returned_priority = shipment_priority_mapping('Expedited')
+	  		expect(returned_priority).to eq priority
+	  	end
+	  end
   end
 end
