@@ -176,4 +176,30 @@ RSpec.describe TaskHelper, type: :helper do
 	  	end
 	  end
   end
+
+  context 'creates orders' do
+  	order_params = {
+      name: test_order['Name'],
+      order_source: "other",
+      email: test_order['Email'],
+      street_address_1: test_order['Address 1'],
+      street_address_2: test_order['Address 2'],
+      city: test_order['City'],
+      state: test_order['State'],
+      postal_code: test_order['Postal Code'],
+      country: test_order['Country'],
+      phone: test_order['Phone Number'].nil? ? '' : test_order['Phone Number'],
+      shipment_priority: test_order['Shipment Priority'],
+      frequencies: [test_order['Radio']]
+  	}
+  	
+    # stub_controller = double('orders_controller', make_queue_order_with_radios: nil )
+    # expect(OrdersController).to receive(:new).and_return(stub_controller)
+    # expect(stub_controller).to receive(:make_queue_order_with_radios).with(order_params)
+    # TODO: Test end state expectations: order count changed
+    # expect(OrdersController).to receive(:make_queue_order_with_radios).with(order_params).and_call_original
+    # expect{ task.execute }.to change(Order, :count).by(4)
+    
+  	helper.create_orders(order_params)
+  end
 end

@@ -53,9 +53,11 @@ describe "orders:import_orders_from_email", type: :rake do
                 frequencies: [test_order['Radio']]
             }
 
-            stub_controller = double('orders_controller', make_queue_order_with_radios: nil )
-            expect(OrdersController).to receive(:new).and_return(stub_controller)
-            expect(stub_controller).to receive(:make_queue_order_with_radios).with(order_params)
+            expect_any_instance_of(TaskHelper).to receive(:create_order).with(order_params)
+
+            # stub_controller = double('orders_controller', make_queue_order_with_radios: nil )
+            # expect(OrdersController).to receive(:new).and_return(stub_controller)
+            # expect(stub_controller).to receive(:make_queue_order_with_radios).with(order_params)
             # TODO: Test end state expectations: order count changed
             # expect(OrdersController).to receive(:make_queue_order_with_radios).with(order_params).and_call_original
             # expect{ task.execute }.to change(Order, :count).by(4)
@@ -96,9 +98,11 @@ describe "orders:import_orders_from_email", type: :rake do
                 frequencies: frequency_list
             }
 
-            stub_controller = double('orders_controller', make_queue_order_with_radios: nil )
-            expect(OrdersController).to receive(:new).and_return(stub_controller)
-            expect(stub_controller).to receive(:make_queue_order_with_radios).with(order_params)
+            expect_any_instance_of(TaskHelper).to receive(:create_order).with(order_params)
+
+            # stub_controller = double('orders_controller', make_queue_order_with_radios: nil )
+            # expect(OrdersController).to receive(:new).and_return(stub_controller)
+            # expect(stub_controller).to receive(:make_queue_order_with_radios).with(order_params)
         end
 
         task.execute
@@ -106,16 +110,19 @@ describe "orders:import_orders_from_email", type: :rake do
 
     it 'handles errors on import and sends an email back with the orders with errors' do
         error_email_params = {
-            to.
+            add_file: 'some/error/csv'
         }
-        
+
         expect_any_instance_of(TaskHelper).to receive(:find_unread_emails).and_return([email_with_bad_orders])
-        expect_any_instance_of(TaskHelper).to receive(:send_email).with(error_email_params)
+        expect_any_instance_of(TaskHelper).to receive(:send_reply).with(error_email_params)
+        expect_any_instance_of(TaskHelper).to receive(:create_order).with(bad_address_params).and_raise(ShippoError)
+        expect_any_instance_of(TaskHelper).to receive(:create_order).with(bad_frequency_params).and_raise(ActiveRecordValidationError)
+        expect_any_instance_of(TaskHelper).to receive(:create_order).with(order_already_imported_params).and_raise(OrderExistsError)
+
         expect(ucg_email).to receive(:message).and_return(ucg_message)
         expect(ucg_message).to receive(:attachments).and_return([ucg_attachment])
         expect(ucg_attachment).to receive(:decoded).and_return(ucg_fixture)
         expect(ucg_email).to receive(:read!)
-
 
         task.execute 
     end
