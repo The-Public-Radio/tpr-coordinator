@@ -1,10 +1,10 @@
 require 'csv'
 
 namespace :orders do
-  include TaskHelper
-
   desc "Orders tasks"
   task import_orders_from_email: :environment do
+    include TaskHelper
+
   	# load unread emails
   	emails = TaskHelper.find_unread_emails
 

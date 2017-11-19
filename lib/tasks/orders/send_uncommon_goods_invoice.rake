@@ -2,10 +2,10 @@ require 'gmail'
 # require 'app/helpers/task_helper'
 
 namespace :orders do
-  include TaskHelper
-
   desc "Orders tasks"
   task send_uncommon_goods_invoice: :environment do
+    include TaskHelper
+    
     Rails.logger.info("Preparing and sending Uncommon Goods invoice")
 
     email_to_send_invoice_to = ENV['UNCOMMON_GOODS_INVOICING_EMAILS'].split(',')
@@ -54,7 +54,7 @@ namespace :orders do
     orders = []
     Order.where(order_source: 'uncommon_goods').each do |o|
       next if o.invoiced
-      next unless o.shipments.select{ |s| %w{boxed transit delivered}.include?(s.shipment_status) }.any?
+      next unless !o.shipments.select{ |s| %w{boxed transit delivered}.include?(s.shipment_status) }.nil?
       orders << o
     end
 
