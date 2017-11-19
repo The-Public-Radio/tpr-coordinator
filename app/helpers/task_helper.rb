@@ -60,6 +60,17 @@ module TaskHelper
   	compose_email(email_params).deliver
   end
 
+  def send_reply(email, email_params)
+  	# build reply Mail object
+  	message = email.reply()
+  	# add / overwrite with new parameters
+	  email_params.each do |k,v|
+			message.send(k, v)
+		end
+		# send reply
+  	gmail_client.deliver(message)
+  end
+
   def compose_email(params)
   	gmail_client.compose do |email|
   		params.each do |k,v|

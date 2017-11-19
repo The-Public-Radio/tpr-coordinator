@@ -1,15 +1,5 @@
 require 'rails_helper'
 
-# Specs in this file have access to a helper object that includes
-# the TaskHelper. For example:
-#
-# describe TaskHelper do
-#   describe "string concat" do
-#     it "concats two strings with spaces" do
-#       expect(helper.concat_strings("this","that")).to eq("this that")
-#     end
-#   end
-# end
 RSpec.describe TaskHelper, type: :helper do
 	context 'calculates the shipping and handling for' do
   	context 'economy shipments with' do
@@ -99,7 +89,7 @@ RSpec.describe TaskHelper, type: :helper do
       end
 
   		it 'composes and sends emails from parameters' do  			
-  			expect(Gmail).to receive(:connect!).and_return(stub_gmail_client)
+  			assert_gmail_connect
   			expect(stub_gmail_client).to receive(:compose).and_return(email) # with(email_params)
   			expect(email).to receive(:deliver)
 
@@ -107,7 +97,7 @@ RSpec.describe TaskHelper, type: :helper do
   		end
 
   		it 'composes emails from parameters' do
-  			expect(Gmail).to receive(:connect!).and_return(stub_gmail_client)
+  			assert_gmail_connect
   			expect(stub_gmail_client).to receive(:compose).and_yield(email)
   			expect(email).to receive(:to).with(to)
   			expect(email).to receive(:subject).with(subject)
@@ -119,11 +109,26 @@ RSpec.describe TaskHelper, type: :helper do
 
   		it 'finds and returns unread emails' do
   			stub_inbox = double('inbox')
-  			expect(Gmail).to receive(:connect!).and_return(stub_gmail_client)
+  			assert_gmail_connect
   			expect(stub_gmail_client).to receive(:inbox).and_return(stub_inbox)
   			expect(stub_inbox).to receive(:find).with(:unread)
 
   			helper.find_unread_emails
+  		end
+
+  		it 'replies to emails' do
+  			reply_email = 'foo@bar.com'
+  			reply_message = Mail.new 
+  			assert_gmail_connect
+  			expect(stub_gmail_client).to receive(:deliver).with(reply_message)
+  			expect(email).to receive(:reply).and_return(reply_message)
+  			expect(reply_message).to receive(:to).with(reply_email)
+
+  			helper.send_reply(email, { to: reply_email })
+  		end
+
+  		def assert_gmail_connect
+  			expect(Gmail).to receive(:connect!).and_return(stub_gmail_client)
   		end
   	end
   end

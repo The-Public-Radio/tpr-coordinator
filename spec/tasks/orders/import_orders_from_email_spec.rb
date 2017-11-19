@@ -104,6 +104,22 @@ describe "orders:import_orders_from_email", type: :rake do
         task.execute
     end
 
+    it 'handles errors on import and sends an email back with the orders with errors' do
+        error_email_params = {
+            to.
+        }
+        
+        expect_any_instance_of(TaskHelper).to receive(:find_unread_emails).and_return([email_with_bad_orders])
+        expect_any_instance_of(TaskHelper).to receive(:send_email).with(error_email_params)
+        expect(ucg_email).to receive(:message).and_return(ucg_message)
+        expect(ucg_message).to receive(:attachments).and_return([ucg_attachment])
+        expect(ucg_attachment).to receive(:decoded).and_return(ucg_fixture)
+        expect(ucg_email).to receive(:read!)
+
+
+        task.execute 
+    end
+
     def load_order_fixture(fixture_name)
         File.read("spec/fixtures/#{fixture_name}.csv")
     end
