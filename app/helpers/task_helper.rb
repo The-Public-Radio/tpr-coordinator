@@ -67,4 +67,8 @@ module TaskHelper
   		end
   	end
   end
+
+  def find_unread_emails
+  	gmail_client.inbox.find(:unread)
+  end
 end

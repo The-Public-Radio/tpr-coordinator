@@ -116,6 +116,15 @@ RSpec.describe TaskHelper, type: :helper do
 
   			helper.compose_email(email_params)
   		end
+
+  		it 'finds and returns unread emails' do
+  			stub_inbox = double('inbox')
+  			expect(Gmail).to receive(:connect!).and_return(stub_gmail_client)
+  			expect(stub_gmail_client).to receive(:inbox).and_return(stub_inbox)
+  			expect(stub_inbox).to receive(:find).with(:unread)
+
+  			helper.find_unread_emails
+  		end
   	end
   end
 

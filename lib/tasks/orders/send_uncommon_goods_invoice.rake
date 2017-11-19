@@ -8,8 +8,6 @@ namespace :orders do
   task send_uncommon_goods_invoice: :environment do
     Rails.logger.info("Preparing and sending Uncommon Goods invoice")
 
-  	gmail_client = TaskHelper.gmail_client
-
     email_to_send_invoice_to = ENV['UNCOMMON_GOODS_INVOICING_EMAILS'].split(',')
     today = Date.today.to_s
     invoice_file_name = "Centerline Labs LLC Invoice #{today}.csv"

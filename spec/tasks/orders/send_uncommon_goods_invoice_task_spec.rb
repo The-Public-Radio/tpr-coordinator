@@ -12,7 +12,7 @@ describe "orders:send_uncommon_goods_invoice", type: :rake do
 
         it 'sends an emails with an invoice csv to uncommon_goods' do
             # We only want to send orders that are in a 'boxed', 'transit', 'delivered'
-            email_to_send_invoice_to = ENV['UNCOMMON_GOODS_INVOICING_EMAILS']
+            email_to_send_invoice_to = ENV['UNCOMMON_GOODS_INVOICING_EMAILS'].split(',')
 
             create_list(:invoiced_true, 2)
             orders_to_invoice = create_list(:invoiced_false, 3)
@@ -32,22 +32,17 @@ describe "orders:send_uncommon_goods_invoice", type: :rake do
                 end
             end
 
-            email_params = {
-                from: 'billing@foo.com',
-                to: email_to_send_invoice_to,
-                subject: "Centerline Labs LLC Invoice #{Date.today}",
-                add_file: invoice_name
-            }
+            email_to_send_invoice_to.each do |email|
 
-            deliver_mock = double('deliver')
+                email_params = {
+                    to: email,
+                    subject: "Centerline Labs LLC Invoice #{Date.today}",
+                    add_file: invoice_name
+                }
 
-            # Assertions
-            assert_gmail_connect
-
-            expect(stub_gmail_client).to receive(:deliver).and_yield(deliver_mock).and_return(true)
+                expect_any_instance_of(TaskHelper).to receive(:send_email).with(email_params)
+            end
             
-            expect(deliver_mock).to receive(:to).with(email_params[:to])
-
             task.execute 
 
             # make sure all send orders are marked as invoiced: true
@@ -57,15 +52,6 @@ describe "orders:send_uncommon_goods_invoice", type: :rake do
 
             File.delete(invoice_name)
         end
-    end
-
-    def assert_gmail_connect
-        # Grab configuration
-        username = ENV['GMAIL_USERNAME']
-        password = ENV['GMAIL_PASSWORD']
-
-        # Assert and return gmail client
-        expect(Gmail).to receive(:connect!).with(username, password).and_return(stub_gmail_client)
     end
 end
 

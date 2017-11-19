@@ -7,30 +7,37 @@ describe "orders:import_orders_from_email", type: :rake do
   end
 
   context 'from the tprorder@gmail.com gmail account' do
-
-    # Stub gmail inbox
-    let(:stub_gmail_inbox) { double('inbox') }
-    # Stub gmail client
-    let(:stub_gmail_client) { double('gmail', inbox: stub_gmail_inbox ) }
     # Stub attachment
-    let(:stub_attachment) { double('attachment') }
+    let(:stub_attachment) { double('attachment', decode: generic_order_fixture) }
 
     # Load order fixtures
     # Generic order fixture
     let(:generic_order_fixture)  { load_order_fixture('generic_orders') }
+    let(:generic_order_attachment) { double('attachment', decoded: generic_order_fixture) }
+    let(:generic_order_message) { double('attachment', attachments: [generic_order_attachment]) }
+    let(:generic_email) { double('generic_email', message: generic_order_message) }
+
     # UCG order fixture
-    let(:ucg_order_fixture)  { load_order_fixture('ucg_orders') }
+    let(:ucg_fixture)  { load_order_fixture('ucg_orders') }
+    let(:ucg_attachment) { double('attachment', decoded: ucg_fixture) }
+    let(:ucg_message) { double('message', attachments: [ucg_attachment]) }
+    let(:ucg_email) { double('ucg_email', message: ucg_message) }
 
     it 'imports generic formated csv attachments' do
-        ENV['GENERIC_ORDER_PROCESSING_FROM_EMAIL_WHITELIST'] = 'gmail.com'
-        email = stub_email('gmail.com')
+        notify_email_params = {
+            to: 'testnotify@foo.com',
+            subject: "TPR Coordinator: Import Complete #{Date.today}",
+            body: "Uncommon Goods import complete! There were 4 orders imported today."
+        } 
 
-        assert_gmail_connect
-        assert_inbox_find(email)
-        assert_attachment_decode('generic_orders')
-        assert_email_read(email)
+        expect_any_instance_of(TaskHelper).to receive(:find_unread_emails).and_return([generic_email])
+        expect_any_instance_of(TaskHelper).to receive(:send_email).with(notify_email_params)
+        expect(generic_email).to receive(:message).and_return(generic_order_message)
+        expect(generic_order_message).to receive(:attachments).and_return([generic_order_attachment])
+        expect(generic_order_attachment).to receive(:decoded).and_return(generic_order_fixture)
+        expect(generic_email).to receive(:read!)
 
-        unpack_order_csv(generic_order_fixture).each do |test_order|
+        unpack_order_csv(CSV.parse(generic_order_fixture)).each do |test_order|
             order_params = {
                 name: test_order['Name'],
                 order_source: "other",
@@ -54,21 +61,18 @@ describe "orders:import_orders_from_email", type: :rake do
             # expect{ task.execute }.to change(Order, :count).by(4)
         end
 
-        # TODO: Add expectation for parameters
-        expect(stub_gmail_client).to receive(:deliver)
-
         task.execute
     end
 
     it 'imports ucg formated csv attachemnts' do
-        email = stub_email('ucg.com')
+        expect_any_instance_of(TaskHelper).to receive(:find_unread_emails).and_return([ucg_email])
+        expect_any_instance_of(TaskHelper).to receive(:send_email)
+        expect(ucg_email).to receive(:message).and_return(ucg_message)
+        expect(ucg_message).to receive(:attachments).and_return([ucg_attachment])
+        expect(ucg_attachment).to receive(:decoded).and_return(ucg_fixture)
+        expect(ucg_email).to receive(:read!)
 
-        assert_gmail_connect
-        assert_inbox_find(email)
-        assert_attachment_decode('ucg_orders')
-        assert_email_read(email)
-
-        unpack_order_csv(ucg_order_fixture).each do |test_order|
+        unpack_order_csv(CSV.parse(ucg_fixture)).each do |test_order|
             frequency = test_order['Custom_Info'].split('/^')[1]
             frequency_list = []
             test_order['quantity'].to_i.times do
@@ -97,39 +101,11 @@ describe "orders:import_orders_from_email", type: :rake do
             expect(stub_controller).to receive(:make_queue_order_with_radios).with(order_params)
         end
 
-        # TODO: Add expectation for parameters
-        expect(stub_gmail_client).to receive(:deliver)
-
         task.execute
     end
 
-    def assert_inbox_find(stub_specific_email)
-        # Assert and return emails
-        expect(stub_gmail_inbox).to receive(:find).with(:unread).and_return([stub_specific_email])
-    end
-
-    def assert_attachment_decode(fixture_name)
-        order_csv_fixture = File.read("spec/fixtures/#{fixture_name}.csv")
-        # Assert and return decoded attachment (csv)
-        expect(stub_attachment).to receive(:decoded).and_return(order_csv_fixture)
-    end
-
-    def assert_email_read(email)
-        # Assert marked as read after import
-        # TODO: Verify this return value
-        # TODO: This should be read! not read
-        expect(email).to receive(:read!).and_return(true)
-    end
-
     def load_order_fixture(fixture_name)
-        CSV.read("spec/fixtures/#{fixture_name}.csv")
-    end
-
-    def stub_email(host)
-        stub_message = double('message', attachments: [stub_attachment])
-
-        @stub_email = double('email', message: stub_message,
-            from: [double('from', host: host)], read: true)
+        File.read("spec/fixtures/#{fixture_name}.csv")
     end
 
     def shipment_priority_mapping(priority_string)
