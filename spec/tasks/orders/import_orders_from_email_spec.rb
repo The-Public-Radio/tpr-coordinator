@@ -103,15 +103,6 @@ describe "orders:import_orders_from_email", type: :rake do
         task.execute
     end
 
-    def assert_gmail_connect
-        # Grab configuration
-        username = ENV['GMAIL_USERNAME']
-        password = ENV['GMAIL_PASSWORD']
-
-        # Assert and return gmail client
-        expect(Gmail).to receive(:connect!).with(username, password).and_return(stub_gmail_client)
-    end
-
     def assert_inbox_find(stub_specific_email)
         # Assert and return emails
         expect(stub_gmail_inbox).to receive(:find).with(:unread).and_return([stub_specific_email])

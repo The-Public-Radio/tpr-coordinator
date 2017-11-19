@@ -2,7 +2,7 @@ require 'gmail'
 
 namespace :orders do
   include TaskHelper
-  
+
   desc "Orders tasks"
   task import_orders_from_email: :environment do
   	@gmail_client = login_to_gmail
@@ -168,8 +168,4 @@ namespace :orders do
 	def generic_from_email_whitelist
 		ENV['GENERIC_ORDER_PROCESSING_FROM_EMAIL_WHITELIST']
 	end
-
-  def login_to_gmail
-  	Gmail.connect!(ENV['GMAIL_USERNAME'], ENV['GMAIL_PASSWORD'])
-  end
 end

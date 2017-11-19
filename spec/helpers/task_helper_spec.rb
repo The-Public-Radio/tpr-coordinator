@@ -69,4 +69,53 @@ RSpec.describe TaskHelper, type: :helper do
 	  	end
 	  end
   end
+
+  context 'using tprorderprocessing@gmail.com' do
+  	it 'logs into gmail' do 
+      # Grab configuration
+      username = ENV['GMAIL_USERNAME']
+      password = ENV['GMAIL_PASSWORD']
+
+      # Assert and return gmail client
+      expect(Gmail).to receive(:connect!).with(username, password)
+
+      helper.gmail_client
+  	end
+
+  	context 'from tprorderprocessing@gmail.com' do
+      let(:stub_gmail_client) { double('gmail', deliver: false ) }
+      let(:to) { 'foo@bar.com' }
+      let(:subject) { 'test subject' }
+      let(:body) { 'test body' }
+      let(:attachment) { 'test/csv.csv' }
+      let(:email_params) do
+      	email_params = {
+					to: to,
+  				subject: subject,
+  				body: body,
+  				attachment: attachment
+  			}
+      end
+      let(:email) { double('email') }
+
+  		it 'composes and sends emails from parameters' do  			
+  			expect(Gmail).to receive(:connect!).and_return(stub_gmail_client)
+  			expect(stub_gmail_client).to receive(:compose).and_return(email) # with(email_params)
+  			expect(email).to receive(:deliver)
+
+  			helper.send_email(email_params)
+  		end
+
+  		it 'composes emails from parameters' do
+  			expect(Gmail).to receive(:connect!).and_return(stub_gmail_client)
+  			expect(stub_gmail_client).to receive(:compose).and_yield(email)
+  			expect(email).to receive(:to).with(to)
+  			expect(email).to receive(:subject).with(subject)
+  			expect(email).to receive(:body).with(body)
+  			expect(email).to receive(:attachment).with(attachment)
+
+  			helper.compose_email(email_params)
+  		end
+  	end
+  end
 end
