@@ -7,8 +7,9 @@ describe "radios:send_radios_created_today_email", type: :rake do
   end
 
   it 'notifies ops@tpr of how many orders were imported that day' do
-  	radio_count = 4
-    create_list(:radio_inital_order, radio_count)
+  	radio_count = 1
+    create(:radio_boxed)
+    create_list(:radio_inital_order, 3)
 
     notify_email_params = {
       to: 'testnotify@foo.com',

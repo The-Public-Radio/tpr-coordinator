@@ -4,7 +4,8 @@ namespace :radios do
     include TaskHelper
 
     # Get all radios that were created today and have a frequency (only radios attached to orders)
-    radio_count = Radio.where("created_at >= ? AND frequency IS NOT ?", Time.zone.now.beginning_of_day, nil).count
+    # TODO Check boxed 
+    radio_count = Radio.where("created_at >= ? AND frequency IS NOT ? AND boxed IS TRUE", Time.zone.now.beginning_of_day, nil).count
     emails = ENV['EMAILS_TO_NOTIFY_OF_IMPORT'].split(',')
     emails.each do |email|
       Rails.logger.info("Notifying #{email} of radios ordered today")
