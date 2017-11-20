@@ -33,8 +33,8 @@ namespace :orders do
         order_count += parsed_csv.count
 		  end
 		  email.read!
-      notify_of_import
 		end
+    notify_of_import
   end
 
   def generic_csv_headers
