@@ -33,7 +33,7 @@ namespace :orders do
         order_count += parsed_csv.count
 		  end
 		  email.read!
-      notify_of_import(order_count)
+      notify_of_import
 		end
   end
 
@@ -143,14 +143,15 @@ namespace :orders do
 		end
 	end
 
-  def notify_of_import(count)
+  def notify_of_import
+    # TODO: Add in number of successful vs errors. Or maybe just errors complete success.
     emails = ENV['EMAILS_TO_NOTIFY_OF_IMPORT'].split(',')
     emails.each do |email|
       Rails.logger.info("Notifying #{email} of successful import.")
       email_params = {
-        subject: "TPR Coordinator: Import Complete #{Date.today}",
+        subject: "TPR Coordinator: UCG Import Complete #{Date.today}",
         to: email,
-        body: "Uncommon Goods import complete! There were #{count} orders imported today."   
+        body: "Uncommon Goods import complete!"   
       }
     
       TaskHelper.send_email(email_params) 

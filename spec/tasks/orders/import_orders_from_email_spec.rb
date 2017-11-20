@@ -26,12 +26,12 @@ describe "orders:import_orders_from_email", type: :rake do
     it 'imports generic formated csv attachments' do
         notify_email_params = {
             to: 'testnotify@foo.com',
-            subject: "TPR Coordinator: Import Complete #{Date.today}",
-            body: "Uncommon Goods import complete! There were 4 orders imported today."
+            subject: "TPR Coordinator: UCG Import Complete #{Date.today}",
+            body: "Uncommon Goods import complete!"
         } 
+        expect_any_instance_of(TaskHelper).to receive(:send_email).with(notify_email_params)
 
         expect_any_instance_of(TaskHelper).to receive(:find_unread_emails).and_return([generic_email])
-        expect_any_instance_of(TaskHelper).to receive(:send_email).with(notify_email_params)
         expect(generic_email).to receive(:message).and_return(generic_order_message)
         expect(generic_order_message).to receive(:attachments).and_return([generic_order_attachment])
         expect(generic_order_attachment).to receive(:decoded).and_return(generic_order_fixture)
