@@ -18,11 +18,11 @@
 
 #### Route
 
-<pre>GET /shipments/363/next_radio?tracking_number=93748896910904960079523789</pre>
+<pre>GET /shipments/73/next_radio?tracking_number=93748896910904960011677211</pre>
 
 #### Query Parameters
 
-<pre>tracking_number: 93748896910904960079523789</pre>
+<pre>tracking_number: 93748896910904960011677211</pre>
 
 ### Response
 
@@ -38,13 +38,13 @@
 
 <pre>{
   "data": {
-    "id": 452,
-    "frequency": "106.4",
+    "id": 109,
+    "frequency": "80.2",
     "pcb_version": null,
     "serial_number": null,
     "assembly_date": null,
     "operator": null,
-    "shipment_id": 363,
+    "shipment_id": 73,
     "boxed": false,
     "country_code": "US",
     "firmware_version": null,

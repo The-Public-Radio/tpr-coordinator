@@ -75,9 +75,6 @@ resource "Orders" do
         status: 'SUCCESS', success?: true, tracking_number: '9400111298370829688891', 
         label_url: 'https://shippo-delivery-east.s3.amazonaws.com/some_label.pdf')
 
-      s3_label_object = object_double('s3_label_object', code: 200, body: 'somelabelpdf') 
-
-      expect(HTTParty).to receive(:get).with(shippo_response_object.label_url).and_return(s3_label_object).exactly(4)
       expect(Shippo::Transaction).to receive(:create).and_return(shippo_response_object).exactly(4)
       expect(shippo_response_object).to receive(:[]).with('status').and_return('SUCCESS').exactly(4)
       expect(shippo_response_object).to receive(:tracking_number).and_return('9400111298370829688891').exactly(4)

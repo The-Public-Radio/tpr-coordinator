@@ -55,16 +55,4 @@ RSpec.describe Shipment, type: :model do
       expect(model).to_not be_valid
     end
   end
-
-  context 'a shipment can have a shipping label which' do
-    it 'can be nil' do
-      model.label_data = nil
-      expect(model).to be_valid
-    end
-
-    it 'is valid when it is base64 encoded' do
-      model.label_data = Base64.strict_encode64('some test string')
-      expect(model).to be_valid
-    end
-  end
 end

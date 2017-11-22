@@ -65,7 +65,6 @@ resource "Shipments" do
       data = JSON.parse(response_body)['data']
       expect(data.length).to be 2
       expect(data[0]['id']).to eq(shipments[0].id)
-      expect(data[0]['label_data']).to eq(shipments[0].label_data)
     end
   end
 
@@ -97,7 +96,6 @@ resource "Shipments" do
       expect(status).to eq 200
       data = JSON.parse(response_body)['data']
       expect(data['id']).to eq(priority_shipment.id)
-      expect(data['label_data']).to eq(priority_shipment.label_data)
     end
   end
 

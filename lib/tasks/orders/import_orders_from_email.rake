@@ -33,8 +33,8 @@ namespace :orders do
         order_count += parsed_csv.count
 		  end
 		  email.read!
-      notify_of_import(order_count)
 		end
+    notify_of_import
   end
 
   def generic_csv_headers
@@ -130,23 +130,28 @@ namespace :orders do
 	def create_orders(orders)
     Rails.logger.info("Creating #{orders.count} orders")
 		orders.each do |order_params|
-      unless Order.find_by_name(order_params[:name]).nil?
-        Rails.logger.info("Order already created for #{order_params[:name]}. Skipping.")
-        next
+      if order_params[:reference_number].nil?
+        unless Order.find_by_name(order_params[:name]).nil?
+          Rails.logger.info("Order already created for #{order_params[:name]}. Skipping.")
+          next
+        end
+      else
+        next unless Order.find_by_reference_number(order_params[:reference_number]).nil?
       end
       Rails.logger.info("Creating order with params:  #{order_params}.")
 			OrdersController.new.make_queue_order_with_radios(order_params)
 		end
 	end
 
-  def notify_of_import(count)
+  def notify_of_import
+    # TODO: Add in number of successful vs errors. Or maybe just errors complete success.
     emails = ENV['EMAILS_TO_NOTIFY_OF_IMPORT'].split(',')
     emails.each do |email|
       Rails.logger.info("Notifying #{email} of successful import.")
       email_params = {
-        subject: "TPR Coordinator: Import Complete #{Date.today}",
+        subject: "TPR Coordinator: UCG Import Complete #{Date.today}",
         to: email,
-        body: "Uncommon Goods import complete! There were #{count} orders imported today."   
+        body: "Uncommon Goods import complete!"   
       }
     
       TaskHelper.send_email(email_params) 

@@ -26,7 +26,7 @@
 
 #### Body
 
-<pre>{"pcb_version":"1","serial_number":"TPRv2.0_1_67508","operator":"Lavern Parker Jr.","country_code":"US"}</pre>
+<pre>{"pcb_version":"1","serial_number":"TPRv2.0_1_10680","operator":"Zula Orn","country_code":"US"}</pre>
 
 ### Response
 
@@ -42,12 +42,12 @@
 
 <pre>{
   "data": {
-    "id": 402,
+    "id": 59,
     "frequency": null,
     "pcb_version": "1",
-    "serial_number": "TPRv2.0_1_67508",
-    "assembly_date": "2017-11-08",
-    "operator": "Lavern Parker Jr.",
+    "serial_number": "TPRv2.0_1_10680",
+    "assembly_date": "2017-11-19",
+    "operator": "Zula Orn",
     "shipment_id": null,
     "boxed": false,
     "country_code": "US",

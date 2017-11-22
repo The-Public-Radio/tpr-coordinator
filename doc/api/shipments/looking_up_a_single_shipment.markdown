@@ -11,7 +11,7 @@
 
 #### Route
 
-<pre>GET /shipments/339</pre>
+<pre>GET /shipments/49</pre>
 
 ### Response
 
@@ -27,12 +27,11 @@
 
 <pre>{
   "data": {
-    "id": 339,
-    "tracking_number": "93748896910904960079523789",
+    "id": 49,
+    "tracking_number": "93748896910904960011677211",
     "ship_date": "2017-07-28",
     "shipment_status": "shipped",
-    "order_id": 329,
-    "label_data": "label_data_fixture",
+    "order_id": 30,
     "priority_processing": null,
     "label_url": null,
     "shipment_priority": "economy"

@@ -83,10 +83,8 @@ RSpec.describe OrdersController, type: :controller do
         status: 'SUCCESS', success?: true, tracking_number: random_track_num,
         label_url: 'https://shippo-delivery-east.s3.amazonaws.com/some_international_label.pdf')
       }
-      let(:s3_label_object) { object_double('s3_label_object', code: 200, body: 'somelabelpdf') }
 
       before(:each) do
-        expect(HTTParty).to receive(:get).with(shippo_response_object.label_url).and_return(s3_label_object).exactly(4)
         expect(Shippo::Transaction).to receive(:create).and_return(shippo_response_object).exactly(4)
         expect(shippo_response_object).to receive(:[]).with('status').and_return('SUCCESS').exactly(4)
         expect(shippo_response_object).to receive(:tracking_number).and_return(random_track_num)
@@ -111,7 +109,6 @@ RSpec.describe OrdersController, type: :controller do
         expect(shipments.select{ |s| s.radio.count == 1 }.count).to be 1
         shipments.each do |shipment|
           expect(shipment.tracking_number).to eq shippo_response_object.tracking_number
-          expect(shipment.label_data).to eq Base64.strict_encode64(s3_label_object.body)
           expect(shipment.shipment_status).to eq 'label_created'
           expect(shipment.shipment_priority).to eq 'priority'
         end

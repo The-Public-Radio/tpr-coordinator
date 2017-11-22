@@ -24,7 +24,7 @@
 
 #### Body
 
-<pre>{"serial_number":"TPRv2.0_1_58723","operator":"Rowland Sipes","boxed":true}</pre>
+<pre>{"serial_number":"TPRv2.0_1_60088","operator":"Forrest Mitchell","boxed":true}</pre>
 
 ### Response
 
@@ -40,12 +40,12 @@
 
 <pre>{
   "data": {
-    "id": 403,
+    "id": 60,
     "frequency": null,
     "pcb_version": "PR9026",
-    "serial_number": "TPRv2.0_1_58723",
-    "assembly_date": "2017-11-08 23:49:17 -0500",
-    "operator": "Rowland Sipes",
+    "serial_number": "TPRv2.0_1_60088",
+    "assembly_date": "2017-11-19 17:53:00 -0500",
+    "operator": "Forrest Mitchell",
     "shipment_id": null,
     "boxed": true,
     "country_code": null,

@@ -25,7 +25,7 @@
 
 #### Body
 
-<pre>{"order_source":"other","name":"Tiffany Rice","address":"345 West Way, Brooklyn, NY, 11221","frequencies":{"us":["98.3","79.5","79.5","98.3","79.5","79.5","98.3","79.5","79.5","105.6"]},"email":"person.mcpersonson@gmail.com"}</pre>
+<pre>{"order_source":"other","name":"Ewell Kulas V","address":"345 West Way, Brooklyn, NY, 11221","frequencies":{"us":["98.3","79.5","79.5","98.3","79.5","79.5","98.3","79.5","79.5","105.6"]},"email":"person.mcpersonson@gmail.com"}</pre>
 
 ### Response
 
@@ -40,8 +40,8 @@
 #### Body
 
 <pre>{
-  "id": 323,
-  "name": "Tiffany Rice",
+  "id": 24,
+  "name": "Ewell Kulas V",
   "order_source": "other",
   "email": "person.mcpersonson@gmail.com",
   "street_address_1": null,
@@ -52,5 +52,6 @@
   "country": "US",
   "phone": null,
   "invoiced": null,
-  "reference_number": null
+  "reference_number": null,
+  "comments": null
 }</pre>

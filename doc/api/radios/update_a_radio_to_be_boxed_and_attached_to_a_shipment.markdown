@@ -21,11 +21,11 @@
 
 #### Route
 
-<pre>PUT /shipments/338/radios</pre>
+<pre>PUT /shipments/48/radios</pre>
 
 #### Body
 
-<pre>{"boxed":true,"serial_number":"TPRv2.0_1_58723","operator":"Jarrell Rogahn","firmware_version":"firmware_v2"}</pre>
+<pre>{"boxed":true,"serial_number":"TPRv2.0_1_60088","operator":"Nikko Lowe","firmware_version":"firmware_v2"}</pre>
 
 ### Response
 
@@ -41,13 +41,13 @@
 
 <pre>{
   "data": {
-    "id": 405,
-    "frequency": "106.4",
+    "id": 62,
+    "frequency": "80.2",
     "pcb_version": "PR9026",
-    "serial_number": "TPRv2.0_1_58723",
-    "assembly_date": "2017-11-08 23:49:17 -0500",
-    "operator": "Jarrell Rogahn",
-    "shipment_id": 338,
+    "serial_number": "TPRv2.0_1_60088",
+    "assembly_date": "2017-11-19 17:53:00 -0500",
+    "operator": "Nikko Lowe",
+    "shipment_id": 48,
     "boxed": true,
     "country_code": "US",
     "firmware_version": "firmware_v2",

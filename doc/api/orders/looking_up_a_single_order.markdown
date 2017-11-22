@@ -11,7 +11,7 @@
 
 #### Route
 
-<pre>GET /orders/320</pre>
+<pre>GET /orders/21</pre>
 
 ### Response
 
@@ -26,10 +26,10 @@
 #### Body
 
 <pre>{
-  "id": 320,
-  "name": "Lisa Wunsch",
+  "id": 21,
+  "name": "Marques Anderson",
   "order_source": "kickstarter",
-  "email": "LisaWunsch@gmail.com",
+  "email": "MarquesAnderson@gmail.com",
   "street_address_1": "123 West 9th St.",
   "street_address_2": "Apt 4",
   "city": "Brooklyn",
@@ -38,5 +38,6 @@
   "country": "US",
   "phone": "123-321-1231",
   "invoiced": false,
-  "reference_number": null
+  "reference_number": null,
+  "comments": null
 }</pre>

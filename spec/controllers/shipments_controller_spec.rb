@@ -164,8 +164,6 @@ RSpec.describe ShipmentsController, type: :controller do
           valid_attributes
         end
 
-        let(:s3_label_object) { object_double('s3_label_object', code: 200, body: 'somelabelpdf') }
-
         before(:each) do
           create_label_params[:shipment][:address_to][:name] = order.name
         end
@@ -178,7 +176,6 @@ RSpec.describe ShipmentsController, type: :controller do
           end
 
           before(:each) do
-            expect(HTTParty).to receive(:get).with(shippo_response_object.label_url).and_return(s3_label_object)
             expect(shippo_response_object).to receive(:[]).with('status').and_return('SUCCESS')
             expect(shippo_response_object).to receive(:tracking_number).and_return('9400111298370829688891')
             expect(shippo_response_object).to receive(:label_url).and_return('https://shippo-delivery-east.s3.amazonaws.com/some_label.pdf')
@@ -248,11 +245,6 @@ RSpec.describe ShipmentsController, type: :controller do
             body = JSON.parse(response.body)['data']
             expect(Shipment.find(body['id']).tracking_number).to eq(shippo_response_object.tracking_number)
             expect(body['tracking_number']).to eq shippo_response_object.tracking_number
-          end
-
-          it 'downloads a label from label_url from the Shippo api response and stores it as base64 encoded data' do
-            execute_post
-            expect(Shipment.last.label_data).to eq(Base64.strict_encode64(s3_label_object.body))
           end
 
           it 'stores the label_url from the shippo response' do

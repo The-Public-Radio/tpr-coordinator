@@ -11,11 +11,11 @@
 
 #### Route
 
-<pre>GET /shipments?order_id=348</pre>
+<pre>GET /shipments?order_id=49</pre>
 
 #### Query Parameters
 
-<pre>order_id: 348</pre>
+<pre>order_id: 49</pre>
 
 ### Response
 
@@ -32,23 +32,21 @@
 <pre>{
   "data": [
     {
-      "id": 361,
-      "tracking_number": "93748896910904960079523789",
+      "id": 71,
+      "tracking_number": "93748896910904960011677211",
       "ship_date": null,
       "shipment_status": null,
-      "order_id": 348,
-      "label_data": null,
+      "order_id": 49,
       "priority_processing": null,
       "label_url": null,
       "shipment_priority": "economy"
     },
     {
-      "id": 362,
-      "tracking_number": "93748896910904960079523789",
+      "id": 72,
+      "tracking_number": "93748896910904960011677211",
       "ship_date": null,
       "shipment_status": null,
-      "order_id": 348,
-      "label_data": null,
+      "order_id": 49,
       "priority_processing": null,
       "label_url": null,
       "shipment_priority": "economy"
