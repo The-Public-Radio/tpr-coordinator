@@ -61,7 +61,7 @@ RSpec.describe TaskHelper, type: :helper do
   end
 
   context 'using tprorderprocessing@gmail.com' do
-  	it 'logs into gmail' do 
+  	it 'logs into gmail' do
       # Grab configuration
       username = ENV['GMAIL_USERNAME']
       password = ENV['GMAIL_PASSWORD']
@@ -88,7 +88,7 @@ RSpec.describe TaskHelper, type: :helper do
   			}
       end
 
-  		it 'composes and sends emails from parameters' do  			
+  		it 'composes and sends emails from parameters' do
   			assert_gmail_connect
   			expect(stub_gmail_client).to receive(:compose).and_return(email) # with(email_params)
   			expect(email).to receive(:deliver)
@@ -118,7 +118,7 @@ RSpec.describe TaskHelper, type: :helper do
 
   		it 'replies to emails' do
   			reply_email = 'foo@bar.com'
-  			reply_message = Mail.new 
+  			reply_message = Mail.new
   			assert_gmail_connect
   			expect(stub_gmail_client).to receive(:deliver).with(reply_message)
   			expect(email).to receive(:reply).and_return(reply_message)
@@ -178,28 +178,32 @@ RSpec.describe TaskHelper, type: :helper do
   end
 
   context 'creates orders' do
-  	order_params = {
-      name: test_order['Name'],
+
+  	let(:order_params) { {
+      name: 'Person McPerson',
       order_source: "other",
-      email: test_order['Email'],
-      street_address_1: test_order['Address 1'],
-      street_address_2: test_order['Address 2'],
-      city: test_order['City'],
-      state: test_order['State'],
-      postal_code: test_order['Postal Code'],
-      country: test_order['Country'],
-      phone: test_order['Phone Number'].nil? ? '' : test_order['Phone Number'],
-      shipment_priority: test_order['Shipment Priority'],
-      frequencies: [test_order['Radio']]
-  	}
-  	
-    # stub_controller = double('orders_controller', make_queue_order_with_radios: nil )
-    # expect(OrdersController).to receive(:new).and_return(stub_controller)
-    # expect(stub_controller).to receive(:make_queue_order_with_radios).with(order_params)
-    # TODO: Test end state expectations: order count changed
-    # expect(OrdersController).to receive(:make_queue_order_with_radios).with(order_params).and_call_original
-    # expect{ task.execute }.to change(Order, :count).by(4)
-    
-  	helper.create_orders(order_params)
+      email: 'perons.mcperson@gmail.com',
+      street_address_1: '123 brooklyn way',
+      street_address_2: '',
+      city: 'Brooklyn',
+      state: 'NY',
+      postal_code: '11221',
+      country: 'US',
+      phone: '',
+      shipment_priority: 'economy',
+      frequencies: ['89.1']
+  	} }
+
+    it 'when given params' do
+      expect_any_instance_of(OrdersController).to receive(:make_queue_order_with_radios).with(order_params)
+      helper.create_order(order_params)
+    end
+
+    it 'raises a TPROrderAlreadyCreated error if the order has been created already' do
+      order = create(:uncommon_goods)
+      order_params[:reference_number] = order.reference_number
+
+      expect{ helper.create_order(order_params) }.to raise_error(TaskHelper::TPROrderAlreadyCreated)
+    end
   end
 end

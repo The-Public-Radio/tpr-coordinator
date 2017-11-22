@@ -61,7 +61,7 @@ namespace :orders do
       order['quantity'].to_i.times do
           frequency_list << frequency
       end
-      
+
       order_params = {
         name: order['customer_name'],
         order_source: "uncommon_goods",
@@ -151,10 +151,10 @@ namespace :orders do
       email_params = {
         subject: "TPR Coordinator: UCG Import Complete #{Date.today}",
         to: email,
-        body: "Uncommon Goods import complete!"   
+        body: "Uncommon Goods import complete!"
       }
-    
-      TaskHelper.send_email(email_params) 
+
+      TaskHelper.send_email(email_params)
     end
   end
 

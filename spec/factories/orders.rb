@@ -11,7 +11,7 @@ FactoryGirl.define do
     order_source 'other'
     email { "#{name.split(' ').join}@gmail.com" }
     invoiced false
-    
+
     factory :kickstarter, class: Order do
       order_source "kickstarter"
 
@@ -30,7 +30,7 @@ FactoryGirl.define do
     factory :uncommon_goods, class: Order do
       order_source "uncommon_goods"
       reference_number random_reference_number
-      
+
       factory :invoiced_true, class: Order do
         invoiced true
       end
@@ -44,7 +44,7 @@ FactoryGirl.define do
       end
     end
   end
-  
+
   factory :international_order, class: Order do
     name random_name
     street_address_1 "123 West 9th St."

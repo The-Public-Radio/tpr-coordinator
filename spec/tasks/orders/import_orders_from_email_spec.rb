@@ -28,7 +28,7 @@ describe "orders:import_orders_from_email", type: :rake do
             to: 'testnotify@foo.com',
             subject: "TPR Coordinator: UCG Import Complete #{Date.today}",
             body: "Uncommon Goods import complete!"
-        } 
+        }
         expect_any_instance_of(TaskHelper).to receive(:send_email).with(notify_email_params)
 
         expect_any_instance_of(TaskHelper).to receive(:find_unread_emails).and_return([generic_email])
@@ -54,13 +54,6 @@ describe "orders:import_orders_from_email", type: :rake do
             }
 
             expect_any_instance_of(TaskHelper).to receive(:create_order).with(order_params)
-
-            # stub_controller = double('orders_controller', make_queue_order_with_radios: nil )
-            # expect(OrdersController).to receive(:new).and_return(stub_controller)
-            # expect(stub_controller).to receive(:make_queue_order_with_radios).with(order_params)
-            # TODO: Test end state expectations: order count changed
-            # expect(OrdersController).to receive(:make_queue_order_with_radios).with(order_params).and_call_original
-            # expect{ task.execute }.to change(Order, :count).by(4)
         end
 
         task.execute
@@ -99,22 +92,18 @@ describe "orders:import_orders_from_email", type: :rake do
             }
 
             expect_any_instance_of(TaskHelper).to receive(:create_order).with(order_params)
-
-            # stub_controller = double('orders_controller', make_queue_order_with_radios: nil )
-            # expect(OrdersController).to receive(:new).and_return(stub_controller)
-            # expect(stub_controller).to receive(:make_queue_order_with_radios).with(order_params)
         end
 
         task.execute
     end
 
-    it 'handles errors on import and sends an email back with the orders with errors' do
-        error_email_params = {
-            add_file: 'some/error/csv'
-        }
+    it 'handles errors on import and cleans up any stray orders, shipments, and radios' do
+        # error_email_params = {
+        #     add_file: 'some/error/csv'
+        # }
 
         expect_any_instance_of(TaskHelper).to receive(:find_unread_emails).and_return([email_with_bad_orders])
-        expect_any_instance_of(TaskHelper).to receive(:send_reply).with(error_email_params)
+        # expect_any_instance_of(TaskHelper).to receive(:send_reply).with(error_email_params)
         expect_any_instance_of(TaskHelper).to receive(:create_order).with(bad_address_params).and_raise(ShippoError)
         expect_any_instance_of(TaskHelper).to receive(:create_order).with(bad_frequency_params).and_raise(ActiveRecordValidationError)
         expect_any_instance_of(TaskHelper).to receive(:create_order).with(order_already_imported_params).and_raise(OrderExistsError)
@@ -124,7 +113,7 @@ describe "orders:import_orders_from_email", type: :rake do
         expect(ucg_attachment).to receive(:decoded).and_return(ucg_fixture)
         expect(ucg_email).to receive(:read!)
 
-        task.execute 
+        task.execute
     end
 
     def load_order_fixture(fixture_name)
@@ -132,7 +121,7 @@ describe "orders:import_orders_from_email", type: :rake do
     end
 
     def shipment_priority_mapping(priority_string)
-        if priority_string.include?('Economy') || priority_string.include?('Standard') 
+        if priority_string.include?('Economy') || priority_string.include?('Standard')
             'economy'
         elsif priority_string.include?('Express')
             'express'
@@ -158,7 +147,7 @@ describe "orders:import_orders_from_email", type: :rake do
                     hash[header] = order[i]
                 end
             end
-            orders << hash 
+            orders << hash
         end
         orders
     end

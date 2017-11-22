@@ -4,10 +4,10 @@ module TaskHelper
 	attr_reader :gmail_client
 
 	def calculate_shipping_and_handling(number_of_radios, shipment_priority)
-	#        first class   priority  priority express  
-	# 1-pack    5.95         12.95      25.95 
-	# 2-pack                 7.95       27.95 
-	# 3-pack                 8.95       29.95 
+	#        first class   priority  priority express
+	# 1-pack    5.95         12.95      25.95
+	# 2-pack                 7.95       27.95
+	# 3-pack                 8.95       29.95
 
 	  case shipment_priority
 	  when 'economy'
@@ -38,12 +38,12 @@ module TaskHelper
 	    when 3
 	      29.95
 	    end
-	  end 
+	  end
 	end
 
 	def shipment_priority_mapping(priority_string)
 		priority_string =	priority_string.downcase
-    if priority_string.include?('economy') || priority_string.include?('standard') 
+    if priority_string.include?('economy') || priority_string.include?('standard')
         'economy'
     elsif priority_string.include?('preferred') || priority_string.include?('priority')
         'priority'
@@ -82,4 +82,26 @@ module TaskHelper
   def find_unread_emails
   	gmail_client.inbox.find(:unread)
   end
+
+  def create_order(order_params)
+    # Check if order has already been created
+    if order_params[:reference_number].nil?
+      unless Order.find_by_name(order_params[:name]).nil?
+        Rails.logger.info("Order already created for #{order_params[:name]}. Skipping.")
+        raise TPROrderAlreadyCreated
+      end
+    else
+      unless Order.find_by_reference_number(order_params[:reference_number]).nil?
+        Rails.logger.info("Order already created for #{order_params[:name]}. Skipping.")
+        raise TPROrderAlreadyCreated
+      end
+    end
+    Rails.logger.info("Creating order with params:  #{order_params}.")
+    OrdersController.new.make_queue_order_with_radios(order_params)
+  end
+
+  class TPROrderAlreadyCreated < Exception
+  end
 end
+
+
