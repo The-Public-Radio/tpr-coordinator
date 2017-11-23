@@ -130,16 +130,8 @@ namespace :orders do
 	def create_orders(orders)
     Rails.logger.info("Creating #{orders.count} orders")
 		orders.each do |order_params|
-      if order_params[:reference_number].nil?
-        unless Order.find_by_name(order_params[:name]).nil?
-          Rails.logger.info("Order already created for #{order_params[:name]}. Skipping.")
-          next
-        end
-      else
-        next unless Order.find_by_reference_number(order_params[:reference_number]).nil?
-      end
-      Rails.logger.info("Creating order with params:  #{order_params}.")
-			OrdersController.new.make_queue_order_with_radios(order_params)
+      # handle error here
+      TaskHelper.create_order(order_params)
 		end
 	end
 
@@ -157,8 +149,4 @@ namespace :orders do
       TaskHelper.send_email(email_params)
     end
   end
-
-	def generic_from_email_whitelist
-		ENV['GENERIC_ORDER_PROCESSING_FROM_EMAIL_WHITELIST']
-	end
 end

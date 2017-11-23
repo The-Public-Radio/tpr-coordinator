@@ -97,24 +97,24 @@ describe "orders:import_orders_from_email", type: :rake do
         task.execute
     end
 
-    it 'handles errors on import and cleans up any stray orders, shipments, and radios' do
-        # error_email_params = {
-        #     add_file: 'some/error/csv'
-        # }
+    # it 'handles errors on import and cleans up any stray orders, shipments, and radios' do
+    #     # error_email_params = {
+    #     #     add_file: 'some/error/csv'
+    #     # }
 
-        expect_any_instance_of(TaskHelper).to receive(:find_unread_emails).and_return([email_with_bad_orders])
-        # expect_any_instance_of(TaskHelper).to receive(:send_reply).with(error_email_params)
-        expect_any_instance_of(TaskHelper).to receive(:create_order).with(bad_address_params).and_raise(ShippoError)
-        expect_any_instance_of(TaskHelper).to receive(:create_order).with(bad_frequency_params).and_raise(ActiveRecordValidationError)
-        expect_any_instance_of(TaskHelper).to receive(:create_order).with(order_already_imported_params).and_raise(OrderExistsError)
+    #     expect_any_instance_of(TaskHelper).to receive(:find_unread_emails).and_return([email_with_bad_orders])
+    #     # expect_any_instance_of(TaskHelper).to receive(:send_reply).with(error_email_params)
+    #     expect_any_instance_of(TaskHelper).to receive(:create_order).with(bad_address_params).and_raise(ShippoError)
+    #     expect_any_instance_of(TaskHelper).to receive(:create_order).with(bad_frequency_params).and_raise(ActiveRecordValidationError)
+    #     expect_any_instance_of(TaskHelper).to receive(:create_order).with(order_already_imported_params).and_raise(OrderExistsError)
 
-        expect(ucg_email).to receive(:message).and_return(ucg_message)
-        expect(ucg_message).to receive(:attachments).and_return([ucg_attachment])
-        expect(ucg_attachment).to receive(:decoded).and_return(ucg_fixture)
-        expect(ucg_email).to receive(:read!)
+    #     expect(ucg_email).to receive(:message).and_return(ucg_message)
+    #     expect(ucg_message).to receive(:attachments).and_return([ucg_attachment])
+    #     expect(ucg_attachment).to receive(:decoded).and_return(ucg_fixture)
+    #     expect(ucg_email).to receive(:read!)
 
-        task.execute
-    end
+    #     task.execute
+    # end
 
     def load_order_fixture(fixture_name)
         File.read("spec/fixtures/#{fixture_name}.csv")
