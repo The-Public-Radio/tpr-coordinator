@@ -115,17 +115,17 @@ module TaskHelper
       shipments.each do |shipment|
         # find radios
         radios = []
-        s.radio.each{ |r| radios << r }
+        shipment.radio.each{ |r| radios << r }
         if radios.count != 0
           radios.each do |radio|
             Rails.logger.info("Destroying radio: #{radio}")
-            r.destroy
+            radio.destroy
           end
         else
           Rails.logger.info("Shipment #{shipment.id} has no radios")
         end
         Rails.logger.info("Destroying shipment: #{shipment}")
-        s.destroy
+        shipment.destroy
       end
     else
       Rails.logger.info("Order #{order.id} has no shipments")
