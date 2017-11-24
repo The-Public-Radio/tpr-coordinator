@@ -24,6 +24,8 @@ namespace :orders do
 		    end
 
         @email_csv = csv
+        @email_csv_headers = csv[0]
+
 		    if csv[0].eql?(uncommon_goods_headers)
 		    	# Process ucg order formated CSV
 		    	parsed_csv = parse_ucg_csv(csv)
@@ -34,8 +36,14 @@ namespace :orders do
 		    create_orders(parsed_csv)
         order_count += parsed_csv.count
 		  end
-      process_failed_orders(email) if @failed_orders.any?
-		  email.read!
+
+      # TODO remove this when done with order processings
+      # Not marking the email as read if there are errors
+      if @failed_orders.any?
+        process_failed_orders(email) if !ENV['PROCESS_FAILED_ORDERS'].nil?
+      else
+		    email.read!
+      end
 		end
     notify_of_import unless order_count == 0
   end
@@ -152,8 +160,7 @@ namespace :orders do
   def process_failed_orders(email)
     CSV.open('failed_orders.csv', 'w') do |csv|
       # Use same headers as the original order csv + an errors column
-      headers = @email_csv.shift
-      csv << (headers << 'Errors')
+      csv << (email_csv_headers << 'Errors')
       # for each failed order, find original info and add to new csv with errors
       @failed_orders.each do |order_error|
         csv << (@email_csv[order_error[:csv_order_index]] << order_error[:error])
