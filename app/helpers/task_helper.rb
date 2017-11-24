@@ -96,8 +96,43 @@ module TaskHelper
         raise TPROrderAlreadyCreated
       end
     end
-    Rails.logger.info("Creating order with params:  #{order_params}.")
+    Rails.logger.info("Creating order with params: #{order_params}.")
     OrdersController.new.make_queue_order_with_radios(order_params)
+  end
+
+  def clean_up_order(order_params)
+    Rails.logger.info("Cleaning up order: #{order_params}.")
+
+    if order_params[:reference_number].nil?
+      order = Order.find_by_reference_number(order_params[:reference_number])
+    else
+      order = Order.find_by_name(order_params[:name])
+    end
+
+    # find shipments
+    shipments = order.shipments
+    if shipments.count != 0
+      shipments.each do |shipment|
+        # find radios
+        radios = []
+        s.radio.each{ |r| radios << r }
+        if radios.count != 0
+          radios.each do |radio|
+            Rails.logger.info("Destroying radio: #{radio}")
+            r.destroy
+          end
+        else
+          Rails.logger.info("Shipment #{shipment.id} has no radios")
+        end
+        Rails.logger.info("Destroying shipment: #{shipment}")
+        s.destroy
+      end
+    else
+      Rails.logger.info("Order #{order.id} has no shipments")
+    end
+
+    Rails.logger.info("Destroying order: #{order}")
+    order.destory
   end
 
   class TPROrderAlreadyCreated < Exception

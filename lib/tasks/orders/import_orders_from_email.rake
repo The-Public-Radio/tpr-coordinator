@@ -130,8 +130,17 @@ namespace :orders do
 	def create_orders(orders)
     Rails.logger.info("Creating #{orders.count} orders")
 		orders.each do |order_params|
-      # handle error here
-      TaskHelper.create_order(order_params)
+      begin
+        TaskHelper.create_order(order_params)
+      rescue ActiveModel::ValidationError => e
+        Rails.logger.error("Validation error!: #{order_params}")
+        TaskHelper.clean_up_order(order_params)
+      rescue TaskHelper::TPROrderAlreadyCreated => e
+        Rails.logger.warn("Order already imported!: #{order_params}")
+      rescue Shippo::Exceptions::Error => e
+        Rails.logger.error("Shipping address is invalid!: #{order_params}")
+        TaskHelper.clean_up_order(order_params)
+      end
 		end
 	end
 

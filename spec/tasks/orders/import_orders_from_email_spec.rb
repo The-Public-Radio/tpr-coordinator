@@ -23,6 +23,12 @@ describe "orders:import_orders_from_email", type: :rake do
     let(:ucg_message) { double('message', attachments: [ucg_attachment]) }
     let(:ucg_email) { double('ucg_email', message: ucg_message) }
 
+    # Error handling fixtures
+    let(:error_fixture)  { load_order_fixture('error_orders') }
+    let(:error_attachment) { double('attachment', decoded: error_fixture) }
+    let(:error_message) { double('message', attachments: [error_attachment]) }
+    let(:error_email) { double('error_email', message: error_message) }
+
     it 'imports generic formated csv attachments' do
         notify_email_params = {
             to: 'testnotify@foo.com',
@@ -97,24 +103,41 @@ describe "orders:import_orders_from_email", type: :rake do
         task.execute
     end
 
-    # it 'handles errors on import and cleans up any stray orders, shipments, and radios' do
-    #     # error_email_params = {
-    #     #     add_file: 'some/error/csv'
-    #     # }
+    context 'cleans up any stray orders, shipments, and radios when the order' do
+        # error_email_params = {
+        #     body: "There were 3 orders with errors. See 'error' collumn of attached csv for details."
+        #     add_file: 'some/error/csv'
+        # }
 
-    #     expect_any_instance_of(TaskHelper).to receive(:find_unread_emails).and_return([email_with_bad_orders])
-    #     # expect_any_instance_of(TaskHelper).to receive(:send_reply).with(error_email_params)
-    #     expect_any_instance_of(TaskHelper).to receive(:create_order).with(bad_address_params).and_raise(ShippoError)
-    #     expect_any_instance_of(TaskHelper).to receive(:create_order).with(bad_frequency_params).and_raise(ActiveRecordValidationError)
-    #     expect_any_instance_of(TaskHelper).to receive(:create_order).with(order_already_imported_params).and_raise(OrderExistsError)
+        # error_order_csv = CSV.parse(error_fixture)
+        # bad_address_params = error_order_csv[1]
+        # bad_frequency_params = error_order_csv[2]
+        # order_already_imported_params = error_order_csv[4]
+        # expect_any_instance_of(TaskHelper).to receive(:send_reply).with(error_email_params)
 
-    #     expect(ucg_email).to receive(:message).and_return(ucg_message)
-    #     expect(ucg_message).to receive(:attachments).and_return([ucg_attachment])
-    #     expect(ucg_attachment).to receive(:decoded).and_return(ucg_fixture)
-    #     expect(ucg_email).to receive(:read!)
+        before(:each) do
+            expect_any_instance_of(TaskHelper).to receive(:find_unread_emails).and_return([error_email])
+            expect(error_email).to receive(:message).and_return(error_message)
+            expect(error_message).to receive(:attachments).and_return([error_attachment])
+            expect(error_attachment).to receive(:decoded).and_return(error_fixture)
+            expect(error_email).to receive(:read!)
+        end
 
-    #     task.execute
-    # end
+        it 'has an invalid frequency' do
+            expect_any_instance_of(TaskHelper).to receive(:create_order).and_raise(ActiveModel::ValidationError('test'))
+            task.execute
+        end
+
+        it 'has already been imported' do
+            expect_any_instance_of(TaskHelper).to receive(:create_order).and_raise(TaskHelper::TPROrderAlreadyCreated)
+            task.execute
+        end
+
+        it 'has an invalid address' do
+            expect_any_instance_of(TaskHelper).to receive(:create_order).and_raise(Shippo::Exceptions::Error)
+            task.execute
+        end
+    end
 
     def load_order_fixture(fixture_name)
         File.read("spec/fixtures/#{fixture_name}.csv")
