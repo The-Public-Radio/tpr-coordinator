@@ -137,11 +137,7 @@ namespace :orders do
         TaskHelper.clean_up_order(order_params)
       rescue TaskHelper::TPROrderAlreadyCreated => e
         Rails.logger.warn("Order already imported!: #{order_params}")
-      rescue Shippo::Exceptions::Error => e
-        Rails.logger.error("Shipping address is invalid!: #{order_params}")
-        TaskHelper.clean_up_order(order_params)
-      rescue ShippoError
-        Rails.logger.error("Second shippo rescue")
+      rescue ShippoError => e
         Rails.logger.error("Shipping address is invalid!: #{order_params}")
         TaskHelper.clean_up_order(order_params)
       end
