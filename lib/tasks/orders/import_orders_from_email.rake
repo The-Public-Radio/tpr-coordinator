@@ -17,18 +17,19 @@ namespace :orders do
 		  email.message.attachments.each do |a|
   			Rails.logger.info("Reading attachments")
 		    begin
-		    	@attachment_csv = CSV.parse(a.decoded)
+		    	csv = CSV.parse(a.decoded)
 		    rescue MalformedCSVError => e
 		    	Rails.logger.error('Email attachment is not a CSV!')
 		    	next
 		    end
 
-		    if @attachment_csv[0].eql?(uncommon_goods_headers)
+        @email_csv = csv
+		    if csv[0].eql?(uncommon_goods_headers)
 		    	# Process ucg order formated CSV
-		    	parsed_csv = parse_ucg_csv(@attachment_csv)
-		    elsif @attachment_csv[0].eql?(generic_csv_headers)
+		    	parsed_csv = parse_ucg_csv(csv)
+		    elsif csv[0].eql?(generic_csv_headers)
 		    	# Process generic order formated CSV
-		    	parsed_csv = parse_generic_csv(@attachment_csv)
+		    	parsed_csv = parse_generic_csv(csv)
 		    end
 		    create_orders(parsed_csv)
         order_count += parsed_csv.count
@@ -151,16 +152,25 @@ namespace :orders do
   def process_failed_orders(email)
     CSV.open('failed_orders.csv', 'w') do |csv|
       # Use same headers as the original order csv + an errors column
-      headers = @attachment_csv.shift
+      headers = @email_csv.shift
       csv << (headers << 'Errors')
       # for each failed order, find original info and add to new csv with errors
       @failed_orders.each do |order_error|
-        csv << (@attachment_csv[order_error[:csv_order_index]] << order_error[:error])
+        csv << (@email_csv[order_error[:csv_order_index]] << order_error[:error])
       end
     end
+    # Send initial reply
     TaskHelper.send_reply(email, {
       body: "Please see attached csv for #{@failed_orders.count} orders with errors",
       add_file: 'failed_orders.csv' })
+    # Send reply to other emails
+    emails_to_notify = ENV['EMAILS_TO_SEND_FAILED_ORDERS'].split(',')
+    emails_to_notify.each do |email_to_notify|
+      TaskHelper.send_reply(email, {
+        to: email_to_notify,
+        body: "Please see attached csv for #{@failed_orders.count} orders with errors",
+        add_file: 'failed_orders.csv' })
+    end
   end
 
   def notify_of_import
