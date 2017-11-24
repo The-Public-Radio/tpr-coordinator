@@ -134,7 +134,7 @@ describe "orders:import_orders_from_email", type: :rake do
         end
 
         it 'has an invalid address' do
-            expect_any_instance_of(TaskHelper).to receive(:create_order).and_raise(Shippo::Exceptions::Error)
+            expect_any_instance_of(TaskHelper).to receive(:create_order).and_raise(ShippoError)
             task.execute
         end
     end

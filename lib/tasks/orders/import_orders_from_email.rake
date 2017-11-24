@@ -33,8 +33,8 @@ namespace :orders do
 		    create_orders(parsed_csv)
         order_count += parsed_csv.count
 		  end
-		  email.read!
       process_failed_orders(email) if @failed_orders.any?
+		  email.read!
 		end
     notify_of_import unless order_count == 0
   end
