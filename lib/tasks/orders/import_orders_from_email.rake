@@ -159,6 +159,7 @@ namespace :orders do
 
   def process_failed_orders(email)
     CSV.open('failed_orders.csv', 'w') do |csv|
+      # TODO Fix this CSV thing
       # Use same headers as the original order csv + an errors column
       csv << (email_csv_headers << 'Errors')
       # for each failed order, find original info and add to new csv with errors
@@ -188,7 +189,7 @@ namespace :orders do
       email_params = {
         subject: "TPR Coordinator: UCG Import Complete #{Date.today}",
         to: email,
-        body: "Uncommon Goods import complete!"
+        body: "Uncommon Goods import complete with #{@failed_orders.count} failed orders!"
       }
 
       TaskHelper.send_email(email_params)
