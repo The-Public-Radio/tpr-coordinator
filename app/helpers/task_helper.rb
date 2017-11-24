@@ -118,21 +118,21 @@ module TaskHelper
         shipment.radio.each{ |r| radios << r }
         if radios.count != 0
           radios.each do |radio|
-            Rails.logger.info("Destroying radio: #{radio}")
+            Rails.logger.info("Destroying radio #{radio.id}")
             radio.destroy
           end
         else
           Rails.logger.info("Shipment #{shipment.id} has no radios")
         end
-        Rails.logger.info("Destroying shipment: #{shipment}")
+        Rails.logger.info("Destroying shipment #{shipment.id}")
         shipment.destroy
       end
     else
       Rails.logger.info("Order #{order.id} has no shipments")
     end
 
-    Rails.logger.info("Destroying order: #{order}")
-    order.destory
+    Rails.logger.info("Destroying order #{order.id}")
+    order.destroy
   end
 
   class TPROrderAlreadyCreated < Exception

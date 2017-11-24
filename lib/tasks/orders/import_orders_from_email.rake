@@ -4,6 +4,7 @@ namespace :orders do
   desc "Orders tasks"
   task import_orders_from_email: :environment do
     include TaskHelper
+    @failed_orders = []
 
   	# load unread emails
   	emails = TaskHelper.find_unread_emails
@@ -16,16 +17,16 @@ namespace :orders do
 		  email.message.attachments.each do |a|
   			Rails.logger.info("Reading attachments")
 		    begin
-		    	csv = CSV.parse(a.decoded)
+		    	@attachment_csv = CSV.parse(a.decoded)
 		    rescue MalformedCSVError => e
 		    	Rails.logger.error('Email attachment is not a CSV!')
 		    	next
 		    end
 
-		    if csv[0].eql?(uncommon_goods_headers)
+		    if @attachment_csv[0].eql?(uncommon_goods_headers)
 		    	# Process ucg order formated CSV
 		    	parsed_csv = parse_ucg_csv(csv)
-		    elsif csv[0].eql?(generic_csv_headers)
+		    elsif @attachment_csv[0].eql?(generic_csv_headers)
 		    	# Process generic order formated CSV
 		    	parsed_csv = parse_generic_csv(csv)
 		    end
@@ -33,6 +34,7 @@ namespace :orders do
         order_count += parsed_csv.count
 		  end
 		  email.read!
+      process_failed_orders(email) if @failed_orders.any?
 		end
     notify_of_import
   end
@@ -129,20 +131,36 @@ namespace :orders do
 
 	def create_orders(orders)
     Rails.logger.info("Creating #{orders.count} orders")
-		orders.each do |order_params|
+		orders.each_with_index do |order_params,i|
       begin
         TaskHelper.create_order(order_params)
       rescue ActiveModel::ValidationError => e
         Rails.logger.error("Validation error!: #{order_params}")
         TaskHelper.clean_up_order(order_params)
+        @failed_orders << { error: 'Shipping address is invalid', csv_order_index: i }
       rescue TaskHelper::TPROrderAlreadyCreated => e
         Rails.logger.warn("Order already imported!: #{order_params}")
       rescue ShippoError => e
         Rails.logger.error("Shipping address is invalid!: #{order_params}")
         TaskHelper.clean_up_order(order_params)
+        @failed_orders << { error: 'Shipping address is invalid', csv_order_index: i }
       end
 		end
 	end
+
+  def process_failed_orders(email)
+    CSV.open('failed_orders.csv', 'w') do |csv|
+      # Use same headers as the original order csv + an errors column
+      csv << @attachment_csv.shift + 'Errors'
+      # for each failed order, find original info and add to new csv with errors
+      @failed_orders.each do |order_error|
+        csv << @attachment_csv[order_error[:index]] + order_error[:error]
+      end
+    end
+    TaskHelper.send_reply(email, {
+      body: "Please see attached csv for #{failed_orders.count} orders with errors",
+      add_file: 'failed_orders.csv' })
+  end
 
   def notify_of_import
     # TODO: Add in number of successful vs errors. Or maybe just errors complete success.
