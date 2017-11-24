@@ -151,7 +151,8 @@ namespace :orders do
   def process_failed_orders(email)
     CSV.open('failed_orders.csv', 'w') do |csv|
       # Use same headers as the original order csv + an errors column
-      csv << (@attachment_csv.shift << 'Errors')
+      headers = @attachment_csv.shift
+      csv << (headers << 'Errors')
       # for each failed order, find original info and add to new csv with errors
       @failed_orders.each do |order_error|
         csv << (@attachment_csv[order_error[:csv_order_index]] << order_error[:error])
