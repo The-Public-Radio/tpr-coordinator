@@ -36,7 +36,7 @@ namespace :orders do
 		  email.read!
       process_failed_orders(email) if @failed_orders.any?
 		end
-    notify_of_import
+    notify_of_import unless order_count == 0
   end
 
   def generic_csv_headers
@@ -151,6 +151,7 @@ namespace :orders do
   def process_failed_orders(email)
     CSV.open('failed_orders.csv', 'w') do |csv|
       # Use same headers as the original order csv + an errors column
+      binding.pry
       csv << @attachment_csv.shift + 'Errors'
       # for each failed order, find original info and add to new csv with errors
       @failed_orders.each do |order_error|
