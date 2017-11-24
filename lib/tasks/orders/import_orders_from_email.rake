@@ -140,6 +140,10 @@ namespace :orders do
       rescue Shippo::Exceptions::Error => e
         Rails.logger.error("Shipping address is invalid!: #{order_params}")
         TaskHelper.clean_up_order(order_params)
+      rescue ShippoError
+        Rails.logger.error("Second shippo rescue")
+        Rails.logger.error("Shipping address is invalid!: #{order_params}")
+        TaskHelper.clean_up_order(order_params)
       end
 		end
 	end
