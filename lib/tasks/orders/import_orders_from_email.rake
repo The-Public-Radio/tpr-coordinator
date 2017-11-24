@@ -158,7 +158,7 @@ namespace :orders do
       end
     end
     TaskHelper.send_reply(email, {
-      body: "Please see attached csv for #{failed_orders.count} orders with errors",
+      body: "Please see attached csv for #{@failed_orders.count} orders with errors",
       add_file: 'failed_orders.csv' })
   end
 
