@@ -25,10 +25,10 @@ namespace :orders do
 
 		    if @attachment_csv[0].eql?(uncommon_goods_headers)
 		    	# Process ucg order formated CSV
-		    	parsed_csv = parse_ucg_csv(csv)
+		    	parsed_csv = parse_ucg_csv(@attachment_csv)
 		    elsif @attachment_csv[0].eql?(generic_csv_headers)
 		    	# Process generic order formated CSV
-		    	parsed_csv = parse_generic_csv(csv)
+		    	parsed_csv = parse_generic_csv(@attachment_csv)
 		    end
 		    create_orders(parsed_csv)
         order_count += parsed_csv.count
