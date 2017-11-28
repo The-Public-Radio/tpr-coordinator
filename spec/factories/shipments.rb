@@ -22,7 +22,7 @@ FactoryGirl.define do
         shipment_priority "priority"
       end
     end
-      
+
     factory :label_created do
         shipment_status "label_created"
         label_url "https://shippo-delivery-east.s3.amazonaws.com/some_label.pdf"
@@ -55,6 +55,11 @@ FactoryGirl.define do
         create(:radio_boxed, :shipment => boxed, serial_number: random_tpr_serial_number)
         create(:radio_boxed, :shipment => boxed, serial_number: random_tpr_serial_number)
       end
+    end
+
+    factory :boxed_false do
+      shipment_status "label_created"
+      ship_date "2017-07-28"
     end
 
     factory :shipped do

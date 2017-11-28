@@ -66,7 +66,7 @@ namespace :orders do
         frequency = order['Custom_Info'].split('/^')[1]
       rescue NoMethodError => e
         Rails.logger.error("Frequency field is missing or malformed: #{order['Custom_Info']}")
-        raise e
+        @failed_orders << order
       end
       frequency_list = []
       order['quantity'].to_i.times do
@@ -146,6 +146,8 @@ namespace :orders do
       rescue ActiveModel::ValidationError => e
         Rails.logger.error("Validation error!: #{order_params}")
         TaskHelper.clean_up_order(order_params)
+        # @email_csv.find order_params
+        binding.pry
         @failed_orders << { error: 'Shipping address is invalid', csv_order_index: i }
       rescue TaskHelper::TPROrderAlreadyCreated => e
         Rails.logger.warn("Order already imported!: #{order_params}")
@@ -189,7 +191,7 @@ namespace :orders do
       email_params = {
         subject: "TPR Coordinator: UCG Import Complete #{Date.today}",
         to: email,
-        body: "Uncommon Goods import complete with #{@failed_orders.count} failed orders!"
+        body: "Uncommon Goods import complete with #{@failed_orders.count} failed order(s)! \n #{@failed_orders}"
       }
 
       TaskHelper.send_email(email_params)

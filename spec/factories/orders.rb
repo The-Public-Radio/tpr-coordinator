@@ -35,12 +35,18 @@ FactoryGirl.define do
         invoiced true
       end
 
-      factory :invoiced_false, class: Order do
-        invoiced false
-      end
-
       after :create do |order|
         create_list(:boxed, 2, :order => order)
+      end
+    end
+
+    factory :invoiced_boxed_false, class: Order do
+      invoiced false
+      order_source "uncommon_goods"
+      reference_number random_reference_number
+
+      after :create do |order|
+        create_list(:boxed_false, 2, :order => order)
       end
     end
   end

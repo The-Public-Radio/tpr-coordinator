@@ -33,7 +33,7 @@ describe "orders:import_orders_from_email", type: :rake do
         notify_email_params = {
             to: 'testnotify@foo.com',
             subject: "TPR Coordinator: UCG Import Complete #{Date.today}",
-            body: "Uncommon Goods import complete!"
+            body: "Uncommon Goods import complete with 0 failed order(s)! \n []"
         }
         expect_any_instance_of(TaskHelper).to receive(:send_email).with(notify_email_params)
 

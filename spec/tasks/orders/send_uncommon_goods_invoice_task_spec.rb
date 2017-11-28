@@ -14,8 +14,10 @@ describe "orders:send_uncommon_goods_invoice", type: :rake do
             # We only want to send orders that are in a 'boxed', 'transit', 'delivered'
             email_to_send_invoice_to = ENV['UNCOMMON_GOODS_INVOICING_EMAILS'].split(',')
 
-            create_list(:invoiced_true, 2)
-            orders_to_invoice = create_list(:invoiced_false, 3)
+            orders_not_to_invoice = create_list(:invoiced_true, 2)
+            orders_to_invoice = create_list(:uncommon_goods, 3)
+            orders_not_to_invoice += create_list(:invoiced_boxed_false, 2)
+
             invoice_name = "Centerline Labs LLC Invoice #{Date.today}.csv"
 
             # Add each order to invoice csv
@@ -42,12 +44,16 @@ describe "orders:send_uncommon_goods_invoice", type: :rake do
 
                 expect_any_instance_of(TaskHelper).to receive(:send_email).with(email_params)
             end
-            
-            task.execute 
+
+            task.execute
 
             # make sure all send orders are marked as invoiced: true
             orders_to_invoice.each do |order|
                 expect{ order.reload }.to change{ order.invoiced }.from(false).to(true)
+            end
+
+            orders_not_to_invoice.each do |order|
+                expect{ order.reload }.to_not change{ order.invoiced }
             end
 
             File.delete(invoice_name)
