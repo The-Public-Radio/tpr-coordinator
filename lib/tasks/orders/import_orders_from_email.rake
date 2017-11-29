@@ -7,8 +7,7 @@ namespace :orders do
 
   	# load unread emails
   	emails = TaskHelper.find_unread_emails
-
-    order_count = 0
+    all_failed_orders = []
   	# For each email, get the attachments and pase them into orders
   	Rails.logger.info("Processing #{emails.count} emails from order mailbox #{ENV['GMAIL_USERNAME']}")
 
@@ -47,7 +46,8 @@ namespace :orders do
           rescue NoMethodError => e
             Rails.logger.info("Order field is missing or malformed: #{order['Custom_Info']}")
             Rails.logger.debug(e)
-            row += 'Order field is missing or malformed. Check the requested frequency'
+
+            row += ['Order field is missing or malformed. Check the requested frequency']
             failed_orders << row
             next
           end
@@ -60,26 +60,26 @@ namespace :orders do
           rescue ActiveModel::ValidationError => e
             Rails.logger.error("Validation error!: #{order_params}")
             TaskHelper.clean_up_order(order_params)
-            row += 'Order inputs are malformed. Check frequency, name, and address fields'
+            row += ['Order inputs are malformed. Check frequency, name, and address fields']
             failed_orders << row
           rescue ShippoError => e
             Rails.logger.error("Shipping address is invalid!: #{order_params}")
             TaskHelper.clean_up_order(order_params)
-            row += 'Shipping address failed USPS validation'
+            row += ['Shipping address failed USPS validation']
             failed_orders << row
           end
         end
       end
 
-      # TODO remove this when done with order processing automatic reply
-      # Not marking the email as read if there are errors
       if failed_orders.any?
         process_failed_orders(email, headers, failed_orders) if !ENV['PROCESS_FAILED_ORDERS'].nil?
-      else
-		    email.read!
+        all_failed_orders += failed_orders
       end
+		  
+      email.read!
 		end
-    notify_of_import unless order_count == 0
+
+    notify_of_import(all_failed_orders) unless emails.count == 0
   end
 
   def generic_csv_headers
@@ -119,7 +119,7 @@ namespace :orders do
     }
   end
 
-	def parse_generic_csv(order)
+	def parse_generic_row(order)
     Rails.logger.info("Parsing generic csv")
     Rails.logger.debug("Parsing order: #{order}")
 
@@ -177,7 +177,7 @@ namespace :orders do
     end
   end
 
-  def notify_of_import
+  def notify_of_import(failed_orders)
     # TODO: Add in number of successful vs errors. Or maybe just errors complete success.
     emails = ENV['EMAILS_TO_NOTIFY_OF_IMPORT'].split(',')
     emails.each do |email|
@@ -185,7 +185,7 @@ namespace :orders do
       email_params = {
         subject: "TPR Coordinator: UCG Import Complete #{Date.today}",
         to: email,
-        body: "Uncommon Goods import complete with #{@failed_orders.count} failed order(s)! \n #{@failed_orders}"
+        body: "Uncommon Goods import complete with #{failed_orders.count} failed order(s)! \n #{failed_orders}"
       }
 
       TaskHelper.send_email(email_params)
