@@ -63,7 +63,7 @@ RSpec.describe Order, type: :model do
   end
 
   it 'counts the number of radios in an order' do
-    order_id = create(:invoiced_false).id
+    order_id = create(:uncommon_goods).id
 
     expect(Order.num_radios_in_order(order_id)).to be 6
   end
