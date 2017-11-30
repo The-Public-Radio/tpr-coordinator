@@ -143,6 +143,22 @@ describe "orders:import_orders_from_email", type: :rake do
             expect_any_instance_of(TaskHelper).to receive(:clean_up_order).exactly(6).times
             task.execute
         end
+
+        it 'sends back a csv with errors as a reply email' do
+            ENV['PROCESS_FAILED_ORDERS'] ='true'
+            ENV['EMAILS_TO_SEND_FAILED_ORDERS'] = ''
+
+            error_reply_params = {
+                body: "Please see attached csv for 6 orders with errors",
+                add_file: 'failed_orders.csv' 
+            }
+
+            expect_any_instance_of(TaskHelper).to receive(:create_order).exactly(6).times
+                .and_raise(ActiveRecord::RecordInvalid)
+            expect_any_instance_of(TaskHelper).to receive(:clean_up_order).exactly(6).times
+            expect_any_instance_of(TaskHelper).to receive(:send_reply).with(error_email, error_reply_params)
+            task.execute
+        end
     end
 
     def load_order_fixture(fixture_name)

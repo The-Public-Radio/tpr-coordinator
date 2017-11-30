@@ -72,13 +72,12 @@ namespace :orders do
             failed_orders << row
           end
         end
-      end
 
-      if failed_orders.any?
-        process_failed_orders(email, headers, failed_orders) if !ENV['PROCESS_FAILED_ORDERS'].nil?
-        all_failed_orders += failed_orders
+        if failed_orders.any?
+          process_failed_orders(email, headers, failed_orders) if ENV['PROCESS_FAILED_ORDERS'] == 'true'
+          all_failed_orders += failed_orders
+        end
       end
-		  
       email.read!
 		end
 
@@ -158,14 +157,16 @@ namespace :orders do
   end
 
   def process_failed_orders(email, headers, failed_orders)
+    # TODO: Don't use file system
     CSV.open('failed_orders.csv', 'w') do |csv|
       # Use same headers as the original order csv + an errors column
-      headers += 'Errors'
-      csv << email_csv_headers
+      headers += ['Errors']
+      csv << headers
       failed_orders.each do |order|
         csv << order
       end
     end
+
     # Send initial reply
     TaskHelper.send_reply(email, {
       body: "Please see attached csv for #{failed_orders.count} orders with errors",
