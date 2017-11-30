@@ -117,6 +117,7 @@ describe "orders:import_orders_from_email", type: :rake do
 
         before(:each) do
             expect_any_instance_of(TaskHelper).to receive(:find_unread_emails).and_return([error_email])
+            expect_any_instance_of(TaskHelper).to receive(:send_email)
             expect(error_email).to receive(:message).and_return(error_message)
             expect(error_message).to receive(:attachments).and_return([error_attachment])
             expect(error_attachment).to receive(:decoded).and_return(error_fixture)
@@ -124,17 +125,38 @@ describe "orders:import_orders_from_email", type: :rake do
         end
 
         it 'has an invalid frequency' do
-            expect_any_instance_of(TaskHelper).to receive(:create_order).and_raise(ActiveModel::ValidationError('test'))
+            expect_any_instance_of(TaskHelper).to receive(:create_order).exactly(6).times
+                .and_raise(ActiveRecord::RecordInvalid)
+            expect_any_instance_of(TaskHelper).to receive(:clean_up_order).exactly(6).times
             task.execute
         end
 
         it 'has already been imported' do
-            expect_any_instance_of(TaskHelper).to receive(:create_order).and_raise(TaskHelper::TPROrderAlreadyCreated)
+            expect_any_instance_of(TaskHelper).to receive(:create_order).exactly(6).times
+                .and_raise(TaskHelper::TPROrderAlreadyCreated)
             task.execute
         end
 
         it 'has an invalid address' do
-            expect_any_instance_of(TaskHelper).to receive(:create_order).and_raise(ShippoError)
+            expect_any_instance_of(TaskHelper).to receive(:create_order).exactly(6).times
+                .and_raise(ShippoError)
+            expect_any_instance_of(TaskHelper).to receive(:clean_up_order).exactly(6).times
+            task.execute
+        end
+
+        it 'sends back a csv with errors as a reply email' do
+            ENV['PROCESS_FAILED_ORDERS'] ='true'
+            ENV['EMAILS_TO_SEND_FAILED_ORDERS'] = ''
+
+            error_reply_params = {
+                body: "Please see attached csv for 6 orders with errors",
+                add_file: 'failed_orders.csv' 
+            }
+
+            expect_any_instance_of(TaskHelper).to receive(:create_order).exactly(6).times
+                .and_raise(ActiveRecord::RecordInvalid)
+            expect_any_instance_of(TaskHelper).to receive(:clean_up_order).exactly(6).times
+            expect_any_instance_of(TaskHelper).to receive(:send_reply).with(error_email, error_reply_params)
             task.execute
         end
     end
