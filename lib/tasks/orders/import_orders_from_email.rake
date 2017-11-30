@@ -1,9 +1,12 @@
 require 'csv'
+# Load for error handling exceptions
+require 'shipments_controller'
 
 namespace :orders do
   desc "Orders tasks"
   task import_orders_from_email: :environment do
     include TaskHelper
+    include ActiveModel::Validations
 
   	# load unread emails
   	emails = TaskHelper.find_unread_emails
@@ -57,12 +60,12 @@ namespace :orders do
             TaskHelper.create_order(order_params)
           rescue TaskHelper::TPROrderAlreadyCreated => e
             Rails.logger.warn("Order already imported!: #{order_params}")
-          rescue ActiveModel::ValidationError => e
+          rescue ActiveRecord::RecordInvalid => e
             Rails.logger.error("Validation error!: #{order_params}")
             TaskHelper.clean_up_order(order_params)
             row += ['Order inputs are malformed. Check frequency, name, and address fields']
             failed_orders << row
-          rescue ShippoError => e
+          rescue OrdersController::ShippoError => e
             Rails.logger.error("Shipping address is invalid!: #{order_params}")
             TaskHelper.clean_up_order(order_params)
             row += ['Shipping address failed USPS validation']
