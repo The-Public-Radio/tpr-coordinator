@@ -1,6 +1,4 @@
 require 'csv'
-# Load for error handling exceptions
-require 'shipments_controller'
 
 namespace :orders do
   desc "Orders tasks"
