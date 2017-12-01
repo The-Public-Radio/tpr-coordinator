@@ -171,7 +171,7 @@ namespace :orders do
     end
 
     # Send initial reply
-    Rails.logger.info("Replying to #{emails_to_send_failure_to} with failed orders CSV")
+    Rails.logger.info("Replying to #{from_address} with failed orders CSV")
     TaskHelper.send_reply(email, {
       to: from_address,
       body: "Please see attached csv for #{failed_orders.count} orders with errors",
