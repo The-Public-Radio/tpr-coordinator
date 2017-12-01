@@ -166,7 +166,7 @@ namespace :orders do
     end
 
     unless ENV['EMAILS_TO_SEND_FAILED_ORDERS'].nil?
-      emails_to_send_failure_to = "#{email.sender[0]},#{ENV['EMAILS_TO_SEND_FAILED_ORDERS']}"
+      emails_to_send_failure_to = "#{email.sender[0].address},#{ENV['EMAILS_TO_SEND_FAILED_ORDERS']}"
     else
       emails_to_send_failure_to = email.sender.address
     end
