@@ -71,6 +71,7 @@ namespace :orders do
         end
 
         if failed_orders.any?
+          Rails.logger.info("Processing #{failed_orders.count} failed orders")
           process_failed_orders(email, headers, failed_orders) if ENV['PROCESS_FAILED_ORDERS'] == 'true'
           all_failed_orders += failed_orders
         end
@@ -165,16 +166,20 @@ namespace :orders do
     end
 
     # Send initial reply
+    Rails.logger.info("Replying to email with failed orders CSV")
     TaskHelper.send_reply(email, {
       body: "Please see attached csv for #{failed_orders.count} orders with errors",
       add_file: 'failed_orders.csv' })
     # Send reply to other emails
-    emails_to_notify = ENV['EMAILS_TO_SEND_FAILED_ORDERS'].split(',')
-    emails_to_notify.each do |email_to_notify|
-      TaskHelper.send_reply(email, {
-        to: email_to_notify,
-        body: "Please see attached csv for #{failed_orders.count} orders with errors",
-        add_file: 'failed_orders.csv' })
+    unless ENV['EMAILS_TO_SEND_FAILED_ORDERS'].nil?
+      emails_to_notify = ENV['EMAILS_TO_SEND_FAILED_ORDERS'].split(',')
+      emails_to_notify.each do |email_to_notify|
+        Rails.logger.info("Informing #{emails_to_notify} of failed orders")
+        TaskHelper.send_reply(email, {
+          to: email_to_notify,
+          body: "Please see attached csv for #{failed_orders.count} orders with errors",
+          add_file: 'failed_orders.csv' })
+      end
     end
   end
 
