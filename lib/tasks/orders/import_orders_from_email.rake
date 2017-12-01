@@ -165,22 +165,18 @@ namespace :orders do
       end
     end
 
+    unless ENV['EMAILS_TO_SEND_FAILED_ORDERS'].nil?
+      emails_to_send_failure_to = "#{email.sender.address},#{ENV['EMAILS_TO_SEND_FAILED_ORDERS']}"
+    else
+      emails_to_send_failure_to = email.sender.address
+    end
+
     # Send initial reply
-    Rails.logger.info("Replying to email with failed orders CSV")
+    Rails.logger.info("Replying to #{emails_to_send_failure_to} with failed orders CSV")
     TaskHelper.send_reply(email, {
+      to: emails_to_send_failure_to,
       body: "Please see attached csv for #{failed_orders.count} orders with errors",
       add_file: 'failed_orders.csv' })
-    # Send reply to other emails
-    unless ENV['EMAILS_TO_SEND_FAILED_ORDERS'].nil?
-      emails_to_notify = ENV['EMAILS_TO_SEND_FAILED_ORDERS'].split(',')
-      emails_to_notify.each do |email_to_notify|
-        Rails.logger.info("Informing #{emails_to_notify} of failed orders")
-        TaskHelper.send_reply(email, {
-          to: email_to_notify,
-          body: "Please see attached csv for #{failed_orders.count} orders with errors",
-          add_file: 'failed_orders.csv' })
-      end
-    end
   end
 
   def notify_of_import(failed_orders)

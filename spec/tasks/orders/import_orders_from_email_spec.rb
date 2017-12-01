@@ -27,7 +27,7 @@ describe "orders:import_orders_from_email", type: :rake do
     let(:error_fixture)  { load_order_fixture('error_orders') }
     let(:error_attachment) { double('attachment', decoded: error_fixture) }
     let(:error_message) { double('message', attachments: [error_attachment]) }
-    let(:error_email) { double('error_email', message: error_message) }
+    let(:error_email) { double('error_email', message: error_message, sender: double('address', address: 'from@foo.com')) }
 
     it 'imports generic formated csv attachments' do
         notify_email_params = {
@@ -146,9 +146,10 @@ describe "orders:import_orders_from_email", type: :rake do
 
         it 'sends back a csv with errors as a reply email' do
             ENV['PROCESS_FAILED_ORDERS'] ='true'
-            ENV['EMAILS_TO_SEND_FAILED_ORDERS'] = ''
+            ENV['EMAILS_TO_SEND_FAILED_ORDERS'] = 'test@gmail.com'
 
             error_reply_params = {
+                to: "from@foo.com,test@gmail.com",
                 body: "Please see attached csv for 6 orders with errors",
                 add_file: 'failed_orders.csv' 
             }
