@@ -5,7 +5,7 @@ namespace :radios do
 
     # Get all radios that were created today and have a frequency (only radios attached to orders)
     # TODO Check boxed 
-    radio_count = Radio.where("created_at >= ? AND frequency IS NOT ? AND boxed IS TRUE", Time.zone.now.beginning_of_day, nil).count
+    radio_count = Radio.where("created_at >= ? AND frequency IS NOT ? AND boxed IS TRUE", (Time.now - 24.hours), nil).count
     emails = ENV['EMAILS_TO_NOTIFY_OF_IMPORT'].split(',')
     emails.each do |email|
       Rails.logger.info("Notifying #{email} of radios ordered today")
