@@ -37,6 +37,17 @@ RSpec.describe Order, type: :model do
     expect(model).to be_valid
   end
 	
+  it 'is valid when the order source is LGA' do
+    model.order_source = 'LGA'
+    expect(model).to be_valid
+  end
+
+  it 'is valid when the order source is WFAE' do
+    model.order_source = 'WFAE'
+    expect(model).to be_valid
+  end
+
+
   it 'is valid when the order source is warranty' do
     model.order_source = 'warranty'
     expect(model).to be_valid
