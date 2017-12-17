@@ -1,3 +1,6 @@
+class OrderInvalid < StandardError
+end
+
 class OrdersController < ApplicationController
   before_action :set_order, only: [:show, :update, :destroy]
 
@@ -54,7 +57,10 @@ class OrdersController < ApplicationController
     @shipment_priority = working_order_params.delete(:shipment_priority)
     @order = Order.new(@working_order_params)
     @order.country = 'US' if @working_order_params[:country].nil?
-    @order.save!
+
+    unless @order.save
+      raise TPRCoordinatorError::OrderInvalid(@order.errors)
+    end
 
     make_shipments_for_queue_order({ @order.country => frequencies })
   end

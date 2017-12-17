@@ -5,7 +5,13 @@ require 'shippo'
 class ShippoError < StandardError
 end
 
-class TprCoordinatorError < StandardError
+class ShipmentInvalid < StandardError
+end
+
+class RadioInvalid < StandardError
+end
+
+class NoShipmentFound < StandardError
 end
 
 class ShipmentsController < ApplicationController
@@ -117,7 +123,9 @@ class ShipmentsController < ApplicationController
     @order = order
 
     set_up_default_shipment(frequencies, shipment_priority)
-    @shipment.save!
+    unless @shipment.save
+      raise ShipmentInvalid(@shipment.errors)
+    end
   end
 
   private
@@ -135,7 +143,10 @@ class ShipmentsController < ApplicationController
       if !frequencies.nil?
         @shipment.save # must save shipment to have an id to associate radios to
         frequencies.each do |frequency|
-          Radio.create(frequency: frequency, boxed: false, country_code: @order.country, shipment_id: @shipment.id).save!
+          radio = Radio.create(frequency: frequency, boxed: false, country_code: @order.country, shipment_id: @shipment.id)
+          unless radio.save
+            raise RadioInvalid(radio.errors)
+          end
         end
       end
 
@@ -355,7 +366,7 @@ class ShipmentsController < ApplicationController
         end
       rescue NoMethodError => e
         api_response([], :not_found, ["Error looking up shipment #{params[:tracking_number]}"])
-        raise TprCoordinatorError
+        raise NoShipmentFound
       end
     end
 

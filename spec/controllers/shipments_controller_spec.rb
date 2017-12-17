@@ -71,7 +71,7 @@ RSpec.describe ShipmentsController, type: :controller do
       tracking_number = "42010008881#{shipment.tracking_number}"
 
       expect{ get :index, params: { tracking_number: tracking_number}, session: valid_session }
-        .to raise_error(TprCoordinatorError)
+        .to raise_error(NoShipmentFound)
 
       expect(response).to have_http_status(:not_found)
       data = JSON.parse(response.body)['data']
