@@ -8,9 +8,6 @@ end
 class ShipmentInvalid < StandardError
 end
 
-class RadioInvalid < StandardError
-end
-
 class NoShipmentFound < StandardError
 end
 
@@ -130,6 +127,9 @@ class ShipmentsController < ApplicationController
 
   private
     attr_accessor :shipment, :shipment_size
+   
+    class RadioInvalid < StandardError
+    end
 
     def set_up_default_shipment(frequencies = params['shipment']['frequencies'], shipment_priority = params['shipment']['shipment_priority'])
       if !@order.nil?
@@ -145,6 +145,7 @@ class ShipmentsController < ApplicationController
         frequencies.each do |frequency|
           radio = Radio.create(frequency: frequency, boxed: false, country_code: @order.country, shipment_id: @shipment.id)
           unless radio.save
+            Rails.logger.debug(radio.errors)
             raise RadioInvalid(radio.errors)
           end
         end
