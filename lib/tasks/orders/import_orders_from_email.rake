@@ -83,7 +83,7 @@ namespace :orders do
   end
 
   def generic_csv_headers
-    ["Name", "Email", "Address 1", "Address 2", "City", "State", "Postal Code", "Country", "Phone Number", "Shipment Priority", "Radio"]
+    ["Name", "Email", "Address 1", "Address 2", "City", "State", "Postal Code", "Country", "Phone Number", "Shipment Priority", "Radio", "Radio", "Radio", "Radio", "Radio", "Radio", "Radio", "Radio", "Radio"]
   end
 
   def uncommon_goods_headers
@@ -135,7 +135,7 @@ namespace :orders do
 		  country: order['Country'],
 		  phone: order['Phone Number'].nil? ? '' : order['Phone Number'],
       shipment_priority: order['Shipment Priority'],
-      frequencies: [order['Radio'].compact]
+      frequencies: order['Radio'].compact
 		}
 	end
 
