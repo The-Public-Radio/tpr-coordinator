@@ -77,19 +77,30 @@ class ShipmentsController < ApplicationController
   end
 
   def next_label_created_shipment
+    # Get all label_created shipments with radios and order by:
+    # 2) priority_processing
+    # 3) created_at
+  
     label_created_shipments = Shipment.where(shipment_status: 'label_created')
+
+    # Sort by created_at
+    label_created_shipments = label_created_shipments.order(:created_at)
+
+    # Move all priority_processing to the front of the queue
     if label_created_shipments.where(priority_processing: true).any?
       label_created_shipments = label_created_shipments.order(:priority_processing)
     end
 
-    label_created_shipments = label_created_shipments.order(:created_at)
-
     @shipment = label_created_shipments.select do |s|
+      # Does the shipment have radios?
       has_radios = s.radio.any?
+      # Is it from an order_source that we want in the main queue?
       processable_order_source =  %w{other kickstarter squarespace uncommon_goods}.include?(s.order.order_source)
 
       has_radios && processable_order_source
     end[0]
+
+    # Return top of the queue
     api_response(@shipment)
   end
 
