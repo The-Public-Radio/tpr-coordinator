@@ -78,18 +78,15 @@ class ShipmentsController < ApplicationController
 
   def next_label_created_shipment
     # Get all label_created shipments with radios and order by:
-    # 2) priority_processing
+    # 1) priority_processing
+    # 2) shipment_priority
     # 3) created_at
   
+    # This is known to put 'express' shipments after 'priority' shipments due alphabetical sorting
+    # Currently it's priority -> express -> economy when it should be express -> priority -> economy
+    # TODO: Fix this to sort shipment_priority correctly. 
     label_created_shipments = Shipment.where(shipment_status: 'label_created')
-
-    # Sort by created_at
-    label_created_shipments = label_created_shipments.order(:created_at)
-
-    # Move all priority_processing to the front of the queue
-    if label_created_shipments.where(priority_processing: true).any?
-      label_created_shipments = label_created_shipments.order(:priority_processing)
-    end
+      .order(:priority_processing, shipment_priority: :desc, created_at: :asc)
 
     @shipment = label_created_shipments.select do |s|
       # Does the shipment have radios?
