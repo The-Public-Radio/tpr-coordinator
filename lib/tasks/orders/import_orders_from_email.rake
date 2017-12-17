@@ -62,7 +62,7 @@ namespace :orders do
             TaskHelper.clean_up_order(order_params)
             row += ['Order inputs are malformed. Check frequency, name, and address fields']
             failed_orders << row
-          rescue OrdersController::ShippoError => e
+          rescue ShipmentsController::ShippoError => e
             Rails.logger.error("Shipping address is invalid!: #{order_params}")
             TaskHelper.clean_up_order(order_params)
             row += ['Shipping address failed USPS validation']
@@ -83,7 +83,7 @@ namespace :orders do
   end
 
   def generic_csv_headers
-    ["Name", "Email", "Address 1", "Address 2", "City", "State", "Postal Code", "Country", "Phone Number", "Shipment Priority", "Radio", "Radio", "Radio", "Radio", "Radio", "Radio", "Radio", "Radio", "Radio"]
+    ["Name", "Email", "Address 1", "Address 2", "City", "State", "Postal Code", "Country", "Phone Number", "Shipment Priority", "Radio"]
   end
 
   def uncommon_goods_headers

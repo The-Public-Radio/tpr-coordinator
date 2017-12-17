@@ -56,7 +56,7 @@ describe "orders:import_orders_from_email", type: :rake do
                 country: test_order['Country'],
                 phone: test_order['Phone Number'].nil? ? '' : test_order['Phone Number'],
                 shipment_priority: test_order['Shipment Priority'],
-                frequencies: [test_order['Radio']]
+                frequencies: test_order['Radio']
             }
 
             expect_any_instance_of(TaskHelper).to receive(:create_order).with(order_params)
