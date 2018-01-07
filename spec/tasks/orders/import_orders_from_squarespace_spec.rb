@@ -1,4 +1,5 @@
 require "rails_helper"
+require 'squarespace'
 
 describe "orders:import_orders_from_squarespace", type: :rake do
 
@@ -15,7 +16,8 @@ describe "orders:import_orders_from_squarespace", type: :rake do
         stub_client = instance_double(Squarespace::Client, :get_orders)
         stub_orders = Squarespace::Order.new(squarespace_order_fixture)
 
-        expect(Squarespace::Client).to receive(:new).with(app_name: app_name, api_key: api_key)
+        stub_class = class_double(Squarespace::Client)
+        expect(stub_class).to receive(:new).with(app_name: app_name, api_key: api_key)
             .and_return(stub_client)
 
         expect(stub_client).to receive(:get_orders).with('pending').and_return(stub_orders)
