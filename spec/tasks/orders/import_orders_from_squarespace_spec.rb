@@ -6,43 +6,56 @@ describe "orders:import_orders_from_squarespace", type: :rake do
     expect(task.prerequisites).to include "environment"
   end
 
-  context 'from the tprorder@gmail.com gmail account' do
+  context 'from squarespace' do
+    it 'import all pendings orders' do
+        api_key = ENV['SQUARESPACE_API_KEY']
+        app_name = ENV['SQUARESPACE_APP_NAME']
 
-    it 'imports all pendings orders from squarespace' do
-        skip('todo')
-        # notify_email_params = {
-        #     to: 'testnotify@foo.com',
-        #     subject: "TPR Coordinator: UCG Import Complete #{Date.today}",
-        #     body: "Uncommon Goods import complete with 0 failed order(s)! \n []"
-        # }
-        # expect_any_instance_of(TaskHelper).to receive(:send_email).with(notify_email_params)
+        squarespace_order_fixture = load_json_fixture('spec/fixtures/squarespace_orders.json')
+        stub_client = instance_double(Squarespace::Client, :get_orders)
+        stub_orders = Squarespace::Order.new(squarespace_order_fixture)
 
-        # expect_any_instance_of(TaskHelper).to receive(:find_unread_emails).and_return([generic_email])
-        # expect(generic_email).to receive(:message).and_return(generic_order_message)
-        # expect(generic_order_message).to receive(:attachments).and_return([generic_order_attachment])
-        # expect(generic_order_attachment).to receive(:decoded).and_return(generic_order_fixture)
-        # expect(generic_email).to receive(:read!)
+        expect(Squarespace::Client).to receive(:new).with(app_name: app_name, api_key: api_key)
+            .and_return(stub_client)
 
-        # unpack_order_csv(CSV.parse(generic_order_fixture)).each do |test_order|
-        #     order_params = {
-        #         name: test_order['Name'],
-        #         order_source: "other",
-        #         email: test_order['Email'],
-        #         street_address_1: test_order['Address 1'],
-        #         street_address_2: test_order['Address 2'],
-        #         city: test_order['City'],
-        #         state: test_order['State'],
-        #         postal_code: test_order['Postal Code'],
-        #         country: test_order['Country'],
-        #         phone: test_order['Phone Number'].nil? ? '' : test_order['Phone Number'],
-        #         shipment_priority: test_order['Shipment Priority'],
-        #         frequencies: test_order['Radio']
-        #     }
+        expect(stub_client).to receive(:get_orders).with('pending').and_return(stub_orders)
 
-        #     expect_any_instance_of(TaskHelper).to receive(:create_order).with(order_params)
-        # end
+        squarespace_order_fixture[:result].each do |test_order|
+            shipping_address = test_order[:shippingAddress]
+            # frequency_list = []
+            # country_code = ''
 
-        # task.execute
+            # test_order[:lineItems][0].each do |c|
+            #     case c[:label]
+            #     when 'Tuning frequency'
+            #         frequency = c[:value]
+            #     when 'Where will you be using your radio?'
+            #         country_code = c[:value]
+            #     end
+            # end
+
+            # test_order[:lineItems][0][:quantity].times do
+            #     frequency_list << frequency
+            # end
+
+            order_params = {
+                name: "#{shipping_address[:firstName]} #{shipping_address[:lastName]}",
+                order_source: "squarespace",
+                email: test_order['customerEmail'],
+                street_address_1: shipping_address['address1'],
+                street_address_2: shipping_address['address2'],
+                city: shipping_address['city'],
+                state: shipping_address['state'],
+                postal_code: shipping_address['postalCode'],
+                country: 'US', #shipping_address[:countryCode], # they only ship to US
+                phone: shipping_address['phone'],
+                reference_number: "#{test_order[:id]},#{test_order[:orderNumber]}", # Squarespace order number
+                shipment_priority: 'economy',
+                frequencies: ['82.7','82.7','82.7','82.7']
+            }
+
+            expect_any_instance_of(TaskHelper).to receive(:create_order).with(order_params)
+        end
     end
   end
 end

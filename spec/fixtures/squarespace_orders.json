@@ -1,0 +1,111 @@
+{
+  "pagination": {
+    "hasNextPage": false,
+    "nextPageCursor": null,
+    "nextPageUrl": null
+  },
+  "result": [
+    {
+      "billingAddress": {
+        "address1": "459 Broadway",
+        "address2": null,
+        "city": "New York",
+        "countryCode": "US",
+        "firstName": "Bob",
+        "lastName": "Loblaw",
+        "phone": "5553334444",
+        "postalCode": "10003",
+        "state": "NY"
+      },
+      "createdOn": "2016-12-23T15:58:07.187Z",
+      "customerEmail": "foo@example.com",
+      "discountLines": [
+        {
+          "amount": {
+            "currency": "USD",
+            "value": "1.00"
+          },
+          "description": "Fall Sale",
+          "promoCode": "FALLSALE"
+        }
+      ],
+      "discountTotal": {
+        "currency": "USD",
+        "value": "1.00"
+      },
+      "formSubmission": [],
+      "fulfillmentStatus": "PENDING",
+      "fulfillments": [],
+      "grandTotal": {
+        "currency": "USD",
+        "value": "57.70"
+      },
+      "id": "585d498fdee9f31a60284a37",
+      "internalNotes": [],
+      "lineItems": [
+        {
+          "customizations": [
+            {
+              "label": "Where will you be using your radio?",
+              "value": "US - United States"
+            },
+            {
+              "label": "Tuning frequency",
+              "value": "82.7"
+            }
+          ],
+          "id": "5a4906cf652deacfabd75bff",
+          "imageUrl": "https://static1.squarespace.com/static/52fa7b89e4b071a64a89a890/54477359e4b024da3a9f288c/5a110de4c830251161344cac/1511067110289/the+public+radio-5.jpg?format=300w",
+          "productId": "5447741ae4b0f96b5303a4e7",
+          "productName": "The Public Radio",
+          "quantity": 4,
+          "sku": "TPRv2.0",
+          "unitPricePaid": {
+            "currency": "USD",
+            "value": "45.00"
+          },
+          "variantOptions": []
+        }
+      ],
+      "modifiedOn": "2016-12-23T15:58:07.187Z",
+      "orderNumber": "3",
+      "refundedTotal": {
+        "currency": "USD",
+        "value": "0.00"
+      },
+      "shippingAddress": {
+        "address1": "459 Broadway",
+        "address2": null,
+        "city": "New York",
+        "countryCode": "US",
+        "firstName": "Bob",
+        "lastName": "Loblaw",
+        "phone": "5553334444",
+        "postalCode": "10003",
+        "state": "NY"
+      },
+      "shippingLines": [
+        {
+          "amount": {
+            "currency": "USD",
+            "value": "1.00"
+          },
+          "method": "Flat Rate"
+        }
+      ],
+      "shippingTotal": {
+        "currency": "USD",
+        "value": "1.00"
+      },
+      "subtotal": {
+        "currency": "USD",
+        "value": "55.00"
+      },
+      "taxTotal": {
+        "currency": "USD",
+        "value": "2.70"
+      },
+      "testmode": true
+    }
+  ]
+}
