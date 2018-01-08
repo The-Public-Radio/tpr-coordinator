@@ -4,7 +4,12 @@ class Order < ApplicationRecord
 	validates_presence_of :name
 	validates_inclusion_of :order_source, in: %w{squarespace kickstarter uncommon_goods other WBEZ warranty KUER LGA WFAE}
 	validates_email_format_of :email, message: 'formated incorrectly', allow_nil: true
+	after_initialize :init
 
+  def init
+    self.invoiced ||= false          #will set the default value only if it's nil
+    self.notified ||= false #let's you set a default association
+  end
 
 	def self.num_radios_in_order(order_id)
 		order = Order.find(order_id)
