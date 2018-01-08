@@ -14,10 +14,10 @@ describe "orders:import_orders_from_squarespace", type: :rake do
 
         squarespace_order_fixture = load_json_fixture('spec/fixtures/squarespace_orders.json')
         stub_client = instance_double(Squarespace::Client, :get_orders)
+
         stub_orders = Squarespace::Order.new(squarespace_order_fixture)
 
-        stub_class = class_double(Squarespace::Client)
-        expect(stub_class).to receive(:new).with(app_name: app_name, api_key: api_key)
+        expect(Squarespace::Client).to receive(:new).with(app_name: app_name, api_key: api_key)
             .and_return(stub_client)
 
         expect(stub_client).to receive(:get_orders).with('pending').and_return(stub_orders)
@@ -58,6 +58,7 @@ describe "orders:import_orders_from_squarespace", type: :rake do
 
             expect_any_instance_of(TaskHelper).to receive(:create_order).with(order_params)
         end
+        task.execute
     end
   end
 end

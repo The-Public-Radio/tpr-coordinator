@@ -1,7 +1,9 @@
 require 'squarespace'
+
 namespace :orders do
   desc "Import squarespace orders"
   task import_orders_from_squarespace: :environment do
+    include TaskHelper
   	Rails.logger.info('Starting Squarespace import')
   	client = Squarespace::Client.new(app_name: ENV['SQUARESPACE_APP_NAME'], api_key: ENV['SQUARESPACE_API_KEY'])
 
@@ -13,17 +15,17 @@ namespace :orders do
       frequency_list = []
       country_code = ''
 
-      order[:lineItems][0].each do |c|
-          case c[:label]
-          when 'Tuning frequency'
-              frequency = c[:value]
-          when 'Where will you be using your radio?'
-              country_code = c[:value]
-          end
-      end
+      order[:lineItems][0][:customizations].each do |c|
+        case c[:label]
+        when 'Tuning frequency'
+            frequency = c[:value]
+        when 'Where will you be using your radio?'
+            country_code = c[:value]
+        end
 
-      order[:lineItems][0][:quantity].times do
-          frequency_list << frequency
+		    order[:lineItems][0][:quantity].times do
+		        frequency_list << frequency
+		    end
       end
 
       order_params = {
@@ -39,7 +41,7 @@ namespace :orders do
           phone: shipping_address['phone'],
           reference_number: "#{order[:id]},#{order[:orderNumber]}", # Squarespace order number
           shipment_priority: 'economy',
-          frequencies: frequency_list
+          frequencies: frequency_list.compact
       }
       Rails.logger.debug("Creating order with params: #{order_params}")
       TaskHelper.create_order(order_params)	
