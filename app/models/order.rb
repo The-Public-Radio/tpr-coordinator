@@ -7,8 +7,8 @@ class Order < ApplicationRecord
 	after_initialize :init
 
   def init
-    self.invoiced ||= false          #will set the default value only if it's nil
-    self.notified ||= false #let's you set a default association
+    self.invoiced ||= false
+    self.notified ||= false
   end
 
 	def self.num_radios_in_order(order_id)
