@@ -1,7 +1,6 @@
 GIT
   remote: https://github.com/gabe-ochoa/squarespace
-  revision: 08a8b537f7f9003cf3a573afad38ae3621408256
-  branch: master
+  revision: fbae069830c12aebf8fe9a0c2f46506ff9c5ff2c
   specs:
     squarespace (0.0.2)
       faraday
@@ -304,4 +303,4 @@ RUBY VERSION
    ruby 2.4.1p111
 
 BUNDLED WITH
-   1.15.4
+   1.16.1
