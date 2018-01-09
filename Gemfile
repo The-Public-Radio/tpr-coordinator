@@ -48,7 +48,7 @@ gem 'faker'
 gem 'rack-attack'
 
 # Squarespace
-gem 'squarespace', git: 'https://github.com/gabe-ochoa/squarespace'
+gem 'squarespace'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
