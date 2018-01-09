@@ -11,6 +11,8 @@ namespace :orders do
     Rails.logger.info("Found #{orders_to_fulfill.count} orders to fulfill")
 
   	orders_to_fulfill.each do |order|
+  		Rails.logger.debug("Fulfilling order: #{order}")
+
   		id, order_number = order[:reference_number].split(',')
 
   		shipments = []
@@ -23,8 +25,15 @@ namespace :orders do
 	      }
   		end
 
-  		Rails.logger.debug("Fulfilling order: #{id}, #{shipments}")
-  		client.fulfill_order(id, shipments)
+  		Rails.logger.debug("Fulfill params: #{id}, #{shipments}")
+  		response = client.fulfill_order(id, shipments)
+  		if response.success?
+  			Rails.logger.debug("Fulfill order succeded. Marking as notified/")
+  			order.notified = true
+  			order.save!
+  		else
+  			Rails.logger.error("Fulfill order failed: #{response.status}")
+  		end
   	end
   end
 end
