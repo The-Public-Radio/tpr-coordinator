@@ -1,3 +1,12 @@
+GIT
+  remote: https://github.com/gabe-ochoa/squarespace
+  revision: 08a8b537f7f9003cf3a573afad38ae3621408256
+  branch: master
+  specs:
+    squarespace (0.0.2)
+      faraday
+      json
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -228,9 +237,6 @@ GEM
       actionpack (>= 4.0)
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
-    squarespace (0.0.2)
-      faraday
-      json
     thor (0.20.0)
     thread_safe (0.3.6)
     timecop (0.9.1)
@@ -285,7 +291,7 @@ DEPENDENCIES
   simplecov
   spring
   spring-watcher-listen (~> 2.0.0)
-  squarespace
+  squarespace!
   timecop
   tracking_number
   tzinfo-data

@@ -44,6 +44,7 @@ namespace :orders do
           frequencies: frequency_list.compact
       }
       Rails.logger.debug("Creating order with params: #{order_params}")
+      
       TaskHelper.create_order(order_params)	
     end
   end
