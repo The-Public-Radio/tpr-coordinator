@@ -11,25 +11,26 @@ namespace :orders do
   	Rails.logger.info("Importing #{orders[:result].count} orders")
 
   	orders[:result].each do |order|
-  	  shipping_address = order[:shippingAddress]
+  	  shipping_address = order['shippingAddress']
       frequency_list = []
       country_code = ''
 
-      order[:lineItems][0][:customizations].each do |c|
-        case c[:label]
+      Rails.logger.debug("Parsing order #{order}")
+      order['lineItems'][0]['customizations'].each do |c|
+        case c['label']
         when 'Tuning frequency'
             frequency = c[:value]
         when 'Where will you be using your radio?'
             country_code = c[:value]
         end
 
-		    order[:lineItems][0][:quantity].times do
+		    order['lineItems'][0]['quantity'].times do
 		        frequency_list << frequency
 		    end
       end
 
       order_params = {
-          name: "#{shipping_address[:firstName]} #{shipping_address[:lastName]}",
+          name: "#{shipping_address['firstName']} #{shipping_address['lastName']}",
           order_source: "squarespace",
           email: order['customerEmail'],
           street_address_1: shipping_address['address1'],
@@ -44,7 +45,7 @@ namespace :orders do
           frequencies: frequency_list.compact
       }
       Rails.logger.debug("Creating order with params: #{order_params}")
-      
+
       TaskHelper.create_order(order_params)	
     end
   end
