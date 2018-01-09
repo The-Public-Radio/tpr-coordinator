@@ -19,9 +19,9 @@ namespace :orders do
       order['lineItems'][0]['customizations'].each do |c|
         case c['label']
         when 'Tuning frequency'
-            frequency = c[:value]
+            frequency = c['value']
         when 'Where will you be using your radio?'
-            country_code = c[:value]
+            country_code = c['value']
         end
 
 		    order['lineItems'][0]['quantity'].times do
@@ -38,9 +38,9 @@ namespace :orders do
           city: shipping_address['city'],
           state: shipping_address['state'],
           postal_code: shipping_address['postalCode'],
-          country: shipping_address[:countryCode], # they only ship to US
+          country: shipping_address['countryCode'], # they only ship to US
           phone: shipping_address['phone'],
-          reference_number: "#{order[:id]},#{order[:orderNumber]}", # Squarespace order number
+          reference_number: "#{order['id']},#{order['orderNumber']}", # Squarespace order number
           shipment_priority: 'economy',
           frequencies: frequency_list.compact
       }
