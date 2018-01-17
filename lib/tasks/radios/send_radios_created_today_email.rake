@@ -4,7 +4,7 @@ namespace :radios do
     include TaskHelper
 
     # Get all radios that were created today and have a frequency (only radios attached to orders)
-    radios = Radio.where("created_at >= ? AND frequency IS NOT ?", (Time.now - 24.hours), nil)
+    radios = Radio.where("created_at >= ? AND frequency IS NOT ?", (Time.now - 24.hours), nil).where.not(shipment_id: nil)
 
     order_hash = {}
     radios.each do |radio|
