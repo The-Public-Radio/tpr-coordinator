@@ -17,7 +17,7 @@ namespace :radios do
       end
     end
 
-    body_arr = ['Radios created today:']
+    body_arr = ['Radios ordered today:']
     order_hash.each do |order_source, radio_count|
       body_arr << "#{order_source}: #{radio_count}"
     end
