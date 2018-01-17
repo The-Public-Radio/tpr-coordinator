@@ -1,5 +1,3 @@
-# TODO: Send breakdown of order source radios that were created
-
 namespace :radios do
   desc "Send a daily count of the number of radios that have been made tasks"
   task send_radios_created_today_email: :environment do

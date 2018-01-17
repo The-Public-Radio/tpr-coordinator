@@ -21,7 +21,7 @@ describe "orders:import_orders_from_squarespace", type: :rake do
             .and_return(stub_client)
 
         expect(stub_client).to receive(:get_orders).with('pending').and_return(stub_orders)
-        expect(TaskHelper).to receive(:notify_of_import).with('squarespace')
+        expect(TaskHelper).to receive(:notify_of_import).with('squarespace', [])
 
         squarespace_order_fixture['result'].each do |test_order|
             shipping_address = test_order['shippingAddress']

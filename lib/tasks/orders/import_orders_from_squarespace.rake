@@ -1,8 +1,5 @@
 require 'squarespace'
 
-# TODO: Send email on successful import
-# TODO: Handle 0 orders found 
-
 namespace :orders do
   desc "Import squarespace orders"
   task import_orders_from_squarespace: :environment do
@@ -12,6 +9,8 @@ namespace :orders do
 
   	orders = client.get_orders('pending')
   	Rails.logger.info("Importing #{orders[:result].count} orders")
+
+    failed_orders = []
 
   	orders[:result].each do |order|
   	  shipping_address = order['shippingAddress']
@@ -49,8 +48,22 @@ namespace :orders do
       }
       Rails.logger.debug("Creating order with params: #{order_params}")
 
-      TaskHelper.create_order(order_params)	
+      begin
+        TaskHelper.create_order(order_params)
+      rescue TaskHelper::TPROrderAlreadyCreated => e
+        Rails.logger.warn("Order already imported!: #{order_params}")
+      rescue ActiveRecord::RecordInvalid => e
+        Rails.logger.error("Validation error!: #{order_params}")
+        TaskHelper.clean_up_order(order_params)
+        row += ['Order inputs are malformed. Check frequency, name, and address fields']
+        failed_orders << row
+      rescue ShipmentsController::ShippoError => e
+        Rails.logger.error("Shipping address is invalid!: #{order_params}")
+        TaskHelper.clean_up_order(order_params)
+        row += ['Shipping address failed USPS validation']
+        failed_orders << row
+      end
     end
-    TaskHelper.notify_of_import('squarespace')
+    TaskHelper.notify_of_import('squarespace', failed_orders)
   end
 end
