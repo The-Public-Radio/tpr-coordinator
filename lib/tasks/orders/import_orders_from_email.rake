@@ -26,9 +26,9 @@ namespace :orders do
 
         # Set csv source and headers        
         if csv[0].eql?(uncommon_goods_headers)
-          csv_source = 'uncommon_goods'
+          @csv_source = 'uncommon_goods'
         elsif csv[0].eql?(generic_csv_headers)
-          csv_source = 'generic'
+          @csv_source = 'generic'
         end
         headers = csv.shift
 
@@ -37,7 +37,7 @@ namespace :orders do
           # Map row into TPR order parameters
           order = map_order_row(headers, row)
           begin
-            case csv_source
+            case @csv_source
             when 'uncommon_goods'
               order_params = parse_ucg_row(order)
             when 'generic'
@@ -79,7 +79,7 @@ namespace :orders do
       email.read!
 		end
 
-    notify_of_import(all_failed_orders) unless emails.count == 0
+    TaskHelper.notify_of_import(@csv_source, all_failed_orders) unless emails.count == 0
   end
 
   def generic_csv_headers
@@ -176,20 +176,5 @@ namespace :orders do
       to: from_address,
       body: "Please see attached csv for #{failed_orders.count} orders with errors",
       add_file: 'failed_orders.csv' })
-  end
-
-  def notify_of_import(failed_orders)
-    # TODO: Add in number of successful vs errors. Or maybe just errors complete success.
-    emails = ENV['EMAILS_TO_NOTIFY_OF_IMPORT'].split(',')
-    emails.each do |email|
-      Rails.logger.info("Notifying #{email} of successful import.")
-      email_params = {
-        subject: "TPR Coordinator: UCG Import Complete #{Date.today}",
-        to: email,
-        body: "Uncommon Goods import complete with #{failed_orders.count} failed order(s)! \n #{failed_orders}"
-      }
-
-      TaskHelper.send_email(email_params)
-    end
   end
 end

@@ -1,5 +1,8 @@
 require 'squarespace'
 
+# TODO: Send email on successful import
+# TODO: Handle 0 orders found 
+
 namespace :orders do
   desc "Import squarespace orders"
   task import_orders_from_squarespace: :environment do
@@ -48,5 +51,6 @@ namespace :orders do
 
       TaskHelper.create_order(order_params)	
     end
+    TaskHelper.notify_of_import('squarespace')
   end
 end

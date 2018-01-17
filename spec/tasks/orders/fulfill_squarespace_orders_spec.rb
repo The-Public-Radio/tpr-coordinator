@@ -6,7 +6,7 @@ describe "orders:fulfill_squarespace_orders", type: :rake do
       expect(task.prerequisites).to include "environment"
     end
 
-    it 'fulfills all boxed squarespace orders that have not been notified' do
+    it 'fulfills all boxed squarespace orders that have not been notified and are shipped' do
         api_key = ENV['SQUARESPACE_API_KEY']
         app_name = ENV['SQUARESPACE_APP_NAME']
 
@@ -16,6 +16,8 @@ describe "orders:fulfill_squarespace_orders", type: :rake do
         stub_client = instance_double(Squarespace::Client, :fulfill_order)
         expect(Squarespace::Client).to receive(:new).with(app_name: app_name, api_key: api_key)
             .and_return(stub_client)
+
+        stub_response = double('response', success?: true)
 
         orders_to_notify.each do |order|
             id, order_number = order[:reference_number].split(',')
@@ -29,7 +31,7 @@ describe "orders:fulfill_squarespace_orders", type: :rake do
                 service: shipment[:shipment_priority]
             }
             end
-            expect(stub_client).to receive(:fulfill_order).with(id, shipments)
+            expect(stub_client).to receive(:fulfill_order).with(id, shipments).and_return(stub_response)
         end
 
         task.execute

@@ -1,4 +1,5 @@
 require "rails_helper"
+require "shipments_controller"
 
 describe "orders:import_orders_from_email", type: :rake do
 
@@ -30,12 +31,7 @@ describe "orders:import_orders_from_email", type: :rake do
     let(:error_email) { double('error_email', message: error_message, sender: double('address', address: 'from@foo.com')) }
 
     it 'imports generic formated csv attachments' do
-        notify_email_params = {
-            to: 'testnotify@foo.com',
-            subject: "TPR Coordinator: UCG Import Complete #{Date.today}",
-            body: "Uncommon Goods import complete with 0 failed order(s)! \n []"
-        }
-        expect_any_instance_of(TaskHelper).to receive(:send_email).with(notify_email_params)
+        expect_any_instance_of(TaskHelper).to receive(:notify_of_import).with('generic', [])
 
         expect_any_instance_of(TaskHelper).to receive(:find_unread_emails).and_return([generic_email])
         expect(generic_email).to receive(:message).and_return(generic_order_message)

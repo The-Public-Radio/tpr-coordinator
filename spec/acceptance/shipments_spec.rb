@@ -134,12 +134,12 @@ resource "Shipments" do
 
   get "/shipments?order_id=:order_id" do
     let(:order_id) { order.id }
-    example "Find a shipments that are attached to an order" do
+    example "Find shipments that are attached to an order" do
       create(:kickstarter)
       do_request
       expect(status).to eq 200
       data = JSON.parse(response_body)['data']
-      expect(data.count).to eq(2)
+      expect(data.count).to eq(4)
       data.each do |shipment|
         expect(shipment['order_id']).to eq(order.id)
       end

@@ -135,6 +135,21 @@ module TaskHelper
     order.destroy
   end
 
+  def notify_of_import(order_source, failed_orders=[])
+    # TODO: Add in number of successful vs errors. Or maybe just errors complete success.
+    emails = ENV['EMAILS_TO_NOTIFY_OF_IMPORT'].split(',')
+    emails.each do |email|
+      Rails.logger.info("Notifying #{email} of successful import for #{order_source}")
+      email_params = {
+        subject: "TPR Coordinator: #{order_source.capitalize} Import Complete #{Date.today}",
+        to: email,
+        body: "Import complete with #{failed_orders.count} failed order(s)! \n #{failed_orders}"
+      }
+
+      send_email(email_params)
+    end
+  end
+
   class TPROrderAlreadyCreated < Exception
   end
 end

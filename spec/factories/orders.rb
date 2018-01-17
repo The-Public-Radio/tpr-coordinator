@@ -20,7 +20,7 @@ FactoryGirl.define do
       end
     end
 
-     factory :squarespace, class: Order do
+    factory :squarespace, class: Order do
       order_source "squarespace"
       reference_number "#{Random.rand(999)},#{Random.rand(9999999)}"
 
@@ -29,7 +29,8 @@ FactoryGirl.define do
       end
 
       after :create do |order|
-        create_list(:shipment, 2, :order => order)
+        create_list(:boxed, 2, :order => order)
+        create_list(:label_created, 2, :order => order)
       end
     end
 

@@ -14,7 +14,7 @@ describe "radios:send_radios_created_today_email", type: :rake do
     notify_email_params = {
       to: 'testnotify@foo.com',
       subject: "TPR Coordinator: #{radio_count} radios were ordered today",
-      body: "There were #{radio_count} radios ordered today"
+      body: "Radios created today:\n\tother: 4"
     } 
     expect_any_instance_of(TaskHelper).to receive(:send_email).with(notify_email_params)
 

@@ -8,6 +8,10 @@ namespace :orders do
   	client = Squarespace::Client.new(app_name: ENV['SQUARESPACE_APP_NAME'], api_key: ENV['SQUARESPACE_API_KEY'])
 
   	orders_to_fulfill = Order.where(order_source: 'squarespace').where.not(notified: true)
+
+  	# TODO Write test for this
+  	# orders_to_fulfill.select{ |o| o.shipments.each{ |s| %w{created label_created label_printed}.exclude?(s.shipment_status) }
+
     Rails.logger.info("Found #{orders_to_fulfill.count} orders to fulfill")
 
   	orders_to_fulfill.each do |order|

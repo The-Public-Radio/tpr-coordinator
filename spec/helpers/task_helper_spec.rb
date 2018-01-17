@@ -127,6 +127,17 @@ RSpec.describe TaskHelper, type: :helper do
   			helper.send_reply(email, { to: reply_email })
   		end
 
+      it 'notifies of a successful import' do
+        notify_email_params = {
+          to: 'testnotify@foo.com',
+          subject: "TPR Coordinator: Generic Import Complete #{Date.today}",
+          body: "Import complete with 0 failed order(s)! \n []"
+        }
+        expect_any_instance_of(TaskHelper).to receive(:send_email).with(notify_email_params)
+
+        helper.notify_of_import('generic', [])
+      end
+
   		def assert_gmail_connect
   			expect(Gmail).to receive(:connect!).and_return(stub_gmail_client)
   		end
