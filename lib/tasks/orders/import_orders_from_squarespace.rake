@@ -15,7 +15,7 @@ namespace :orders do
   	orders[:result].each do |order|
   	  shipping_address = order['shippingAddress']
       frequency_list = []
-      country_code = ''
+      radio_country_code = ''
 
       Rails.logger.debug("Parsing order #{order}")
       order['lineItems'][0]['customizations'].each do |c|
@@ -23,7 +23,7 @@ namespace :orders do
         when 'Tuning frequency'
             frequency = c['value']
         when 'Where will you be using your radio?'
-            country_code = c['value']
+            radio_country_code = c['value'][0..1]
         end
 
 		    order['lineItems'][0]['quantity'].times do
@@ -44,7 +44,7 @@ namespace :orders do
           phone: shipping_address['phone'],
           reference_number: "#{order['id']},#{order['orderNumber']}", # Squarespace order number
           shipment_priority: 'economy',
-          frequencies: frequency_list.compact
+          frequencies: { radio_country_code => frequency_list.compact }
       }
       Rails.logger.debug("Creating order with params: #{order_params}")
 

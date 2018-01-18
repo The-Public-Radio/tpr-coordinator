@@ -62,7 +62,7 @@ class OrdersController < ApplicationController
       raise TPRCoordinatorError::OrderInvalid(@order.errors)
     end
 
-    make_shipments_for_queue_order({ @order.country => frequencies })
+    make_shipments_for_queue_order(frequencies)
   end
 
   private

@@ -21,10 +21,12 @@ describe "orders:import_orders_from_squarespace", type: :rake do
             .and_return(stub_client)
 
         expect(stub_client).to receive(:get_orders).with('pending').and_return(stub_orders)
-        expect(TaskHelper).to receive(:notify_of_import).with('squarespace', [])
+        expect_any_instance_of(TaskHelper).to receive(:notify_of_import).with('squarespace', [])
 
         squarespace_order_fixture['result'].each do |test_order|
             shipping_address = test_order['shippingAddress']
+
+            radio_country = test_order['lineItems'][0]['customizations'][0]['value'][0..1]
 
             order_params = {
                 name: "#{shipping_address['firstName']} #{shipping_address['lastName']}",
@@ -35,11 +37,11 @@ describe "orders:import_orders_from_squarespace", type: :rake do
                 city: shipping_address['city'],
                 state: shipping_address['state'],
                 postal_code: shipping_address['postalCode'],
-                country: 'US', #shipping_address[:countryCode], # they only ship to US
+                country: shipping_address['countryCode'],
                 phone: shipping_address['phone'],
                 reference_number: "#{test_order['id']},#{test_order['orderNumber']}", # Squarespace order number
                 shipment_priority: 'economy',
-                frequencies: ['82.7','82.7','82.7','82.7']
+                frequencies: { radio_country => ['82.7','82.7','82.7','82.7'] }
             }
 
             expect_any_instance_of(TaskHelper).to receive(:create_order).with(order_params)

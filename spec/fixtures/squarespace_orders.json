@@ -47,7 +47,7 @@
           "customizations": [
             {
               "label": "Where will you be using your radio?",
-              "value": "US - United States"
+              "value": "CA - Canada"
             },
             {
               "label": "Tuning frequency",

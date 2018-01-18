@@ -115,7 +115,7 @@ namespace :orders do
       reference_number: "#{order['order_id']},#{order['shipment_id']}", # UCG order_id,shipment_id
       shipment_priority: shipment_priority_mapping(order['shipping_upgrade']),
       comments: order['giftmessage'],
-      frequencies: frequency_list
+      frequencies: {'US' => frequency_list }
     }
   end
 
@@ -135,7 +135,7 @@ namespace :orders do
 		  country: order['Country'],
 		  phone: order['Phone Number'].nil? ? '' : order['Phone Number'],
       shipment_priority: order['Shipment Priority'],
-      frequencies: order['Radio'].compact
+      frequencies: { order['Country'] => order['Radio'].compact }
 		}
 	end
 
