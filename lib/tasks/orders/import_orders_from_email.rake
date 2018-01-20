@@ -79,7 +79,9 @@ namespace :orders do
       email.read!
 		end
 
-    TaskHelper.notify_of_import(@csv_source, all_failed_orders) unless emails.count == 0
+    if ENV['SEND_IMPORT_NOTIFICATION_EMAILS'] == true || emails.count != 0
+      TaskHelper.notify_of_import(@csv_source, all_failed_orders)
+    end
   end
 
   def generic_csv_headers
