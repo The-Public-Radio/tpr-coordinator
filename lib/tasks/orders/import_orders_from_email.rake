@@ -24,7 +24,7 @@ namespace :orders do
 		    	next
 		    end
 
-        # Set csv source and headers        
+        # Set csv source and headers
         if csv[0].eql?(uncommon_goods_headers)
           @csv_source = 'uncommon_goods'
         elsif csv[0].eql?(generic_csv_headers)
@@ -42,7 +42,7 @@ namespace :orders do
               order_params = parse_ucg_row(order)
             when 'generic'
               order_params = parse_generic_row(order)
-            end 
+            end
           rescue NoMethodError => e
             Rails.logger.info("Order field is missing or malformed: #{order['Custom_Info']}")
             Rails.logger.debug(e)
@@ -62,7 +62,7 @@ namespace :orders do
             TaskHelper.clean_up_order(order_params)
             row += ['Order inputs are malformed. Check frequency, name, and address fields']
             failed_orders << row
-          rescue ShipmentsController::ShippoError => e
+          rescue ShippoError => e
             Rails.logger.error("Shipping address is invalid!: #{order_params}")
             TaskHelper.clean_up_order(order_params)
             row += ['Shipping address failed USPS validation']

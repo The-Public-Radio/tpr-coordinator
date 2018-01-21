@@ -57,7 +57,7 @@ namespace :orders do
         TaskHelper.clean_up_order(order_params)
         row += ['Order inputs are malformed. Check frequency, name, and address fields']
         failed_orders << row
-      rescue ShipmentsController::ShippoError => e
+      rescue ShippoError => e
         Rails.logger.error("Shipping address is invalid!: #{order_params}")
         TaskHelper.clean_up_order(order_params)
         row += ['Shipping address failed USPS validation']
