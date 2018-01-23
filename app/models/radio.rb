@@ -15,5 +15,5 @@ class Radio < ApplicationRecord
   validates_inclusion_of :boxed, in: [true, false], allow_nil: true
   validates :serial_number, uniqueness: true, allow_nil: true
   validates_inclusion_of :country_code, in: eu + america + asia, allow_nil: true
-  validates_inclusion_of :quality_control_status, in: %w{passed failed_software failed_mech}, allow_nil: true
+  validates_inclusion_of :quality_control_status, in: %w{passed failed_functionality failed_appearance}, allow_nil: true
 end
