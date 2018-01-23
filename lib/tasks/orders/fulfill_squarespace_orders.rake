@@ -9,8 +9,11 @@ namespace :orders do
 
   	orders_to_fulfill = Order.where(order_source: 'squarespace').where.not(notified: true)
 
-  	# TODO Write test for this
-  	# orders_to_fulfill.select{ |o| o.shipments.each{ |s| %w{created label_created label_printed}.exclude?(s.shipment_status) }
+  	orders_to_fulfill.select do |o| 
+      o.shipments.each do |s| 
+        %w{created label_created label_printed}.exclude?(s.shipment_status)
+      end
+    end
 
     Rails.logger.info("Found #{orders_to_fulfill.count} orders to fulfill")
 
@@ -30,7 +33,14 @@ namespace :orders do
   		end
 
   		Rails.logger.debug("Fulfill params: #{id}, #{shipments}")
-  		response = client.fulfill_order(id, shipments)
+      case ENV['SEND_SQUARESPACE_NOTIFICATION_EMAILS']
+      when false
+        send_notification = false
+      else
+        send_notification = true
+      end
+            
+  		response = client.fulfill_order(id, shipments, send_notification)
   		if response.success?
   			Rails.logger.debug("Fulfill order succeded. Marking as notified/")
   			order.notified = true

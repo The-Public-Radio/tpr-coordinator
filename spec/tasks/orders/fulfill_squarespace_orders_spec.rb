@@ -31,7 +31,7 @@ describe "orders:fulfill_squarespace_orders", type: :rake do
                 service: shipment[:shipment_priority]
             }
             end
-            expect(stub_client).to receive(:fulfill_order).with(id, shipments).and_return(stub_response)
+            expect(stub_client).to receive(:fulfill_order).with(id, shipments, true).and_return(stub_response)
         end
 
         task.execute
