@@ -34,14 +34,14 @@ RSpec.describe Radio, type: :model do
     expect(model).to_not be_valid
   end
 
-  it 'valid with quality_control_status of passed, failed_mech, or failed_software' do
+  it 'valid with quality_control_status of passed, failed_appearance, or failed_functionality' do
     model.quality_control_status = 'passed'
     expect(model).to be_valid
 
-    model.quality_control_status = 'failed_software'
+    model.quality_control_status = 'failed_functionality'
     expect(model).to be_valid
 
-    model.quality_control_status = 'failed_mech'
+    model.quality_control_status = 'failed_appearance'
     expect(model).to be_valid
 
     model.quality_control_status = 'failed'
