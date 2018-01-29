@@ -199,7 +199,7 @@ class ShipmentsController < ApplicationController
       if @order.country != 'US'
          usps_service_level_international
       else
-        case @shipment.shipment_priority
+        case @shipment.shipment_priority.downcase
         when nil || 'economy'
           # If under 1 lb (16oz) the shipment can go first class, > 1lb it has to go priority
           @shipment_size > 1 ? 'usps_priority' : 'usps_first'
