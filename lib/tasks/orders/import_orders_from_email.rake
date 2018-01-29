@@ -1,6 +1,6 @@
 require 'csv'
 
-class UnknownOrderSource < StandardError
+class UnknownOrderHeaders < StandardError
 end
 
 namespace :orders do
@@ -36,7 +36,7 @@ namespace :orders do
           @csv_source = 'generic'
         end
 
-        raise UnknownOrderSource if @csv_source.nil?
+        raise UnknownOrderHeaders.new(headers) if @csv_source.nil?
 
         # For each row in the csv, map to TPR params and create order while handling input errors
         csv.each do |row|

@@ -111,7 +111,7 @@ describe "orders:import_orders_from_email", type: :rake do
         expect(unknown_message).to receive(:attachments).and_return([unknown_attachment])
         expect(unknown_attachment).to receive(:decoded).and_return(unknown_fixture)
 
-        expect{ task.execute }.to raise_error(UnknownOrderSource)
+        expect{ task.execute }.to raise_error(UnknownOrderHeaders)
     end
 
     context 'cleans up any stray orders, shipments, and radios when the order' do
