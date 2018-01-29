@@ -1,5 +1,4 @@
 require 'csv'
-require 'shipments_controller'
 
 namespace :orders do
   desc "Orders tasks"
