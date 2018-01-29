@@ -1,5 +1,8 @@
 require 'csv'
 
+class UnknownOrderSource < StandardError
+end
+
 namespace :orders do
   desc "Orders tasks"
   task import_orders_from_email: :environment do
@@ -32,6 +35,8 @@ namespace :orders do
         elsif headers.eql?(generic_csv_headers)
           @csv_source = 'generic'
         end
+
+        raise UnknownOrderSource if @csv_source.nil?
 
         # For each row in the csv, map to TPR params and create order while handling input errors
         csv.each do |row|
