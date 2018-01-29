@@ -84,19 +84,19 @@ module TaskHelper
   end
 
   def create_order(order_params)
+    Rails.logger.info("Creating order with params: #{order_params}.")
     # Check if order has already been created
     if order_params[:reference_number].nil?
       unless Order.find_by_name(order_params[:name]).nil?
-        Rails.logger.info("Order already created for #{order_params[:name]}. Skipping.")
+        Rails.logger.warn("Order already created for #{order_params[:name]}. Skipping.")
         raise TPROrderAlreadyCreated
       end
     else
       unless Order.find_by_reference_number(order_params[:reference_number]).nil?
-        Rails.logger.info("Order already created for #{order_params[:name]}. Skipping.")
+        Rails.logger.warn("Order already created for #{order_params[:name]}. Skipping.")
         raise TPROrderAlreadyCreated
       end
     end
-    Rails.logger.info("Creating order with params: #{order_params}.")
     OrdersController.new.make_queue_order_with_radios(order_params)
   end
 

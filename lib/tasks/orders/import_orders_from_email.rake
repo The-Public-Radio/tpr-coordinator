@@ -1,4 +1,5 @@
 require 'csv'
+require 'shipments_controller'
 
 namespace :orders do
   desc "Orders tasks"
@@ -25,17 +26,19 @@ namespace :orders do
 		    end
 
         # Set csv source and headers
-        if csv[0].eql?(uncommon_goods_headers)
+        headers = csv.shift
+        Rails.logger.debug("Checking headers for determine csv source: #{headers}")
+        if headers.eql?(uncommon_goods_headers)
           @csv_source = 'uncommon_goods'
-        elsif csv[0].eql?(generic_csv_headers)
+        elsif headers.eql?(generic_csv_headers)
           @csv_source = 'generic'
         end
-        headers = csv.shift
 
         # For each row in the csv, map to TPR params and create order while handling input errors
         csv.each do |row|
           # Map row into TPR order parameters
           order = map_order_row(headers, row)
+          Rails.logger.debug("Mapped csv rows: #{order}")
           begin
             case @csv_source
             when 'uncommon_goods'
@@ -43,6 +46,7 @@ namespace :orders do
             when 'generic'
               order_params = parse_generic_row(order)
             end
+            Rails.logger.debug("Parsed order params: #{order_params}")
           rescue NoMethodError => e
             Rails.logger.info("Order field is missing or malformed: #{order['Custom_Info']}")
             Rails.logger.debug(e)
