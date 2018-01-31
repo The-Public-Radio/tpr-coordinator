@@ -120,7 +120,10 @@ class ShipmentsController < ApplicationController
     @order = order
 
     set_up_default_shipment(frequencies, shipment_priority)
+
+    Rails.logger.debug("Saving new shipment for order #{order.id}: #{@shipment.attributes}")
     unless @shipment.save
+      Rails.logger.error(@shipment.errors)
       raise ShipmentInvalid(@shipment.errors)
     end
   end
@@ -145,7 +148,7 @@ class ShipmentsController < ApplicationController
         frequencies.each do |frequency|
           radio = Radio.create(frequency: frequency, boxed: false, country_code: @order.country, shipment_id: @shipment.id)
           unless radio.save
-            Rails.logger.debug(radio.errors)
+            Rails.logger.error(radio.errors)
             raise RadioInvalid(radio.errors)
           end
         end

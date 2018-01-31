@@ -107,9 +107,11 @@ describe "orders:import_orders_from_email", type: :rake do
 
     it 'raises a error when no order source can be matched' do
         expect_any_instance_of(TaskHelper).to receive(:find_unread_emails).and_return([unknown_email])
+        expect_any_instance_of(TaskHelper).to receive(:create_order)
         expect(unknown_email).to receive(:message).and_return(unknown_message)
         expect(unknown_message).to receive(:attachments).and_return([unknown_attachment])
         expect(unknown_attachment).to receive(:decoded).and_return(unknown_fixture)
+        expect(unknown_email).to receive(:read!)
 
         expect{ task.execute }.to raise_error(UnknownOrderHeaders)
     end
