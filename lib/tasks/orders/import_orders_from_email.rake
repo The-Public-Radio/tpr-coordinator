@@ -144,7 +144,7 @@ namespace :orders do
 		  postal_code: order['Postal Code'],
 		  country: order['Country'],
 		  phone: order['Phone Number'].nil? ? '' : order['Phone Number'],
-      shipment_priority: order['Shipment Priority'],
+      shipment_priority: order['Shipment Priority'].downcase,
       frequencies: { order['Country'] => order['Radio'].compact }
 		}
 	end

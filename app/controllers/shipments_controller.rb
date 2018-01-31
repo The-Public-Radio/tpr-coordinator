@@ -134,7 +134,7 @@ class ShipmentsController < ApplicationController
     class RadioInvalid < StandardError
     end
 
-    def set_up_default_shipment(frequencies = params['shipment']['frequencies'], shipment_priority = params['shipment']['shipment_priority'])
+    def set_up_default_shipment(frequencies = params['shipment']['frequencies'], shipment_priority = params['shipment']['shipment_priority'].downcase)
       if !@order.nil?
         find_order(@shipment)
       else
