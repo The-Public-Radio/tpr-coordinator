@@ -95,7 +95,7 @@ class ShipmentsController < ApplicationController
       # Does the shipment have radios?
       has_radios = s.radio.any?
       # Is it from an order_source that we want in the main queue?
-      processable_order_source =  %w{other kickstarter squarespace uncommon_goods WFAE LGA WBEZ KUER}.include?(s.order.order_source)
+      processable_order_source =  %w{squarespace kickstarter uncommon_goods other WBEZ warranty KUER LGA WFAE KERA KXT}.include?(s.order.order_source)
 
       has_radios && processable_order_source
     end[0]

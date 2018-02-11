@@ -132,10 +132,9 @@ namespace :orders do
 	def parse_generic_row(order)
     Rails.logger.info("Parsing generic csv")
     Rails.logger.debug("Parsing order: #{order}")
-
 		{
 		  name: order['Name'],
-		  order_source: 'other',
+		  order_source: order['Source'],
 		  email: order['Email'],
 		  street_address_1: order['Address 1'],
 		  street_address_2: order['Address 2'],

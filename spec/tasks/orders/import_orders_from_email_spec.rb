@@ -48,7 +48,7 @@ describe "orders:import_orders_from_email", type: :rake do
         unpack_order_csv(CSV.parse(generic_order_fixture)).each do |test_order|
             order_params = {
                 name: test_order['Name'],
-                order_source: "other",
+                order_source: test_order['Source'],
                 email: test_order['Email'],
                 street_address_1: test_order['Address 1'],
                 street_address_2: test_order['Address 2'],
