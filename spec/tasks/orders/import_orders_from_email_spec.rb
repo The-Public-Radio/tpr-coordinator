@@ -46,15 +46,6 @@ describe "orders:import_orders_from_email", type: :rake do
         expect(generic_email).to receive(:read!)
 
         unpack_order_csv(CSV.parse(generic_order_fixture)).each do |test_order|
-            # Here, I think, is where we'd create a frequency (aka radio) array
-            # I'm just copying the stuff from UG for now as a placeholder - this needs to be edited & tested
-            
-            #frequency = test_order['Custom_Info'].split('/^')[1]
-            #frequency_list = []
-            #test_order['quantity'].to_i.times do
-            #    frequency_list << frequency
-            #end
-
             order_params = {
                 name: test_order['Name'],
                 order_source: test_order['Source'],

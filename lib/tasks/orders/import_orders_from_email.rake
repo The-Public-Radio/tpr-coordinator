@@ -132,16 +132,6 @@ namespace :orders do
 	def parse_generic_row(order)
     Rails.logger.info("Parsing generic csv")
     Rails.logger.debug("Parsing order: #{order}")
-
-    # Here, I think, is where we'd create a frequency (aka radio) array
-    # I'm just copying the stuff from UG for now as a placeholder - this needs to be edited & tested
-    
-#    frequency = order['Custom_Info'].split('/^')[1]
-#    frequency_list = []
-#    order['quantity'].to_i.times do
-#        frequency_list << frequency
-#    end
-
 		{
 		  name: test_order['Name'],
 		  order_source: test_order['Source'],
