@@ -46,6 +46,9 @@ describe "orders:import_orders_from_email", type: :rake do
         expect(generic_email).to receive(:read!)
 
         unpack_order_csv(CSV.parse(generic_order_fixture)).each do |test_order|
+            # Get all radios in the CSV
+            frequencies = test_order.select{ |c| c.include?('radio')}
+
             order_params = {
                 name: test_order['Name'],
                 order_source: test_order['Source'],
@@ -58,7 +61,7 @@ describe "orders:import_orders_from_email", type: :rake do
                 country: test_order['Country'],
                 phone: test_order['Phone Number'].nil? ? '' : test_order['Phone Number'],
                 shipment_priority: test_order['Shipment Priority'],
-                frequencies: { test_order['Country'] => test_order['Radio'] }
+                frequencies: { test_order['Country'] => frequencies }
             }
 
             expect_any_instance_of(TaskHelper).to receive(:create_order).with(order_params)
@@ -195,10 +198,11 @@ describe "orders:import_orders_from_email", type: :rake do
         csv.each do |order|
             hash = {}
             headers.each_with_index do |header,i|
+                header = header.downcase
                 # don't include empty values from the csv
                 next if order[i].nil?
                 # If a radio frequency put in an array
-                if header.include?('Radio')
+                if header.include?('radio')
                     # initalize radio array if it's nil
                     hash[header] = [] if hash[header].nil?
                     hash[header] << order[i]
