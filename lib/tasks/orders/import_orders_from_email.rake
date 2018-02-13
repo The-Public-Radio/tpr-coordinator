@@ -27,16 +27,20 @@ namespace :orders do
 		    	next
 		    end
 
-        # Set csv source and headers
+        # Set csv source and headers and downcase
         headers = csv.shift
+        headers.map!(&:downcase)
+        # Filter out radio columns before checking source
+        source_check_headers = headers.select{ |h| !h.include?('radio') }
+
         Rails.logger.debug("Checking headers for determine csv source: #{headers}")
-        if headers.eql?(uncommon_goods_headers)
+        if source_check_headers.eql?(uncommon_goods_headers)
           @csv_source = 'uncommon_goods'
-        elsif headers.eql?(generic_csv_headers)
+        elsif source_check_headers.eql?(generic_csv_headers)
           @csv_source = 'generic'
         end
 
-        raise UnknownOrderHeaders.new(headers) if @csv_source.nil?
+        raise UnknownOrderHeaders.new(source_check_headers) if @csv_source.nil?
 
         # For each row in the csv, map to TPR params and create order while handling input errors
         csv.each do |row|
@@ -52,7 +56,7 @@ namespace :orders do
             end
             Rails.logger.debug("Parsed order params: #{order_params}")
           rescue NoMethodError => e
-            Rails.logger.info("Order field is missing or malformed: #{order['Custom_Info']}")
+            Rails.logger.info("Order field is missing or malformed: #{order['custom_info']}")
             Rails.logger.debug(e)
 
             row += ['Order field is missing or malformed. Check the requested frequency']
@@ -93,11 +97,11 @@ namespace :orders do
   end
 
   def generic_csv_headers
-    ["Name", "Source", "Email", "Address 1", "Address 2", "City", "State", "Postal Code", "Country", "Phone Number", "Shipment Priority", "Radio"]
+    ["name", "source", "email", "address 1", "address 2", "city", "state", "postal code", "country", "phone number", "shipment priority"]
   end
 
   def uncommon_goods_headers
-     ["date_created", "expected_ship_date", "order_id", "quantity", "sku", "vendor_name", "item_name", "customer_name", "st_address_line1", "st_address_line2", "city", "state", "postal_code", "shipping_upgrade", "shipment_id", "external_order_id", "bill_first_name", "bill_last_name", "bill_address1", "bill_address2", "bill_city", "bill_zip", "bill_phonenum", "bill_company", "bill_code", "giftmessage", "Custom_Info"]
+     ["date_created", "expected_ship_date", "order_id", "quantity", "sku", "vendor_name", "item_name", "customer_name", "st_address_line1", "st_address_line2", "city", "state", "postal_code", "shipping_upgrade", "shipment_id", "external_order_id", "bill_first_name", "bill_last_name", "bill_address1", "bill_address2", "bill_city", "bill_zip", "bill_phonenum", "bill_company", "bill_code", "giftmessage", "custom_info"]
   end
 
   def parse_ucg_row(order)
@@ -105,7 +109,7 @@ namespace :orders do
     Rails.logger.debug("Parsing order: #{order}")
 
     # Handling quantity for field
-    frequency = order['Custom_Info'].split('/^')[1]
+    frequency = order['custom_info'].split('/^')[1]
     frequency_list = []
     order['quantity'].to_i.times do
         frequency_list << frequency
@@ -133,25 +137,25 @@ namespace :orders do
     Rails.logger.info("Parsing generic csv")
     Rails.logger.debug("Parsing order: #{order}")
 		{
-		  name: order['Name'],
-		  order_source: order['Source'],
-		  email: order['Email'],
-		  street_address_1: order['Address 1'],
-		  street_address_2: order['Address 2'],
-		  city: order['City'],
-		  state: order['State'],
-		  postal_code: order['Postal Code'],
-		  country: order['Country'],
-		  phone: order['Phone Number'].nil? ? '' : order['Phone Number'],
-      shipment_priority: order['Shipment Priority'].downcase,
-      frequencies: { order['Country'] => order['Radio'].compact }
+		  name: order['name'],
+		  order_source: order['source'],
+		  email: order['email'],
+		  street_address_1: order['address 1'],
+		  street_address_2: order['address 2'],
+		  city: order['city'],
+		  state: order['state'],
+		  postal_code: order['postal code'],
+		  country: order['country'],
+		  phone: order['phone number'].nil? ? '' : order['phone number'],
+      shipment_priority: order['shipment priority'].downcase,
+      frequencies: { order['country'] => order['radio'].compact }
 		}
 	end
 
   def map_order_row(headers, row)
     hash = {}
     headers.each_with_index do |header,i|
-      if header.include?('Radio')
+      if header.include?('radio')
         if hash[header].nil?
           hash[header] = []
         end
