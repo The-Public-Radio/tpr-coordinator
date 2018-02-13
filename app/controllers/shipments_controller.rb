@@ -95,13 +95,17 @@ class ShipmentsController < ApplicationController
       # Does the shipment have radios?
       has_radios = s.radio.any?
       # Is it from an order_source that we want in the main queue?
-      processable_order_source =  %w{squarespace kickstarter uncommon_goods other WBEZ warranty KUER LGA WFAE KERA KXT}.include?(s.order.order_source)
+      order_source_blacklisted = order_source_processing_blacklist.include?(s.order.order_source)
 
-      has_radios && processable_order_source
+      has_radios && !order_source_blacklisted
     end[0]
 
     # Return top of the queue
     api_response(@shipment)
+  end
+
+  def order_source_processing_blacklist
+    ENV['TPR_ORDER_SOURCES_PROCESSING_BLACKLIST'].nil? ? '' : ENV['TPR_ORDER_SOURCES_PROCESSING_BLACKLIST']
   end
 
   def shipment_label_created_count
