@@ -3,7 +3,7 @@ namespace :shipments do
   task check_shipment_status: :environment do
   	# Find all shipments that are boxed in batches
   	# TODO refactor to use .find_in_batches(batch_size: 100)
-  	boxed_shipments = Shipment.where(shipment_status: 'boxed') 
+  	boxed_shipments = Shipment.where.not(shipment_status: 'delivered') 
 
   	# Auth to shippo
     Shippo::API.token = ENV['SHIPPO_TOKEN']
