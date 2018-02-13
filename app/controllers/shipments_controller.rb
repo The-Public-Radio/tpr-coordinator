@@ -134,7 +134,8 @@ class ShipmentsController < ApplicationController
     class RadioInvalid < StandardError
     end
 
-    def set_up_default_shipment(frequencies = params['shipment']['frequencies'], shipment_priority = params['shipment']['shipment_priority'].downcase)
+    def set_up_default_shipment(frequencies = params['shipment']['frequencies'], shipment_priority = params['shipment']['shipment_priority'])
+
       if !@order.nil?
         find_order(@shipment)
       else
@@ -155,7 +156,7 @@ class ShipmentsController < ApplicationController
       end
 
       # Check priority, default to economy
-      @shipment.shipment_priority = shipment_priority.nil? ? 'economy' : shipment_priority
+      @shipment.shipment_priority = shipment_priority.nil? ? 'economy' : shipment_priority.downcase
 
       # Create tracking number and label_url
       if @shipment.tracking_number.nil?
