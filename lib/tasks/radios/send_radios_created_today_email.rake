@@ -24,7 +24,7 @@ namespace :radios do
 
     body = body_arr.join("\n\t")
 
-    emails = ENV['EMAILS_TO_NOTIFY_OF_IMPORT'].split(',')
+    emails = ENV['EMAILS_TO_NOTIFY_OF_ORDERS'].split(',')
     emails.each do |email|
       Rails.logger.info("Notifying #{email} of radios ordered today")
 
