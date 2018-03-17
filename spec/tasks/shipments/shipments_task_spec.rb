@@ -25,7 +25,7 @@ describe "shipments:check_shipment_status", type: :rake do
       shippo_response['tracking_status']['status'] = k
 
       # Mock the shippo call
-      expect(Shippo::Track).to receive(:get).with(shipments[0].tracking_number, 'usps').and_return(shippo_response).exactly(3).times
+      expect(Shippo::Track).to receive(:get).with(shipments[0].tracking_number, 'usps').and_return(shippo_response).exactly(6).times
       expect(Shippo::Track).to receive(:get).with(shipments[1].tracking_number, 'usps').and_return(shippo_response) 
 
       task.execute
