@@ -252,6 +252,14 @@ RSpec.describe ShipmentsController, type: :controller do
             expect(Shipment.last.label_url).to eq(shippo_response_object.label_url)
           end
 
+          it 'creates a return label if the order_source is warranty' do
+            create_return_label_params[:extra] = { :is_return => true }
+            expect(Shippo::Transaction).to receive(:create).with(create_label_params).and_return(shippo_response_object).once
+            expect(Shippo::Shipment).to receive(:create).with(create_return_label_params).and_return(shippo_response_object).once
+            
+            post :create, params: { order_id: order_id, shipment: valid_shipping_attributes }, session: valid_session
+          end
+
           it 'creates express shipments' do
             valid_attributes['shipment_priority'] = 'express'
             create_label_params[:servicelevel_token] = 'usps_priority_express'
