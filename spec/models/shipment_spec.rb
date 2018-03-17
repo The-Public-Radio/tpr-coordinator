@@ -22,6 +22,11 @@ RSpec.describe Shipment, type: :model do
     expect(model).to be_valid
   end
 
+  it 'is valid when return_label_url is nil' do
+    model.return_label_url = nil
+    expect(model).to be_valid
+  end
+
   context 'a shipment has a status that' do
     it 'has a valid shipment_status' do
       model.shipment_status = 'created'
