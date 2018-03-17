@@ -20,7 +20,7 @@ namespace :shipments do
 			if shippo_response['tracking_status'].nil?
 				Rails.logger.error("Tracking status is nil")
 			else
-				tracking_status = Shippo::Track.get(shipment.tracking_number, 'usps')['tracking_status']['status']
+				tracking_status = shippo_response['tracking_status']['status']
 				# Update shipment status
 				status_whitelist = %w{DELIVERED TRANSIT FAILURE RETURNED}
 				if status_whitelist.include?(tracking_status)

@@ -16,7 +16,10 @@ namespace :orders do
 
   	emails.each_with_index do |email,i|
       failed_orders = []
-  		Rails.logger.info("Processing email #{i}")
+      Rails.logger.info("Processing email #{i}")
+
+      # We need this instantiated before we loop over emails
+      csv_source = nil
 
 		  email.message.attachments.each do |a|
   			Rails.logger.info("Reading attachments")
@@ -35,12 +38,12 @@ namespace :orders do
 
         Rails.logger.debug("Checking headers for determine csv source: #{headers}")
         if source_check_headers.eql?(uncommon_goods_headers)
-          @csv_source = 'uncommon_goods'
+          csv_source = 'uncommon_goods'
         elsif source_check_headers.eql?(generic_csv_headers)
-          @csv_source = 'generic'
+          csv_source = 'generic'
         end
 
-        raise UnknownOrderHeaders.new(source_check_headers) if @csv_source.nil?
+        raise UnknownOrderHeaders.new(source_check_headers) if csv_source.nil?
 
         # For each row in the csv, map to TPR params and create order while handling input errors
         csv.each do |row|
@@ -48,7 +51,7 @@ namespace :orders do
           order = map_order_row(headers, row)
           Rails.logger.debug("Mapped csv rows: #{order}")
           begin
-            case @csv_source
+            case csv_source
             when 'uncommon_goods'
               order_params = parse_ucg_row(order)
             when 'generic'
@@ -89,10 +92,9 @@ namespace :orders do
         end
       end
       email.read!
-		end
-
-    if ENV['SEND_IMPORT_NOTIFICATION_EMAILS'] == true || emails.count != 0
-      TaskHelper.notify_of_import(@csv_source, all_failed_orders)
+      if ENV['SEND_IMPORT_NOTIFICATION_EMAILS'] == true || emails.count != 0
+        TaskHelper.notify_of_import(csv_source, all_failed_orders)
+      end
     end
   end
 

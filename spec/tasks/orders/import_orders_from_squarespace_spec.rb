@@ -9,6 +9,7 @@ describe "orders:import_orders_from_squarespace", type: :rake do
 
   context 'from squarespace' do
     it 'import all pendings orders' do
+        ENV['SEND_IMPORT_NOTIFICATION_EMAILS_SQUARESPACE'] = 'true'
         api_key = ENV['SQUARESPACE_API_KEY']
         app_name = ENV['SQUARESPACE_APP_NAME']
 
@@ -21,7 +22,6 @@ describe "orders:import_orders_from_squarespace", type: :rake do
             .and_return(stub_client)
 
         expect(stub_client).to receive(:get_orders).with('pending').and_return(stub_orders)
-        expect_any_instance_of(TaskHelper).to receive(:notify_of_import).with('squarespace', [])
 
         squarespace_order_fixture['result'].each do |test_order|
             shipping_address = test_order['shippingAddress']

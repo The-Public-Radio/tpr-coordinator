@@ -24,7 +24,7 @@ describe "orders:import_orders_from_email", type: :rake do
     let(:ucg_message) { double('message', attachments: [ucg_attachment]) }
     let(:ucg_email) { double('ucg_email', message: ucg_message) }
 
-    # UCG order fixture
+    # Unknown order fixture
     let(:unknown_fixture)  { load_order_fixture('unknown_orders') }
     let(:unknown_attachment) { double('attachment', decoded: unknown_fixture) }
     let(:unknown_message) { double('message', attachments: [unknown_attachment]) }
@@ -110,27 +110,14 @@ describe "orders:import_orders_from_email", type: :rake do
 
     it 'raises a error when no order source can be matched' do
         expect_any_instance_of(TaskHelper).to receive(:find_unread_emails).and_return([unknown_email])
-        expect_any_instance_of(TaskHelper).to receive(:create_order)
         expect(unknown_email).to receive(:message).and_return(unknown_message)
         expect(unknown_message).to receive(:attachments).and_return([unknown_attachment])
-        expect(unknown_attachment).to receive(:decoded).and_return(unknown_fixture)
-        expect(unknown_email).to receive(:read!)
+        expect(unknown_attachment).to receive(:decoded).and_return(unknown_fixture)      
 
         expect{ task.execute }.to raise_error(UnknownOrderHeaders)
     end
 
     context 'cleans up any stray orders, shipments, and radios when the order' do
-        # error_email_params = {
-        #     body: "There were 3 orders with errors. See 'error' collumn of attached csv for details."
-        #     add_file: 'some/error/csv'
-        # }
-
-        # error_order_csv = CSV.parse(error_fixture)
-        # bad_address_params = error_order_csv[1]
-        # bad_frequency_params = error_order_csv[2]
-        # order_already_imported_params = error_order_csv[4]
-        # expect_any_instance_of(TaskHelper).to receive(:send_reply).with(error_email_params)
-
         before(:each) do
             expect_any_instance_of(TaskHelper).to receive(:find_unread_emails).and_return([error_email])
             expect_any_instance_of(TaskHelper).to receive(:send_email)
