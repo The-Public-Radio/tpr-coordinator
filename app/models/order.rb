@@ -1,8 +1,14 @@
 class Order < ApplicationRecord
 	has_many :shipments
 
+	if ENV['TPR_ORDER_SOURCES'].nil?
+		order_sources = []
+	else
+		order_sources = ENV['TPR_ORDER_SOURCES']
+	end
+
 	validates_presence_of :name
-	validates_inclusion_of :order_source, in: ENV['TPR_ORDER_SOURCES'].split(',')
+	validates_inclusion_of :order_source, in: order_sources
 	validates_email_format_of :email, message: 'formated incorrectly', allow_nil: true
 	after_initialize :init
 
