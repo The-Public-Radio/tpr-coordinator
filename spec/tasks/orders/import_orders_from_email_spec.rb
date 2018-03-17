@@ -118,17 +118,6 @@ describe "orders:import_orders_from_email", type: :rake do
     end
 
     context 'cleans up any stray orders, shipments, and radios when the order' do
-        # error_email_params = {
-        #     body: "There were 3 orders with errors. See 'error' collumn of attached csv for details."
-        #     add_file: 'some/error/csv'
-        # }
-
-        # error_order_csv = CSV.parse(error_fixture)
-        # bad_address_params = error_order_csv[1]
-        # bad_frequency_params = error_order_csv[2]
-        # order_already_imported_params = error_order_csv[4]
-        # expect_any_instance_of(TaskHelper).to receive(:send_reply).with(error_email_params)
-
         before(:each) do
             expect_any_instance_of(TaskHelper).to receive(:find_unread_emails).and_return([error_email])
             expect_any_instance_of(TaskHelper).to receive(:send_email)
