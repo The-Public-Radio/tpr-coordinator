@@ -6,7 +6,7 @@ describe "radios:send_radios_created_today_email", type: :rake do
     expect(task.prerequisites).to include "environment"
   end
 
-  it 'notifies ops@tpr of how many orders were imported that day' do
+  it 'notifies of how many orders were imported that day' do
   	radio_count = 4
     create(:radio_boxed)
     create_list(:radio_inital_order, 3)
