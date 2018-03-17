@@ -4,7 +4,7 @@ class Order < ApplicationRecord
 	if ENV['TPR_ORDER_SOURCES'].nil?
 		order_sources = []
 	else
-		order_sources = ENV['TPR_ORDER_SOURCES']
+		order_sources = ENV['TPR_ORDER_SOURCES'].split(',')
 	end
 
 	validates_presence_of :name
