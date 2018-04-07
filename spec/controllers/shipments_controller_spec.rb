@@ -153,7 +153,15 @@ RSpec.describe ShipmentsController, type: :controller do
           carrier_account: "d2ed2a63bef746218a32e15450ece9d9"
         }}
 
-        let(:shippo_response_object) { object_double('shippo response', code: 200,
+        let(:shippo_rates_object) { object_double('shippo response', code: 200,
+          'status'=> 'SUCCESS', rates: [])
+        }
+        
+        let(:shippo_create_shipment_response) { object_double('shippo response', code: 200,
+          'status'=> 'SUCCESS', rates: [shippo_rates_object])
+        }
+
+        let(:shippo_create_transaction_response) { object_double('shippo response', code: 200,
           'status'=> 'SUCCESS', tracking_number: '9400111298370829688891',
           label_url: 'https://shippo-delivery-east.s3.amazonaws.com/some_label.pdf')
         }
@@ -171,17 +179,22 @@ RSpec.describe ShipmentsController, type: :controller do
         context 'and succeeds to' do
 
           def execute_post
-            expect(Shippo::Transaction).to receive(:create).with(create_label_params).and_return(shippo_response_object).once
+            # expect(Shippo::Shipment).to receive(:create).with(create_shipment_params).and_return(shippo_create_shipment_response).once
+            expect(Shippo::Transaction).to receive(:create).with(create_label_params).and_return(shippo_create_transaction_response).once
             post :create, params: { order_id: order_id, shipment: valid_shipping_attributes }, session: valid_session
           end
 
           before(:each) do
-            expect(shippo_response_object).to receive(:[]).with('status').and_return('SUCCESS')
-            expect(shippo_response_object).to receive(:tracking_number).and_return('9400111298370829688891')
-            expect(shippo_response_object).to receive(:label_url).and_return('https://shippo-delivery-east.s3.amazonaws.com/some_label.pdf')
+            expect(shippo_create_transaction_response).to receive(:[]).with('status').and_return('SUCCESS')
+            expect(shippo_create_transaction_response).to receive(:tracking_number).and_return('9400111298370829688891')
+            expect(shippo_create_transaction_response).to receive(:label_url).and_return('https://shippo-delivery-east.s3.amazonaws.com/some_label.pdf')
           end 
 
-          it 'create a tracking number and label from the Shippo API' do
+          it 'creates a shipment in shippo' do
+            execute_post
+          end
+
+          it 'buys a shipping label from shippo and stores the tracking number and label_url from the Shippo API' do
             # Sample create label reponse object
             # => #<Transaction:0x3ff8084b9f70[id=7eac98cbcd0e4f47b0f8c143c3e91331]{"object_state"=>"VALID", "status"=>"SUCCESS", "object_created"=>"2017-09-10T20:32:21.436Z", "object_updated"=>"2017-09-10T20:32:23.455Z", "object_id"=>"7eac98cbcd0e4f47b0f8c143c3e91331", "object_owner"=>"info@thepublicrad.io", "test"=>true, "rate"=>{"object_id"=>"0ca3611323ea4eefb8c660aeedae3212", "amount"=>"6.66", "currency"=>"USD", "amount_local"=>"6.66", "currency_local"=>"USD", "provider"=>"USPS", "servicelevel_name"=>"Priority Mail", "servicelevel_token"=>"usps_priority", "carrier_account"=>"d2ed2a63bef746218a32e15450ece9d9"}, "tracking_number"=>"92055901755477000000000015", "tracking_status"=>"UNKNOWN", "eta"=>nil, "tracking_url_provider"=>"https://tools.usps.com/go/TrackConfirmAction_input?origTrackNum=92055901755477000000000015", "label_url"=>"https://shippo-delivery-east.s3.amazonaws.com/7eac98cbcd0e4f47b0f8c143c3e91331.pdf?Signature=b0ovKkUqrhyiZfDPYk%2F3SpTlJUo%3D&Expires=1536611542&AWSAccessKeyId=AKIAJGLCC5MYLLWIG42A", "commercial_invoice_url"=>nil, "messages"=>[], "order"=>nil, "metadata"=>"", "parcel"=>"01f2dc092d8e467db5321eadd903ce36", "billing"=>{"payments"=>[]}}->#<Shippo::API::ApiObject created=2017-09-10 20:32:21 UTC id="7eac98cbcd0e4f47b0f8c143c3e91331" owner="info@thepublicrad.io" state=#<Shippo::API::Category::State:0x007ff011b265c0 @name=:state, @value=:valid> updated=2017-09-10 20:32:23 UTC>
 
@@ -190,8 +203,11 @@ RSpec.describe ShipmentsController, type: :controller do
             execute_post
 
             body = JSON.parse(response.body)['data']
-            expect(Shipment.find(body['id']).tracking_number).to eq(shippo_response_object.tracking_number)
-            expect(Shipment.find(body['id']).shipment_status).to eq 'label_created'
+
+            created_shipment = Shipment.find(body['id'])
+            expect(created_shipment.tracking_number).to eq(shippo_create_transaction_response.tracking_number)
+            expect(created_shipment.shipment_status).to eq 'label_created'
+            expect(created_shipment.label_url).to eq(shippo_create_transaction_response.label_url)
           end
 
           it 'creates tracking number for international orders' do
@@ -239,23 +255,30 @@ RSpec.describe ShipmentsController, type: :controller do
             create_label_params[:servicelevel_token] = 'usps_first_class_package_international_service'
             valid_shipping_attributes['order_id'] = international_order.id
 
-            expect(Shippo::Transaction).to receive(:create).with(create_label_params).and_return(shippo_response_object).once
+            expect(Shippo::Transaction).to receive(:create).with(create_label_params).and_return(shippo_create_transaction_response).once
             post :create, params: { order_id: international_order.id, shipment: valid_shipping_attributes }, session: valid_session
 
             body = JSON.parse(response.body)['data']
-            expect(Shipment.find(body['id']).tracking_number).to eq(shippo_response_object.tracking_number)
-            expect(body['tracking_number']).to eq shippo_response_object.tracking_number
+            expect(Shipment.find(body['id']).tracking_number).to eq(shippo_create_transaction_response.tracking_number)
+            expect(body['tracking_number']).to eq shippo_create_transaction_response.tracking_number
           end
 
           it 'stores the label_url from the shippo response' do
             execute_post
-            expect(Shipment.last.label_url).to eq(shippo_response_object.label_url)
+            expect(Shipment.last.label_url).to eq(shippo_create_transaction_response.label_url)
           end
 
           it 'creates a return label if the order_source is warranty' do
+            # Create address_from, address_to and parcel variables first
+            # shipment_return = Shippo::Shipment.create(
+            #   :address_from => address_from,
+            #   :address_to => address_to,
+            #   :parcels => parcel,
+            #   :extra => {:is_return => true},
+            #   :async => false)
             create_return_label_params[:extra] = { :is_return => true }
-            expect(Shippo::Transaction).to receive(:create).with(create_label_params).and_return(shippo_response_object).once
-            expect(Shippo::Shipment).to receive(:create).with(create_return_label_params).and_return(shippo_response_object).once
+            expect(Shippo::Transaction).to receive(:create).with(create_label_params).and_return(shippo_create_transaction_response).once
+            expect(Shippo::Shipment).to receive(:create).with(create_return_label_params).and_return(shippo_create_shipment_response).once
             
             post :create, params: { order_id: order_id, shipment: valid_shipping_attributes }, session: valid_session
           end
