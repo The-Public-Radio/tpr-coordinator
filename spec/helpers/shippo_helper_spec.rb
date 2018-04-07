@@ -141,7 +141,6 @@ RSpec.describe ShippoHelper, type: :helper do
             end
 
             describe 'customs declaration' do
-                skip("not yet")
                 it 'creates a customs declaration' do
                     shippo_customs_declaration_object = double("shippo_customs_declaration")
 

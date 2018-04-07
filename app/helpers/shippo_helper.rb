@@ -67,4 +67,17 @@ module ShippoHelper
             }
         end
     end
+
+    def self.customs_declaration(number_of_items)
+        customs_declaration_options = {
+            :contents_type => "MERCHANDISE",
+            :contents_explanation => "Single station FM radio",
+            :non_delivery_option => "ABANDON",
+            :certify => true,
+            :certify_signer => "Spencer Wright",
+            :items => [customs_item(number_of_items)]
+        }
+    
+        Shippo::CustomsDeclaration.create(customs_declaration_options)
+    end
 end
