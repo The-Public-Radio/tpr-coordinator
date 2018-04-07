@@ -80,4 +80,8 @@ module ShippoHelper
     
         Shippo::CustomsDeclaration.create(customs_declaration_options)
     end
+
+    def self.setup_create_shipment_params(shipment)
+
+    end
 end
