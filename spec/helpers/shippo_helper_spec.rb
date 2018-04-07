@@ -2,8 +2,12 @@ require 'rails_helper'
 
 RSpec.describe ShippoHelper, type: :helper do
     context 'with the shippo_api' do
+        # Order
+        let(:order) { create(:order) }
 
         # Shipment creation params
+        let(:shipment) { create(:created) }
+        
         let(:create_shipment_params)  { 
             {
                 shipment: {
@@ -48,8 +52,6 @@ RSpec.describe ShippoHelper, type: :helper do
                 :rate => "test_rate_id"
             }
         }
-
-        let(:shipment) { create(:created) }
 
         # Parcel types
         let(:one_radio_parcel) {
@@ -121,26 +123,88 @@ RSpec.describe ShippoHelper, type: :helper do
                 :value_currency => "USD",
                 :origin_country => "US"
             }
-        }  
+        }
+        
+        let(:from_address) {
+            {
+                :name => 'Centerline Labs',
+                :company => '',
+                :street1 => '814 Lincoln Pl',
+                :street2 => '#2',
+                :city => 'Brooklyn',
+                :state => 'NY',
+                :zip => '11216',
+                :country => 'US',
+                :phone => '123-456-7890',
+                :email => 'info@thepublicrad.io'
+              }
+        }
+
+        let(:warranty_return_address) {
+            {
+                :name => 'Centerline Labs',
+                :company => '',
+                :street1 => '814 Lincoln Pl',
+                :street2 => '#2',
+                :city => 'Brooklyn',
+                :state => 'NY',
+                :zip => '11216',
+                :country => 'US',
+                :phone => '123-456-7890',
+                :email => 'info@thepublicrad.io'
+            }
+        }
+
+        let(:to_address) {
+            {
+                :name => order.name,
+                :company => '',
+                :street1 => order.street_address_1,
+                :street2 => order.street_address_2,
+                :city => order.city,
+                :state => order.state,
+                :zip => order.postal_code,
+                :country => order.country,
+                :phone => order.phone.nil? ? '' : order.phone,
+                :email => order.email
+            }
+        }
 
         describe 'setting up a shipment' do
             it 'creates shipping parameters from a Shipment object' do
-                expect(ShippoHelper.setup_create_shipment_params).to eq create_shipment_params
+                expect(ShippoHelper.setup_create_shipment_params(shipment)).to eq create_shipment_params
             end
 
-            it 'sets up a parcel for 1 radio' do
-                expect(ShippoHelper.parcel(1)).to eq one_radio_parcel
+            describe 'addresses' do
+                it 'from' do
+                    expect(ShippoHelper.from_address).to eq from_address
+                end
+
+                it 'warranty return' do 
+                    expect(ShippoHelper.warranty_return_address).to eq warranty_return_address
+                    
+                end
+
+                it 'to built from order params' do
+                    expect(ShippoHelper.to_address(order)).to eq to_address
+                end
             end
 
-            it 'sets up a parcel for 2 radios' do
-                expect(ShippoHelper.parcel(2)).to eq two_radio_parcel
+            describe 'and paracel' do
+                it 'for 1 radio' do
+                    expect(ShippoHelper.parcel(1)).to eq one_radio_parcel
+                end
+
+                it 'for 2 radios' do
+                    expect(ShippoHelper.parcel(2)).to eq two_radio_parcel
+                end
+
+                it 'for 3 radios' do
+                    expect(ShippoHelper.parcel(3)).to eq three_radio_parcel
+                end
             end
 
-            it 'sets up a parcel for 3 radios' do
-                expect(ShippoHelper.parcel(3)).to eq three_radio_parcel
-            end
-
-            describe 'customs declaration' do
+            describe 'and customs declaration' do
                 it 'creates a customs declaration' do
                     shippo_customs_declaration_object = double("shippo_customs_declaration")
 

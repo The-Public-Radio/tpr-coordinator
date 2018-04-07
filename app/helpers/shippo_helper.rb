@@ -84,4 +84,49 @@ module ShippoHelper
     def self.setup_create_shipment_params(shipment)
 
     end
+
+    def self.to_address(order)
+        {
+          :name => order.name,
+          :company => '',
+          :street1 => order.street_address_1,
+          :street2 => order.street_address_2,
+          :city => order.city,
+          :state => order.state,
+          :zip => order.postal_code,
+          :country => order.country,
+          :phone => order.phone.nil? ? '' : order.phone,
+          :email => order.email
+        }
+    end
+  
+    def self.from_address
+        {
+          :name => 'Centerline Labs',
+          :company => '',
+          :street1 => '814 Lincoln Pl',
+          :street2 => '#2',
+          :city => 'Brooklyn',
+          :state => 'NY',
+          :zip => '11216',
+          :country => 'US',
+          :phone => ENV['FROM_ADDRESS_PHONE_NUMBER'],
+          :email => 'info@thepublicrad.io'
+        }
+    end
+
+    def self.warranty_return_address
+        {
+            :name => 'Centerline Labs',
+            :company => '',
+            :street1 => '814 Lincoln Pl',
+            :street2 => '#2',
+            :city => 'Brooklyn',
+            :state => 'NY',
+            :zip => '11216',
+            :country => 'US',
+            :phone => ENV['FROM_ADDRESS_PHONE_NUMBER'],
+            :email => 'info@thepublicrad.io'
+        }
+    end
 end
