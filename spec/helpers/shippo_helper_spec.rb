@@ -1,0 +1,213 @@
+require 'rails_helper'
+
+RSpec.describe ShippoHelper, type: :helper do
+    context 'with the shippo_api' do
+
+        # Shipment creation params
+        let(:create_shipment_params)  { 
+            {
+                shipment: {
+                address_from: {
+                    :name => 'Centerline Labs',
+                    :company => '',
+                    :street1 => '814 Lincoln Pl',
+                    :street2 => '#2',
+                    :city => 'Brooklyn',
+                    :state => 'NY',
+                    :zip => '11216',
+                    :country => 'US',
+                    :phone => '123-456-7890',
+                    :email => 'info@thepublicrad.io'
+                },
+                address_to: {
+                    :name => order.name,
+                    :company => '',
+                    :street1 => '123 West 9th St.',
+                    :street2 => 'Apt 4',
+                    :city => 'Brooklyn',
+                    :state => 'NY',
+                    :zip => '11221',
+                    :country => 'US',
+                    :phone => '123-321-1231',
+                    :email => order.email
+                },
+                parcels: {
+                    :length => 5,
+                    :width => 4,
+                    :height => 3,
+                    :distance_unit => :in,
+                    :weight => 12,
+                    :mass_unit => :oz
+                },
+                carrier_accounts: ["d2ed2a63bef746218a32e15450ece9d9"]              
+                }
+            } 
+        }
+  
+        let(:create_transaction_params)  { {
+                :rate => "test_rate_id"
+            }
+        }
+
+        let(:shipment) { create(:created) }
+
+        # Parcel types
+        let(:one_radio_parcel) {
+            {
+                :length => 6,
+                :width => 5,
+                :height => 4,
+                :distance_unit => :in,
+                :weight => 1.75,
+                :mass_unit => :lb
+            }
+        }
+
+        let(:two_radio_parcel) {
+            {
+                :length => 6,
+                :width => 5,
+                :height => 4,
+                :distance_unit => :in,
+                :weight => 1.75,
+                :mass_unit => :lb
+            }
+        }
+
+        let(:three_radio_parcel) {
+            {
+                :length => 9,
+                :width => 5,
+                :height => 4,
+                :distance_unit => :in,
+                :weight => 2.60,
+                :mass_unit => :lb
+            }
+        }
+
+        # Customs declaration types
+
+        let(:one_radio_customs_item) {
+            {
+                :description => "Single station FM radio",
+                :quantity => 1,
+                :net_weight => "12",
+                :mass_unit => "oz",
+                :value_amount => "40",
+                :value_currency => "USD",
+                :origin_country => "US"
+            }
+        }  
+        
+        let(:two_radio_customs_item) {
+            {
+                :description => "Single station FM radio",
+                :quantity => 2,
+                :net_weight => "1.75",
+                :mass_unit => "lb",
+                :value_amount => "80",
+                :value_currency => "USD",
+                :origin_country => "US"
+            }
+        }  
+
+        let(:three_radio_customs_item) {
+            {
+                :description => "Single station FM radio",
+                :quantity => 3,
+                :net_weight => "2.60",
+                :mass_unit => "lb",
+                :value_amount => "120",
+                :value_currency => "USD",
+                :origin_country => "US"
+            }
+        }  
+
+        describe 'setting up a shipment' do
+            it 'creates shipping parameters from a Shipment object' do
+                expect(ShippoHelper.setup_create_shipment_params).to eq create_shipment_params
+            end
+
+            it 'sets up a parcel for 1 radio' do
+                expect(ShippoHelper.parcel(1)).to eq one_radio_parcel
+            end
+
+            it 'sets up a parcel for 2 radios' do
+                expect(ShippoHelper.parcel(2)).to eq two_radio_parcel
+            end
+
+            it 'sets up a parcel for 3 radios' do
+                expect(ShippoHelper.parcel(3)).to eq three_radio_parcel
+            end
+
+            describe 'customs declaration' do
+                skip("not yet")
+                it 'creates a customs declaration' do
+                    shippo_customs_declaration_object = double("shippo_customs_declaration")
+
+                    customs_declaration_options = {
+                        :contents_type => "MERCHANDISE",
+                        :contents_explanation => "Single station FM radio",
+                        :non_delivery_option => "ABANDON",
+                        :certify => true,
+                        :certify_signer => "Spencer Wright",
+                        :items => [{
+                            :description => "Single station FM radio",
+                            :quantity => 1,
+                            :net_weight => "12",
+                            :mass_unit => "oz",
+                            :value_amount => "40",
+                            :value_currency => "USD",
+                            :origin_country => "US"
+                        }]
+                      }
+
+                    expect(Shippo::CustomsDeclaration).to receive(:create).with(customs_declaration_options).and_return(shippo_customs_declaration_object)
+                    expect(ShippoHelper.customs_declaration(1)).to be shippo_customs_declaration_object
+                end
+
+                it 'creates a customs item for 1 radio' do
+                    expect(ShippoHelper.customs_item(1)).to eq one_radio_customs_item
+                end
+
+                it 'creates a customs item for 2 radio' do
+                    expect(ShippoHelper.customs_item(2)).to eq two_radio_customs_item
+                end
+
+                it 'creates a customs item for 3 radio' do
+                    expect(ShippoHelper.customs_item(3)).to eq three_radio_customs_item
+                end
+            end
+        end
+
+        describe 'api operations' do
+            it 'creates a shipment' do
+                skip("not yet")
+                expect(Shippo::Shipment).to receive(:create).with(create_shipment_params).and_return(shippo_shipment).once            
+                expect(ShippoHelper.create_shipment(shipment)).to be (shippo_shipment)
+            end
+
+            it 'creates a shipment with a return label' do
+                skip("todo")
+                
+                create_shipment_with_return_params = create_shipment_params.merge({:extra => {:is_return => true}})
+                
+                # Create shipment
+                expect(Shippo::Shipment).to receive(:create).with(create_shipment_with_return_params).and_return(shippo_shipment_with_return).once            
+                
+                # Make sure the shipment object is returned
+                # FIXME: We should proabably be returning a different object here? maybe? or not. TBD.
+                expect(ShippoHelper.create_shipment_with_return(shipment_params)).to be (shippo_shipment_with_return)
+            end
+
+            it 'creates a transaction to make a label' do
+                skip("todo")
+            end
+
+            it 'chooses a rate' do
+                skip("todo")            
+                expect(ShippoHelper.choose_rate(shippo_shipment_id)).to eq('test_rate_id')
+            end
+        end
+    end
+end
