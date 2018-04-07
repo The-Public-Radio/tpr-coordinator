@@ -54,13 +54,13 @@ RSpec.describe ShippoHelper, type: :helper do
         # Parcel types
         let(:one_radio_parcel) {
             {
-                :length => 6,
-                :width => 5,
-                :height => 4,
+                :length => 5,
+                :width => 4,
+                :height => 3,
                 :distance_unit => :in,
-                :weight => 1.75,
-                :mass_unit => :lb
-            }
+                :weight => 12,
+                :mass_unit => :oz
+              }
         }
 
         let(:two_radio_parcel) {
