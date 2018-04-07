@@ -33,4 +33,38 @@ module ShippoHelper
             }
         end
     end
+
+    def self.customs_item(number_of_items)
+        if number_of_items == 1
+            {
+              :description => "Single station FM radio",
+              :quantity => 1,
+              :net_weight => "12",
+              :mass_unit => "oz",
+              :value_amount => "40",
+              :value_currency => "USD",
+              :origin_country => "US"
+            }
+          elsif number_of_items == 2
+            {
+              :description => "Single station FM radio",
+              :quantity => 2,
+              :net_weight => "1.75",
+              :mass_unit => "lb",
+              :value_amount => "80",
+              :value_currency => "USD",
+              :origin_country => "US"
+            }
+          elsif number_of_items == 3
+            {
+              :description => "Single station FM radio",
+              :quantity => 3,
+              :net_weight => "2.60",
+              :mass_unit => "lb",
+              :value_amount => "120",
+              :value_currency => "USD",
+              :origin_country => "US"
+            }
+        end
+    end
 end
