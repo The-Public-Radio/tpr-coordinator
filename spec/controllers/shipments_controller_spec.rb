@@ -203,7 +203,7 @@ RSpec.describe ShipmentsController, type: :controller do
               :quantity => 1,
               :net_weight => "12",
               :mass_unit => "oz",
-              :value_amount => "40",
+              :value_amount => "18.21",
               :value_currency => "USD",
               :origin_country => "US"
             }
