@@ -11,42 +11,47 @@ RSpec.describe ShippoHelper, type: :helper do
         let(:create_shipment_params)  { 
             {
                 shipment: {
-                address_from: {
-                    :name => 'Centerline Labs',
-                    :company => '',
-                    :street1 => '814 Lincoln Pl',
-                    :street2 => '#2',
-                    :city => 'Brooklyn',
-                    :state => 'NY',
-                    :zip => '11216',
-                    :country => 'US',
-                    :phone => '123-456-7890',
-                    :email => 'info@thepublicrad.io'
-                },
-                address_to: {
-                    :name => order.name,
-                    :company => '',
-                    :street1 => '123 West 9th St.',
-                    :street2 => 'Apt 4',
-                    :city => 'Brooklyn',
-                    :state => 'NY',
-                    :zip => '11221',
-                    :country => 'US',
-                    :phone => '123-321-1231',
-                    :email => order.email
-                },
-                parcels: {
-                    :length => 5,
-                    :width => 4,
-                    :height => 3,
-                    :distance_unit => :in,
-                    :weight => 12,
-                    :mass_unit => :oz
-                },
-                carrier_accounts: ["d2ed2a63bef746218a32e15450ece9d9"]              
+                    address_from: {
+                        :name => 'Centerline Labs',
+                        :company => '',
+                        :street1 => '814 Lincoln Pl',
+                        :street2 => '#2',
+                        :city => 'Brooklyn',
+                        :state => 'NY',
+                        :zip => '11216',
+                        :country => 'US',
+                        :phone => '123-456-7890',
+                        :email => 'info@thepublicrad.io'
+                    },
+                    address_to: {
+                        :name => order.name,
+                        :company => '',
+                        :street1 => '123 West 9th St.',
+                        :street2 => 'Apt 4',
+                        :city => 'Brooklyn',
+                        :state => 'NY',
+                        :zip => '11221',
+                        :country => 'US',
+                        :phone => '123-321-1231',
+                        :email => order.email
+                    },
+                    parcels: {
+                        :length => 5,
+                        :width => 4,
+                        :height => 3,
+                        :distance_unit => :in,
+                        :weight => 12,
+                        :mass_unit => :oz
+                    },
+                    carrier_accounts: ["d2ed2a63bef746218a32e15450ece9d9"]              
                 }
             } 
         }
+
+        let(:create_international_shipment_params) do
+            create_shipment_params[:shipment][:customs_declaration] = customs_declaration_object
+            create_shipment_params
+        end
   
         let(:create_transaction_params)  { {
                 :rate => "test_rate_id"
@@ -170,9 +175,27 @@ RSpec.describe ShippoHelper, type: :helper do
             }
         }
 
+        let(:customs_declaration_options) {
+            {
+                :contents_type => "MERCHANDISE",
+                :contents_explanation => "Single station FM radio",
+                :non_delivery_option => "ABANDON",
+                :certify => true,
+                :certify_signer => "Spencer Wright",
+                :items => [one_radio_customs_item]
+            }
+        }
+        
+        let(:customs_declaration_object) { double(Shippo::CustomsDeclaration) }
+
         describe 'setting up a shipment' do
             it 'creates shipping parameters from a Shipment object' do
-                expect(ShippoHelper.setup_create_shipment_params(shipment)).to eq create_shipment_params
+                expect(ShippoHelper.create_shipment_params(shipment)).to eq create_shipment_params
+            end
+
+            it 'creates international shipping parameters from a Shipment object' do
+                expect(Shippo::CustomsDeclaration).to receive(:create).and_return(customs_declaration_object)
+                expect(ShippoHelper.create_international_shipment_params(shipment)).to eq create_international_shipment_params
             end
 
             describe 'addresses' do
@@ -207,23 +230,6 @@ RSpec.describe ShippoHelper, type: :helper do
             describe 'and customs declaration' do
                 it 'creates a customs declaration' do
                     shippo_customs_declaration_object = double("shippo_customs_declaration")
-
-                    customs_declaration_options = {
-                        :contents_type => "MERCHANDISE",
-                        :contents_explanation => "Single station FM radio",
-                        :non_delivery_option => "ABANDON",
-                        :certify => true,
-                        :certify_signer => "Spencer Wright",
-                        :items => [{
-                            :description => "Single station FM radio",
-                            :quantity => 1,
-                            :net_weight => "12",
-                            :mass_unit => "oz",
-                            :value_amount => "40",
-                            :value_currency => "USD",
-                            :origin_country => "US"
-                        }]
-                      }
 
                     expect(Shippo::CustomsDeclaration).to receive(:create).with(customs_declaration_options).and_return(shippo_customs_declaration_object)
                     expect(ShippoHelper.customs_declaration(1)).to be shippo_customs_declaration_object
