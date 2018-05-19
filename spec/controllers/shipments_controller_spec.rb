@@ -176,7 +176,7 @@ RSpec.describe ShipmentsController, type: :controller do
         end
 
         before(:each) do
-          create_label_params[:shipment][:address_to][:name] = order.name
+          create_shipment_params[:shipment][:address_to][:name] = order.name
         end
 
         context 'and succeeds to' do
@@ -242,7 +242,7 @@ RSpec.describe ShipmentsController, type: :controller do
             expect(Shippo::CustomsDeclaration).to receive(:create).with(customs_declaration_options)
               .and_return(customs_declaration_response)
 
-            create_label_params[:shipment][:address_to] = {
+            create_shipment_params[:shipment][:address_to] = {
               :name => international_order.name,
               :company => '',
               :street1 => international_order.street_address_1,
@@ -255,11 +255,11 @@ RSpec.describe ShipmentsController, type: :controller do
               :email => international_order.email
             }
 
-            create_label_params[:shipment][:customs_declaration] = customs_declaration_response
-            create_label_params[:servicelevel_token] = 'usps_first_class_package_international_service'
+            create_shipment_params[:shipment][:customs_declaration] = customs_declaration_response
+            create_shipment_params[:servicelevel_token] = 'usps_first_class_package_international_service'
             valid_shipping_attributes['order_id'] = international_order.id
 
-            expect(Shippo::Transaction).to receive(:create).with(create_label_params).and_return(shippo_create_transaction_response).once
+            expect(Shippo::Transaction).to receive(:create).with(create_shipment_params).and_return(shippo_create_transaction_response).once
             post :create, params: { order_id: international_order.id, shipment: valid_shipping_attributes }, session: valid_session
 
             body = JSON.parse(response.body)['data']
@@ -281,7 +281,7 @@ RSpec.describe ShipmentsController, type: :controller do
             #   :extra => {:is_return => true},
             #   :async => false)
             create_return_label_params[:extra] = { :is_return => true }
-            expect(Shippo::Transaction).to receive(:create).with(create_label_params).and_return(shippo_create_transaction_response).once
+            expect(Shippo::Transaction).to receive(:create).with(create_shipment_params).and_return(shippo_create_transaction_response).once
             expect(Shippo::Shipment).to receive(:create).with(create_return_label_params).and_return(shippo_create_shipment_response).once
             
             post :create, params: { order_id: order_id, shipment: valid_shipping_attributes }, session: valid_session
@@ -289,7 +289,7 @@ RSpec.describe ShipmentsController, type: :controller do
 
           it 'creates express shipments' do
             valid_attributes['shipment_priority'] = 'express'
-            create_label_params[:servicelevel_token] = 'usps_priority_express'
+            create_shipment_params[:servicelevel_token] = 'usps_priority_express'
             execute_post
             expect(Shipment.last.shipment_priority).to eq('express')
             expect(Shipment.last.priority_processing).to be true
@@ -297,7 +297,7 @@ RSpec.describe ShipmentsController, type: :controller do
 
           it 'creates priority shipments' do
             valid_attributes['shipment_priority'] = 'priority'
-            create_label_params[:servicelevel_token] = 'usps_priority'
+            create_shipment_params[:servicelevel_token] = 'usps_priority'
             execute_post
             expect(Shipment.last.shipment_priority).to eq('priority')
           end
@@ -311,7 +311,7 @@ RSpec.describe ShipmentsController, type: :controller do
 
           expect(create_label_error_response).to receive(:[]).with('status').and_return('FAILURE')
 
-          expect(Shippo::Transaction).to receive(:create).with(create_label_params).and_return(create_label_error_response)
+          expect(Shippo::Transaction).to receive(:create).with(create_shipment_params).and_return(create_label_error_response)
 
           expect{
             post :create, params: { order_id: order_id, shipment: valid_shipping_attributes }, session: valid_session
