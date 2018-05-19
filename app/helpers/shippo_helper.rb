@@ -82,8 +82,39 @@ module ShippoHelper
     end
 
     def self.setup_create_shipment_params(shipment)
-
-    end
+        order = Order.find(shipment.order_id)
+        number_of_items = shipment.radio.count
+        {
+            shipment: {
+            address_from: {
+                :name => 'Centerline Labs',
+                :company => '',
+                :street1 => '814 Lincoln Pl',
+                :street2 => '#2',
+                :city => 'Brooklyn',
+                :state => 'NY',
+                :zip => '11216',
+                :country => 'US',
+                :phone => '123-456-7890',
+                :email => 'info@thepublicrad.io'
+            },
+            address_to: {
+                :name => order.name,
+                :company => '',
+                :street1 => '123 West 9th St.',
+                :street2 => 'Apt 4',
+                :city => 'Brooklyn',
+                :state => 'NY',
+                :zip => '11221',
+                :country => 'US',
+                :phone => '123-321-1231',
+                :email => order.email
+            },
+            parcels: parcel(number_of_items),
+            carrier_accounts: ["d2ed2a63bef746218a32e15450ece9d9"]              
+            }
+        }
+    end 
 
     def self.to_address(order)
         {
