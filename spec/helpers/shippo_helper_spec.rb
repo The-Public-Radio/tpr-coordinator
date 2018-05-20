@@ -10,46 +10,49 @@ RSpec.describe ShippoHelper, type: :helper do
         
         let(:create_shipment_params)  { 
             {
-                shipment: {
-                    address_from: {
-                        :name => 'Centerline Labs',
-                        :company => '',
-                        :street1 => '814 Lincoln Pl',
-                        :street2 => '#2',
-                        :city => 'Brooklyn',
-                        :state => 'NY',
-                        :zip => '11216',
-                        :country => 'US',
-                        :phone => '123-456-7890',
-                        :email => 'info@thepublicrad.io'
-                    },
-                    address_to: {
-                        :name => order.name,
-                        :company => '',
-                        :street1 => '123 West 9th St.',
-                        :street2 => 'Apt 4',
-                        :city => 'Brooklyn',
-                        :state => 'NY',
-                        :zip => '11221',
-                        :country => 'US',
-                        :phone => '123-321-1231',
-                        :email => order.email
-                    },
-                    parcels: {
-                        :length => 5,
-                        :width => 4,
-                        :height => 3,
-                        :distance_unit => :in,
-                        :weight => 12,
-                        :mass_unit => :oz
-                    },
-                    carrier_accounts: ["d2ed2a63bef746218a32e15450ece9d9"]              
-                }
+                address_from: {
+                    :name => 'Centerline Labs',
+                    :company => '',
+                    :street1 => '814 Lincoln Pl',
+                    :street2 => '#2',
+                    :city => 'Brooklyn',
+                    :state => 'NY',
+                    :zip => '11216',
+                    :country => 'US',
+                    :phone => '123-456-7890',
+                    :email => 'info@thepublicrad.io'
+                },
+                address_to: {
+                    :name => order.name,
+                    :company => '',
+                    :street1 => '123 West 9th St.',
+                    :street2 => 'Apt 4',
+                    :city => 'Brooklyn',
+                    :state => 'NY',
+                    :zip => '11221',
+                    :country => 'US',
+                    :phone => '123-321-1231',
+                    :email => order.email
+                },
+                parcels: {
+                    :length => 5,
+                    :width => 4,
+                    :height => 3,
+                    :distance_unit => :in,
+                    :weight => 12,
+                    :mass_unit => :oz
+                },
+                carrier_accounts: ["d2ed2a63bef746218a32e15450ece9d9"]              
             } 
         }
 
         let(:create_international_shipment_params) do
-            create_shipment_params[:shipment][:customs_declaration] = customs_declaration_object
+            create_shipment_params[:customs_declaration] = customs_declaration_object
+            create_shipment_params
+        end
+
+        let(:create_shipment_with_return_params) do
+            create_shipment_params[:extra] = { is_return: true }
             create_shipment_params
         end
   
@@ -191,6 +194,9 @@ RSpec.describe ShippoHelper, type: :helper do
         # Shippo API doubles
         let(:shippo_shipment) { double('shippo_shipment', status: "SUCCESS", rates: [])}
 
+        # This is separate from the above due to the rates needing to be different in future testing.
+        let(:shippo_shipment_with_return) { double('shippo_shipment', status: "SUCCESS", rates: [])}        
+
         describe 'setting up a shipment' do
             it 'creates shipping parameters from a Shipment object' do
                 expect(ShippoHelper.create_shipment_params(shipment)).to eq create_shipment_params
@@ -259,16 +265,11 @@ RSpec.describe ShippoHelper, type: :helper do
             end
 
             it 'creates a shipment with a return label' do
-                skip("todo")
-                
-                create_shipment_with_return_params = create_shipment_params.merge({:extra => {:is_return => true}})
-                
                 # Create shipment
                 expect(Shippo::Shipment).to receive(:create).with(create_shipment_with_return_params).and_return(shippo_shipment_with_return).once            
                 
                 # Make sure the shipment object is returned
-                # FIXME: We should proabably be returning a different object here? maybe? or not. TBD.
-                expect(ShippoHelper.create_shipment_with_return(shipment_params)).to be (shippo_shipment_with_return)
+                expect(ShippoHelper.create_shipment_with_return(shipment)).to be (shippo_shipment_with_return)
             end
 
             it 'creates a transaction to make a label' do

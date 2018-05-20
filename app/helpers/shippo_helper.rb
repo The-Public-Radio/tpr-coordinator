@@ -84,13 +84,11 @@ module ShippoHelper
     def self.create_shipment_params(shipment)
         order = Order.find(shipment.order_id)
         number_of_items = shipment.radio.count
-        shipment_params ={
-            shipment: {
+        {
             address_from: from_address,
             address_to: to_address(order),
             parcels: parcel(number_of_items),
             carrier_accounts: ["d2ed2a63bef746218a32e15450ece9d9"]
-            }
         }
     end 
 
@@ -98,13 +96,11 @@ module ShippoHelper
         order = Order.find(shipment.order_id)
         number_of_items = shipment.radio.count
         {
-            shipment: {
-                address_from: from_address,
-                address_to: to_address(order),
-                parcels: parcel(number_of_items),
-                carrier_accounts: ["d2ed2a63bef746218a32e15450ece9d9"],
-                customs_declaration: customs_declaration(number_of_items)
-            }
+            address_from: from_address,
+            address_to: to_address(order),
+            parcels: parcel(number_of_items),
+            carrier_accounts: ["d2ed2a63bef746218a32e15450ece9d9"],
+            customs_declaration: customs_declaration(number_of_items)
         }
     end
 
@@ -155,5 +151,11 @@ module ShippoHelper
 
     def self.create_shipment(shipment)
         Shippo::Shipment.create(create_shipment_params(shipment))
+    end
+
+    def self.create_shipment_with_return(shipment)
+        shipment_params = create_shipment_params(shipment)
+        shipment_params[:extra] = { is_return: true }
+        Shippo::Shipment.create(shipment_params)        
     end
 end
