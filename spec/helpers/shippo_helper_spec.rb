@@ -277,7 +277,9 @@ RSpec.describe ShippoHelper, type: :helper do
             end
 
             it 'chooses a rate' do
-                expect(ShippoHelper.choose_rate(shippo_shipment_id)).to eq('test_rate_id')
+                shipment.rate_reference_id = 'test_shippo_rate_reference_id'
+                shipment.save
+                expect(ShippoHelper.choose_rate(shippo_rates)).to eq('test_rate_id')
             end
         end
     end
