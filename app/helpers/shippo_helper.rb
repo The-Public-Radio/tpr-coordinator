@@ -152,4 +152,8 @@ module ShippoHelper
             :email => 'info@thepublicrad.io'
         }
     end
+
+    def self.create_shipment(shipment)
+        Shippo::Shipment.create(create_shipment_params(shipment))
+    end
 end

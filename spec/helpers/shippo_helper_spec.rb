@@ -188,6 +188,9 @@ RSpec.describe ShippoHelper, type: :helper do
         
         let(:customs_declaration_object) { double(Shippo::CustomsDeclaration) }
 
+        # Shippo API doubles
+        let(:shippo_shipment) { double('shippo_shipment', status: "SUCCESS", rates: [])}
+
         describe 'setting up a shipment' do
             it 'creates shipping parameters from a Shipment object' do
                 expect(ShippoHelper.create_shipment_params(shipment)).to eq create_shipment_params
@@ -251,7 +254,6 @@ RSpec.describe ShippoHelper, type: :helper do
 
         describe 'api operations' do
             it 'creates a shipment' do
-                skip("not yet")
                 expect(Shippo::Shipment).to receive(:create).with(create_shipment_params).and_return(shippo_shipment).once            
                 expect(ShippoHelper.create_shipment(shipment)).to be (shippo_shipment)
             end
