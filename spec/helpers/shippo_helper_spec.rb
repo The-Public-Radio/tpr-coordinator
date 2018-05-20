@@ -277,7 +277,6 @@ RSpec.describe ShippoHelper, type: :helper do
             end
 
             it 'chooses a rate' do
-                skip("todo")            
                 expect(ShippoHelper.choose_rate(shippo_shipment_id)).to eq('test_rate_id')
             end
         end
