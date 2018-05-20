@@ -158,4 +158,8 @@ module ShippoHelper
         shipment_params[:extra] = { is_return: true }
         Shippo::Shipment.create(shipment_params)        
     end
+
+    def self.choose_rate(shippo_rates)
+
+    end
 end
