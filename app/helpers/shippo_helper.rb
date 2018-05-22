@@ -159,7 +159,14 @@ module ShippoHelper
         Shippo::Shipment.create(shipment_params)        
     end
 
-    def self.choose_rate(shippo_rates)
-
+    def self.choose_rate(shippo_rates, service_level)
+        # Choose the rate which maps to a shipment's priority
+        choosen_rate = ''        
+        shippo_rates.select do |rate|
+            if rate[:servicelevel][:token] == service_level
+                choosen_rate = rate
+            end
+        end
+        choosen_rate[:reference_id]
     end
 end
