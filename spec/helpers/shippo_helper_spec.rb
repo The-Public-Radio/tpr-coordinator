@@ -1,4 +1,5 @@
 require 'rails_helper'
+require 'helpers/shippo_helper'
 
 RSpec.describe ShippoHelper, type: :helper do
     context 'with the shippo_api' do
@@ -198,8 +199,11 @@ RSpec.describe ShippoHelper, type: :helper do
             ])
         }
 
+        let(:failed_shippo_shipment) { double('failed_shippo_shipment', "status": "FAILURE", "messages": 'this is a test error message')
+        }
+
         # This is separate from the above due to the rates needing to be different in future testing.
-        let(:shippo_shipment_with_return) { double('shippo_shipment', status: "SUCCESS", rates: [])}     
+        let(:shippo_shipment_with_return) { double('shippo_shipment_with_return', "status": "SUCCESS", "rates": [])}     
 
         let(:shippo_transaction) { double('shippo_transaction', "status": "SUCCESS", "tracking_number": "test_tracking_number", "label_url": "test_label_url")}
 
@@ -266,14 +270,20 @@ RSpec.describe ShippoHelper, type: :helper do
 
         describe 'api operations' do
             it 'creates a shipment' do
+                expect(shippo_shipment).to receive(:[]).with("status").and_return("SUCCESS")
                 expect(Shippo::Shipment).to receive(:create).with(create_shipment_params).and_return(shippo_shipment).once            
                 expect(ShippoHelper.create_shipment(shipment)).to be (shippo_shipment)
             end
 
+            it 'handles a create shipment failure' do
+                expect(failed_shippo_shipment).to receive(:[]).with("status").and_return("FAILURE")                
+                expect(Shippo::Shipment).to receive(:create).with(create_shipment_params).and_return(failed_shippo_shipment).once            
+                expect{ ShippoHelper.create_shipment(shipment) }.to raise_error(ShippoError, 'this is a test error message')
+            end
+
             it 'creates a shipment with a return label' do
-                # Create shipment
+                expect(shippo_shipment_with_return).to receive(:[]).with("status").and_return("SUCCESS")
                 expect(Shippo::Shipment).to receive(:create).with(create_shipment_with_return_params).and_return(shippo_shipment_with_return).once            
-                
                 # Make sure the shipment object is returned
                 expect(ShippoHelper.create_shipment_with_return(shipment)).to be shippo_shipment_with_return
             end
