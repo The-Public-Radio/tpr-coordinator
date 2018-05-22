@@ -1,9 +1,5 @@
 require 'httparty'
 require 'date'
-require 'shippo'
-
-class ShippoError < StandardError
-end
 
 class ShipmentInvalid < StandardError
 end
@@ -76,7 +72,7 @@ class ShipmentsController < ApplicationController
   end
 
   def shipping_label_creation_response(shipment)
-    @shipping_label_creation_response ||= create_shipping_label(shipment)
+    @shipping_label_creation_response ||= ShippoHelper.create_shipment(shipment)
   end
 
   def next_label_created_shipment
@@ -141,7 +137,7 @@ class ShipmentsController < ApplicationController
     def set_up_default_shipment(frequencies = params['shipment']['frequencies'], shipment_priority = params['shipment']['shipment_priority'])
 
       if !@order.nil?
-        find_order(@shipment)
+        @order = Order.find(shipment.order_id)
       else
         # Make sure there's a country code
         @order = Order.new(country: 'US')
@@ -169,38 +165,6 @@ class ShipmentsController < ApplicationController
         @shipment.shipment_status = 'label_created'
         @shipment.label_url = shipping_label_url
       end
-    end
-
-    def find_order(shipment)
-      @order = Order.find(shipment.order_id)
-    end
-
-    def create_shipping_label(shipment)
-      find_order(shipment)
-      Rails.logger.info("Creating shipping label for shipment #{shipment.id}")
-
-      Shippo::API.token = ENV['SHIPPO_TOKEN']
-
-      shippo_options = {
-        :shipment => @order.country != 'US' ? international_shipment_options : shipment_options,
-        :carrier_account => 'd2ed2a63bef746218a32e15450ece9d9',
-        :servicelevel_token => usps_service_level,
-      }
-      Rails.logger.debug("Shipping label create options: #{shippo_options}")
-
-      begin
-        transaction = Shippo::Transaction.create(shippo_options)
-      rescue RestClient::BadRequest => e
-        Rails.logger.error("Bad request to the Shippo api: #{e}")
-        Rails.logger.error("Returned transaction: #{transaction}")
-      end
-
-      if transaction["status"] != "SUCCESS"
-        Rails.logger.error(transaction.messages)
-        raise ShippoError
-      end
-
-      transaction
     end
 
     def usps_service_level
