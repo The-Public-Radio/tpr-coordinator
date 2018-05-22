@@ -151,7 +151,7 @@ module ShippoHelper
     end
 
     def self.create_shipment(shipment)
-        shipment_params = create_shipment_params(shipment)        
+        shipment_params = create_shipment_params(shipment)
         create_shippo_shipment(shipment_params)
     end
 
@@ -162,6 +162,8 @@ module ShippoHelper
     end
 
     def self.create_shippo_shipment(shipment_params)
+        Rails.logger.debug("Shipment create options: #{shipment_params}")    
+        Shippo::API.token = ENV['SHIPPO_TOKEN']            
         response = Shippo::Shipment.create(shipment_params)
         if response["status"] != "SUCCESS"
             Rails.logger.error(response.messages)
@@ -183,6 +185,7 @@ module ShippoHelper
 
     def self.create_label(shipment)
         rate_id = shipment.rate_reference_id
+        Shippo::API.token = ENV['SHIPPO_TOKEN']
         transaction = Shippo::Transaction.create(rate: rate_id)
     end
 end

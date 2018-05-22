@@ -1,5 +1,5 @@
 require 'rails_helper'
-require 'helpers/shippo_helper'
+# require 'helpers/shippo_helper'
 
 RSpec.describe ShippoHelper, type: :helper do
     context 'with the shippo_api' do
