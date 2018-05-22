@@ -192,10 +192,16 @@ RSpec.describe ShippoHelper, type: :helper do
         let(:customs_declaration_object) { double(Shippo::CustomsDeclaration) }
 
         # Shippo API doubles
-        let(:shippo_shipment) { double('shippo_shipment', "status": "SUCCESS", "rates": [{"reference_id": "test_rate_id", "servicelevel": { "token": "usps_priority" }}] )}
+        let(:shippo_shipment) { double('shippo_shipment', "status": "SUCCESS", "rates": [
+            {"reference_id": "test_rate_id", "servicelevel": { "token": "usps_priority" }},
+            {"reference_id": "test_rate_id2", "servicelevel": { "token": "usps_first_priority" }}
+            ])
+        }
 
         # This is separate from the above due to the rates needing to be different in future testing.
-        let(:shippo_shipment_with_return) { double('shippo_shipment', status: "SUCCESS", rates: [])}        
+        let(:shippo_shipment_with_return) { double('shippo_shipment', status: "SUCCESS", rates: [])}     
+
+        let(:shippo_transaction) { double('shippo_transaction', "status": "SUCCESS", "tracking_number": "test_tracking_number", "label_url": "test_label_url")}
 
         describe 'setting up a shipment' do
             it 'creates shipping parameters from a Shipment object' do
@@ -269,11 +275,14 @@ RSpec.describe ShippoHelper, type: :helper do
                 expect(Shippo::Shipment).to receive(:create).with(create_shipment_with_return_params).and_return(shippo_shipment_with_return).once            
                 
                 # Make sure the shipment object is returned
-                expect(ShippoHelper.create_shipment_with_return(shipment)).to be (shippo_shipment_with_return)
+                expect(ShippoHelper.create_shipment_with_return(shipment)).to be shippo_shipment_with_return
             end
 
             it 'creates a transaction to make a label' do
-                skip("todo")
+                shipment.rate_reference_id = 'test_rate_id'
+                shipment.save
+                expect(Shippo::Transaction).to receive(:create).with(create_transaction_params).and_return(shippo_transaction)
+                expect(ShippoHelper.create_label(shipment)).to be shippo_transaction
             end
 
             it 'chooses a rate' do
