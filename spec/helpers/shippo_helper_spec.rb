@@ -192,7 +192,7 @@ RSpec.describe ShippoHelper, type: :helper do
         let(:customs_declaration_object) { double(Shippo::CustomsDeclaration) }
 
         # Shippo API doubles
-        let(:shippo_shipment) { double('shippo_shipment', status: "SUCCESS", rates: [])}
+        let(:shippo_shipment) { double('shippo_shipment', "status": "SUCCESS", "rates": [{"reference_id": "test_rate_id", "servicelevel": { "token": "usps_priority" }}] )}
 
         # This is separate from the above due to the rates needing to be different in future testing.
         let(:shippo_shipment_with_return) { double('shippo_shipment', status: "SUCCESS", rates: [])}        
@@ -277,9 +277,7 @@ RSpec.describe ShippoHelper, type: :helper do
             end
 
             it 'chooses a rate' do
-                shipment.rate_reference_id = 'test_shippo_rate_reference_id'
-                shipment.save
-                expect(ShippoHelper.choose_rate(shippo_rates)).to eq('test_rate_id')
+                expect(ShippoHelper.choose_rate(shippo_shipment.rates, "usps_priority")).to eq('test_rate_id')
             end
         end
     end
