@@ -1,8 +1,9 @@
 require 'shippo'
 
 module ShippoHelper
-    attr_reader :shippo_client
-    
+    class ShippoError < StandardError
+    end
+
     def self.parcel(number_of_items)
         if number_of_items == 2
             {
@@ -150,15 +151,23 @@ module ShippoHelper
     end
 
     def self.create_shipment(shipment)
-        # TODO: Handle failure of shipment creation
-        Shippo::Shipment.create(create_shipment_params(shipment))
+        shipment_params = create_shipment_params(shipment)        
+        create_shippo_shipment(shipment_params)
     end
 
-    def self.create_shipment_with_return(shipment)
-        # TODO: Handle failure of shipment creation        
+    def self.create_shipment_with_return(shipment)   
         shipment_params = create_shipment_params(shipment)
         shipment_params[:extra] = { is_return: true }
-        Shippo::Shipment.create(shipment_params)        
+        create_shippo_shipment(shipment_params)
+    end
+
+    def self.create_shippo_shipment(shipment_params)
+        response = Shippo::Shipment.create(shipment_params)
+        if response["status"] != "SUCCESS"
+            Rails.logger.error(response.messages)
+            raise ShippoError.new(response.messages)
+        end
+        response
     end
 
     def self.choose_rate(shippo_rates, service_level)
