@@ -150,10 +150,12 @@ module ShippoHelper
     end
 
     def self.create_shipment(shipment)
+        # TODO: Handle failure of shipment creation
         Shippo::Shipment.create(create_shipment_params(shipment))
     end
 
     def self.create_shipment_with_return(shipment)
+        # TODO: Handle failure of shipment creation        
         shipment_params = create_shipment_params(shipment)
         shipment_params[:extra] = { is_return: true }
         Shippo::Shipment.create(shipment_params)        
@@ -168,5 +170,10 @@ module ShippoHelper
             end
         end
         choosen_rate[:reference_id]
+    end
+
+    def self.create_label(shipment)
+        rate_id = shipment.rate_reference_id
+        transaction = Shippo::Transaction.create(rate: rate_id)
     end
 end
