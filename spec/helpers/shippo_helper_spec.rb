@@ -194,8 +194,8 @@ RSpec.describe ShippoHelper, type: :helper do
 
         # Shippo API doubles
         let(:shippo_shipment) { double('shippo_shipment', "status": "SUCCESS", "rates": [
-            {"reference_id": "test_rate_id", "servicelevel": { "token": "usps_priority" }},
-            {"reference_id": "test_rate_id2", "servicelevel": { "token": "usps_first_priority" }}
+            {"resource_id": "test_rate_id", "servicelevel": { "token": "usps_priority" }},
+            {"resource_id": "test_rate_id2", "servicelevel": { "token": "usps_first_priority" }}
             ])
         }
 
