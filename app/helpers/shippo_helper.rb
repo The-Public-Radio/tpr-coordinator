@@ -4,6 +4,13 @@ module ShippoHelper
     class ShippoError < StandardError
     end
 
+    # Module functions:
+    # - create_shipment
+    # - create_international_shipment
+    # - create_shipment_with_return
+    # - create_label
+    # - choose_rate
+
     def self.parcel(number_of_items)
         if number_of_items == 2
             {
@@ -148,6 +155,11 @@ module ShippoHelper
             :phone => ENV['FROM_ADDRESS_PHONE_NUMBER'],
             :email => 'info@thepublicrad.io'
         }
+    end
+
+    def self.create_international_shipment(shipment)
+        shipment_params = create_international_shipment_params(shipment)
+        create_shippo_shipment(shipment_params)
     end
 
     def self.create_shipment(shipment)

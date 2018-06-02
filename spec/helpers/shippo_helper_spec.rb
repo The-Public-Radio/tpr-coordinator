@@ -248,10 +248,8 @@ RSpec.describe ShippoHelper, type: :helper do
 
             describe 'and customs declaration' do
                 it 'creates a customs declaration' do
-                    shippo_customs_declaration_object = double("shippo_customs_declaration")
-
-                    expect(Shippo::CustomsDeclaration).to receive(:create).with(customs_declaration_options).and_return(shippo_customs_declaration_object)
-                    expect(ShippoHelper.customs_declaration(1)).to be shippo_customs_declaration_object
+                    expect(Shippo::CustomsDeclaration).to receive(:create).with(customs_declaration_options).and_return(customs_declaration_object)
+                    expect(ShippoHelper.customs_declaration(1)).to be customs_declaration_object
                 end
 
                 it 'creates a customs item for 1 radio' do
@@ -273,6 +271,13 @@ RSpec.describe ShippoHelper, type: :helper do
                 expect(shippo_shipment).to receive(:[]).with("status").and_return("SUCCESS")
                 expect(Shippo::Shipment).to receive(:create).with(create_shipment_params).and_return(shippo_shipment).once            
                 expect(ShippoHelper.create_shipment(shipment)).to be (shippo_shipment)
+            end
+
+            it 'creates a international shipment' do
+                expect(shippo_shipment).to receive(:[]).with("status").and_return("SUCCESS")
+                expect(Shippo::CustomsDeclaration).to receive(:create).with(customs_declaration_options).and_return(customs_declaration_object)
+                expect(Shippo::Shipment).to receive(:create).with(create_international_shipment_params).and_return(shippo_shipment).once            
+                expect(ShippoHelper.create_international_shipment(shipment)).to be (shippo_shipment)
             end
 
             it 'handles a create shipment failure' do
