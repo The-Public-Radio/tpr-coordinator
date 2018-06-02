@@ -192,7 +192,7 @@ module ShippoHelper
                 choosen_rate = rate
             end
         end
-        choosen_rate[:reference_id]
+        choosen_rate[:resource_id]
     end
 
     def self.create_label(shipment)
