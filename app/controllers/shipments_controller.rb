@@ -63,18 +63,6 @@ class ShipmentsController < ApplicationController
     api_response(@shipment.next_unboxed_radio)
   end
 
-  def shipping_tracking_number(shipment = @shipment)
-    @shipping_tracking_number ||= shipping_label_creation_response(shipment).tracking_number
-  end
-
-  def shipping_label_url(shipment = @shipment)
-    @shipping_label_url ||= shipping_label_creation_response(shipment).label_url
-  end
-
-  def shipping_label_creation_response(shipment)
-    @shipping_label_creation_response ||= ShippoHelper.create_shipment(shipment)
-  end
-
   def next_label_created_shipment
     # Get all label_created shipments with radios and order by:
     # 1) priority_processing
@@ -129,7 +117,7 @@ class ShipmentsController < ApplicationController
   end
 
   private
-    attr_accessor :shipment, :shipment_size
+    attr_accessor :shipment
    
     class RadioInvalid < StandardError
     end
@@ -161,9 +149,16 @@ class ShipmentsController < ApplicationController
       # Create tracking number and label_url
       if @shipment.tracking_number.nil?
         Rails.logger.info('No tracking number provided for new shipment')
-        @shipment.tracking_number = shipping_tracking_number
+        if @shipment.shippo_reference_id.empty? 
+          Rails.logger.info('No Shippo shipment created. Creating shipment.')
+          response = ShippoHelper.create_shipment(@shipment)
+          @shipment.shippo_reference_id = response.resource_id
+          @shipment.rate_reference_id = ShippoHelper.choose_rate(response.rates, usps_service_level)
+        end
+        response = ShippoHelper.create_label(@shipment)
+        @shipment.tracking_number = response.tracking_number
+        @shipment.label_url = response.label_url
         @shipment.shipment_status = 'label_created'
-        @shipment.label_url = shipping_label_url
       end
     end
 
@@ -174,7 +169,7 @@ class ShipmentsController < ApplicationController
         case @shipment.shipment_priority.downcase
         when nil || 'economy'
           # If under 1 lb (16oz) the shipment can go first class, > 1lb it has to go priority
-          @shipment_size > 1 ? 'usps_priority' : 'usps_first'
+          @shipment.radio.count > 1 ? 'usps_priority' : 'usps_first'
         when 'priority'
           'usps_priority'
         when 'express'

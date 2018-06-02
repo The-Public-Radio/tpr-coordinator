@@ -150,18 +150,16 @@ RSpec.describe ShipmentsController, type: :controller do
             carrier_accounts: ["d2ed2a63bef746218a32e15450ece9d9"]              
           }
         }}
-
-        let(:create_transaction_params)  { {
-            :rate => "test_rate_id"
-          }
-         }
-
-        let(:shippo_rates_object) { object_double('shippo response', code: 200,
-          'status'=> 'SUCCESS', rates: [])
-        }
         
         let(:shippo_create_shipment_response) { object_double('shippo response', code: 200,
-          'status'=> 'SUCCESS', rates: [shippo_rates_object])
+          'status'=> 'SUCCESS', resource_id: "shippo_reference_id", rates: [
+            {"resource_id": "test_rate_id", "servicelevel": { "token": "usps_priority" }},
+            {"resource_id": "test_rate_id2", "servicelevel": { "token": "usps_first_priority" }}
+            ])
+        }
+
+        let(:choosen_shippo_rate) {
+          "test_rate_id"
         }
 
         let(:shippo_create_transaction_response) { object_double('shippo response', code: 200,
@@ -182,19 +180,20 @@ RSpec.describe ShipmentsController, type: :controller do
         context 'and succeeds to' do
 
           def execute_post
-            expect(Shippo::Shipment).to receive(:create).with(create_shipment_params).and_return(shippo_create_shipment_response).once
-            expect(Shippo::Transaction).to receive(:create).with(create_transaction_params).and_return(shippo_create_transaction_response).once
+            expect(ShippoHelper).to receive(:create_shipment).and_return(shippo_create_shipment_response).once
+            expect(ShippoHelper).to receive(:choose_rate).and_return(choosen_shippo_rate).once
+            expect(ShippoHelper).to receive(:create_label).and_return(shippo_create_transaction_response).once            
             post :create, params: { order_id: order_id, shipment: valid_shipping_attributes }, session: valid_session
           end
 
-          before(:each) do
-            expect(shippo_create_transaction_response).to receive(:[]).with('status').and_return('SUCCESS')
-            expect(shippo_create_transaction_response).to receive(:tracking_number).and_return('9400111298370829688891')
-            expect(shippo_create_transaction_response).to receive(:label_url).and_return('https://shippo-delivery-east.s3.amazonaws.com/some_label.pdf')
-          end 
-
-          it 'creates a shipment in shippo' do
+          it 'creates a shipment in shippo and stories the choosen rate' do
             execute_post
+
+            # Check if the rate was choosen and stored
+            body = JSON.parse(response.body)['data']
+            created_shipment = Shipment.find(body['id'])
+
+            expect(created_shipment.rate_reference_id).to eq choosen_shippo_rate            
           end
 
           it 'buys a shipping label from shippo and stores the tracking number and label_url from the Shippo API' do
@@ -218,58 +217,12 @@ RSpec.describe ShipmentsController, type: :controller do
             Timecop.freeze('2017-08-06')
             international_order = create(:international_order)
 
-            customs_item = {
-              :description => "Single station FM radio",
-              :quantity => 1,
-              :net_weight => "12",
-              :mass_unit => "oz",
-              :value_amount => "40",
-              :value_currency => "USD",
-              :origin_country => "US"
-            }
-
-            customs_declaration_options = {
-              :contents_type => "MERCHANDISE",
-              :contents_explanation => "Single station FM radio",
-              :non_delivery_option => "ABANDON",
-              :certify => true,
-              :certify_signer => "Spencer Wright",
-              :items => [customs_item]
-            }
-
-            customs_declaration_response = object_double('customs_declaration', valid: true)
-
-            expect(Shippo::CustomsDeclaration).to receive(:create).with(customs_declaration_options)
-              .and_return(customs_declaration_response)
-
-            create_shipment_params[:shipment][:address_to] = {
-              :name => international_order.name,
-              :company => '',
-              :street1 => international_order.street_address_1,
-              :street2 => international_order.street_address_2,
-              :city => international_order.city,
-              :state => international_order.state,
-              :zip => international_order.postal_code,
-              :country => international_order.country,
-              :phone => international_order.phone,
-              :email => international_order.email
-            }
-
-            create_shipment_params[:shipment][:customs_declaration] = customs_declaration_response
-            create_shipment_params[:servicelevel_token] = 'usps_first_class_package_international_service'
-            valid_shipping_attributes['order_id'] = international_order.id
-
-            expect(Shippo::Transaction).to receive(:create).with(create_shipment_params).and_return(shippo_create_transaction_response).once
+            expect(ShippoHelper).to receive(:create_international_shipment).with(international_order.shipment).and_return(shippo_create_transaction_response).once
             post :create, params: { order_id: international_order.id, shipment: valid_shipping_attributes }, session: valid_session
 
             body = JSON.parse(response.body)['data']
             expect(Shipment.find(body['id']).tracking_number).to eq(shippo_create_transaction_response.tracking_number)
             expect(body['tracking_number']).to eq shippo_create_transaction_response.tracking_number
-          end
-
-          it 'stores the label_url from the shippo response' do
-            execute_post
-            expect(Shipment.last.label_url).to eq(shippo_create_transaction_response.label_url)
           end
 
           it 'creates a return label if the order_source is warranty' do
