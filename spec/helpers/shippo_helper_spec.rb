@@ -278,7 +278,7 @@ RSpec.describe ShippoHelper, type: :helper do
             it 'handles a create shipment failure' do
                 expect(failed_shippo_shipment).to receive(:[]).with("status").and_return("FAILURE")                
                 expect(Shippo::Shipment).to receive(:create).with(create_shipment_params).and_return(failed_shippo_shipment).once            
-                expect{ ShippoHelper.create_shipment(shipment) }.to raise_error(ShippoError, 'this is a test error message')
+                expect{ ShippoHelper.create_shipment(shipment) }.to raise_error(ShippoHelper::ShippoError, 'this is a test error message')
             end
 
             it 'creates a shipment with a return label' do
