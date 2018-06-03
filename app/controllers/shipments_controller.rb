@@ -148,7 +148,7 @@ class ShipmentsController < ApplicationController
       # Create tracking number and label_url
       if @shipment.tracking_number.nil?
         Rails.logger.info('No tracking number provided for new shipment')
-        if @shipment.shippo_reference_id.empty? 
+        if @shipment.shippo_reference_id.nil? || @shipment.shippo_reference_id.try(:empty?)
           Rails.logger.info('No Shippo shipment created. Creating shipment.')
           if @order.country != 'US'
             Rails.logger.debug('Creating international shipment')
