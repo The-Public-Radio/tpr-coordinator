@@ -104,7 +104,9 @@ RSpec.configure do |config|
   end
 
   config.after(:suite) do
-    FileUtils.rm('./failed_orders.csv')
+    if File.exists?('./failed_orders.csv')
+      FileUtils.rm('./failed_orders.csv')
+    end
   end    
 end
 
