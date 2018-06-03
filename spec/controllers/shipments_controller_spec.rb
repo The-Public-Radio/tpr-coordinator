@@ -45,6 +45,8 @@ RSpec.describe ShipmentsController, type: :controller do
   let(:order_id) { order.id }
   let(:international_order) { create(:international_order) }
   let(:international_order_id) { international_order.id }
+  let(:warranty_order) { create(:warranty) }
+  let(:warranty_order_id) { warranty_order.id }
 
   before(:each) do
     request.headers['HTTP_AUTHORIZATION'] = "Bearer #{ENV['HTTP_AUTH_TOKENS']}"
@@ -187,7 +189,7 @@ RSpec.describe ShipmentsController, type: :controller do
 
           def expect_rate_and_label
             expect(ShippoHelper).to receive(:choose_rate).and_return(choosen_shippo_rate).once
-            expect(ShippoHelper).to receive(:create_label).and_return(shippo_create_transaction_response).once            
+            expect(ShippoHelper).to receive(:create_label).and_return(shippo_create_transaction_response).once
           end
 
           def expect_shipment_object_params
@@ -256,18 +258,19 @@ RSpec.describe ShipmentsController, type: :controller do
           end
 
           it 'creates a return label if the order_source is warranty' do
-            # Create address_from, address_to and parcel variables first
-            # shipment_return = Shippo::Shipment.create(
-            #   :address_from => address_from,
-            #   :address_to => address_to,
-            #   :parcels => parcel,
-            #   :extra => {:is_return => true},
-            #   :async => false)
-            create_return_label_params[:extra] = { :is_return => true }
-            expect(Shippo::Transaction).to receive(:create).with(create_shipment_params).and_return(shippo_create_transaction_response).once
-            expect(Shippo::Shipment).to receive(:create).with(create_return_label_params).and_return(shippo_create_shipment_response).once
+            expect(ShippoHelper).to receive(:create_shipment_with_return).and_return(shippo_create_shipment_response).once
+            expect(ShippoHelper).to receive(:create_shipment).and_return(shippo_create_shipment_response).once
+            expect(ShippoHelper).to receive(:choose_rate).and_return(choosen_shippo_rate).twice
+            expect(ShippoHelper).to receive(:create_label).and_return(shippo_create_transaction_response).twice
             
-            post :create, params: { order_id: order_id, shipment: valid_shipping_attributes }, session: valid_session
+            valid_shipping_attributes[:order_id] = warranty_order_id
+            post :create, params: { order_id: warranty_order_id, shipment: valid_shipping_attributes }, session: valid_session
+            expect_shipment_object_params
+
+            # Duplicated from expect_shipment_object_params due to need to check return_label_url
+            body = JSON.parse(response.body)['data']
+            created_shipment = Shipment.find(body['id'])
+            expect(created_shipment.return_label_url).to eq(shippo_create_transaction_response.label_url)
           end
 
           it 'creates express shipments' do
