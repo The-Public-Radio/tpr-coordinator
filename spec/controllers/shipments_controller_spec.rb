@@ -274,34 +274,25 @@ RSpec.describe ShipmentsController, type: :controller do
           end
 
           it 'creates express shipments' do
+            expect(ShippoHelper).to receive(:create_shipment).and_return(shippo_create_shipment_response).once     
             valid_attributes['shipment_priority'] = 'express'
             create_shipment_params[:servicelevel_token] = 'usps_priority_express'
+            expect_rate_and_label
             execute_post
+            expect_shipment_object_params
             expect(Shipment.last.shipment_priority).to eq('express')
             expect(Shipment.last.priority_processing).to be true
           end
 
           it 'creates priority shipments' do
+            expect(ShippoHelper).to receive(:create_shipment).and_return(shippo_create_shipment_response).once        
             valid_attributes['shipment_priority'] = 'priority'
             create_shipment_params[:servicelevel_token] = 'usps_priority'
+            expect_rate_and_label
             execute_post
+            expect_shipment_object_params
             expect(Shipment.last.shipment_priority).to eq('priority')
           end
-        end
-
-        it 'handles errors from Shippo and raises an exception' do
-          # Sample error object
-          # => #<Transaction:0x3ff808e2f3ac[id=91bdbecdc6ca49689b4984670dc52393]{"object_state"=>"VALID", "status"=>"ERROR", "object_created"=>"2017-09-10T20:25:46.898Z", "object_updated"=>"2017-09-10T20:25:47.952Z", "object_id"=>"91bdbecdc6ca49689b4984670dc52393", "object_owner"=>"info@thepublicrad.io", "test"=>true, "rate"=>{"object_id"=>"33c2904f50384420988c1329f1a988fc", "amount"=>"7.18", "currency"=>"USD", "amount_local"=>"7.18", "currency_local"=>"USD", "provider"=>"USPS", "servicelevel_name"=>"Priority Mail", "servicelevel_token"=>"usps_priority", "carrier_account"=>"d2ed2a63bef746218a32e15450ece9d9"}, "tracking_number"=>"", "tracking_status"=>"UNKNOWN", "eta"=>nil, "tracking_url_provider"=>"", "label_url"=>"", "commercial_invoice_url"=>nil, "messages"=>[#<Hashie::Mash code="" source="USPS" text="Recipient address invalid: The address as submitted could not be found. Please check for excessive abbreviations in the street address line or in the City name.">], "order"=>nil, "metadata"=>"", "parcel"=>"588d1166330b46778f666bc808e216ec", "billing"=>{"payments"=>[]}}->#<Shippo::API::ApiObject created=2017-09-10 20:25:46 UTC id="91bdbecdc6ca49689b4984670dc52393" owner="info@thepublicrad.io" state=#<Shippo::API::Category::State:0x007ff011b265c0 @name=:state, @value=:valid> updated=2017-09-10 20:25:47 UTC>
-          create_label_error_response = object_double('error', success?: false, status: 'ERROR',
-            messages: object_double('message', text: 'Recipient address invalid: The address as submitted could not be found. Please check for excessive abbreviations in the street address line or in the City name.') )
-
-          expect(create_label_error_response).to receive(:[]).with('status').and_return('FAILURE')
-
-          expect(Shippo::Transaction).to receive(:create).with(create_shipment_params).and_return(create_label_error_response)
-
-          expect{
-            post :create, params: { order_id: order_id, shipment: valid_shipping_attributes }, session: valid_session
-            }.to raise_error(ShippoError)
         end
       end
     end
