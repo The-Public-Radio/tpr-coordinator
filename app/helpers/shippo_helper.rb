@@ -213,7 +213,7 @@ module ShippoHelper
         check_shippo_response(response)
     end
 
-    def check_shippo_response(response)
+    def self.check_shippo_response(response)
         Rails.logger.debug("Checking shippo response for error. Status: #{response["status"]}")
         Rails.logger.debug("Shippo response: #{response}")                       
         if response["status"] != "SUCCESS" || response["status"] != "QUEUED"
