@@ -12,6 +12,14 @@ FactoryGirl.define do
     email { "#{name.split(' ').join}@gmail.com" }
     invoiced false
 
+    factory :warranty, class: Order do
+      order_source "warranty"
+
+      after :create do |order|
+        create_list(:shipment, 4, :order => order)
+      end
+    end
+
     factory :kickstarter, class: Order do
       order_source "kickstarter"
 
