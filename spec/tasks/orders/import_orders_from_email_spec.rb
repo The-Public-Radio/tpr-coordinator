@@ -34,7 +34,8 @@ describe "orders:import_orders_from_email", type: :rake do
     let(:error_fixture)  { load_order_fixture('error_orders') }
     let(:error_attachment) { double('attachment', decoded: error_fixture) }
     let(:error_message) { double('message', attachments: [error_attachment]) }
-    let(:error_email) { double('error_email', message: error_message, sender: double('address', address: 'from@foo.com')) }
+    let(:address_double) { double('address', address: 'from@foo.com') }
+    let(:error_email) { double('error_email', message: error_message, sender: address_double) }
 
     it 'imports generic formated csv attachments' do
         expect_any_instance_of(TaskHelper).to receive(:notify_of_import).with('generic', [])
@@ -161,6 +162,7 @@ describe "orders:import_orders_from_email", type: :rake do
                 .and_raise(ActiveRecord::RecordInvalid)
             expect_any_instance_of(TaskHelper).to receive(:clean_up_order).exactly(6).times
             expect_any_instance_of(TaskHelper).to receive(:send_reply).with(error_email, error_reply_params)
+            expect(address_double).to receive(:[]).with(0).and_return(double('mailbox', mailbox: 'from', host: 'foo.com')).twice
             task.execute
         end
     end
