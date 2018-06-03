@@ -79,16 +79,15 @@ RSpec.describe OrdersController, type: :controller do
 
     context "with a frequency list" do
       random_track_num = random_tracking_number
-      let(:shippo_response_object) { object_double('shippo response', code: 200,
+      let(:shippo_create_shipment_response) { object_double('shippo response', code: 200,
         status: 'SUCCESS', success?: true, tracking_number: random_track_num,
         label_url: 'https://shippo-delivery-east.s3.amazonaws.com/some_international_label.pdf')
       }
 
       before(:each) do
-        expect(Shippo::Transaction).to receive(:create).and_return(shippo_response_object).exactly(4)
-        expect(shippo_response_object).to receive(:[]).with('status').and_return('SUCCESS').exactly(4)
-        expect(shippo_response_object).to receive(:tracking_number).and_return(random_track_num)
-        expect(shippo_response_object).to receive(:label_url).and_return('https://shippo-delivery-east.s3.amazonaws.com/some_international_label.pdf').exactly(4)
+        shipments_controller_double = object_double('shipments_controller', :create_shipment_from_order)
+        expect(ShipmentsController).to receive(:new).and_return(shipments_controller_double).exactly(4).times
+        expect(shipments_controller_double).to receive(:create_shipment_from_order).exactly(4).times
       end
 
       it "creates a shipment for each set of 3 radios, tracking numbers, and label data" do
@@ -98,40 +97,7 @@ RSpec.describe OrdersController, type: :controller do
           'AZ': ['79.5', '79.5', '105.6']
         }
 
-        expect{
-          post :create, params: {frequencies: frequencies, shipment_priority: 'priority', order: valid_attributes }, session: valid_session
-        }.to change(Shipment, :count).by(4)
-
-        shipments = Shipment.all[-4..-1]
-
-        expect(shipments.select{ |s| s.radio.count == 3 }.count).to be 2
-        expect(shipments.select{ |s| s.radio.count == 2 }.count).to be 1
-        expect(shipments.select{ |s| s.radio.count == 1 }.count).to be 1
-        shipments.each do |shipment|
-          expect(shipment.tracking_number).to eq shippo_response_object.tracking_number
-          expect(shipment.shipment_status).to eq 'label_created'
-          expect(shipment.shipment_priority).to eq 'priority'
-        end
-      end
-
-      it "creates a radio for each entry in the list" do
-        frequencies = {
-          'FR': ['98.3', '79.5', '79.5', '98.3', '79.5', '79.5', '98.3', '79.5'],
-          'US': ['79.5', '105.6']
-        }
-
-        expect{
-          post :create, params: { frequencies: frequencies, order: valid_attributes }, session: valid_session
-        }.to change(Radio, :count).by(10)
-
-        radios = Radio.all[-10..-1]
-
-        expect(radios.select{ |r| r.frequency == '79.5' }.count).to be 6
-        expect(radios.select{ |r| r.frequency == '105.6' }.count).to be 1
-        radios.each do |r|
-          expect(r.boxed).to be false
-        end
-
+        post :create, params: {frequencies: frequencies, shipment_priority: 'priority', order: valid_attributes }, session: valid_session
       end
     end
 
