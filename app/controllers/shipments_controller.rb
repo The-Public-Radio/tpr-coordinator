@@ -1,9 +1,5 @@
 require 'httparty'
 require 'date'
-require 'shippo'
-
-class ShippoError < StandardError
-end
 
 class ShipmentInvalid < StandardError
 end
@@ -30,7 +26,6 @@ class ShipmentsController < ApplicationController
   # POST /shipments.json
   def create
     @shipment = Shipment.new(shipment_params)
-
     set_up_default_shipment
 
     if @shipment.save
@@ -65,18 +60,6 @@ class ShipmentsController < ApplicationController
   def next_unboxed_radio
     # sort by object creation time to always get the same order
     api_response(@shipment.next_unboxed_radio)
-  end
-
-  def shipping_tracking_number(shipment = @shipment)
-    @shipping_tracking_number ||= shipping_label_creation_response(shipment).tracking_number
-  end
-
-  def shipping_label_url(shipment = @shipment)
-    @shipping_label_url ||= shipping_label_creation_response(shipment).label_url
-  end
-
-  def shipping_label_creation_response(shipment)
-    @shipping_label_creation_response ||= create_shipping_label(shipment)
   end
 
   def next_label_created_shipment
@@ -133,15 +116,15 @@ class ShipmentsController < ApplicationController
   end
 
   private
-    attr_accessor :shipment, :shipment_size
+    attr_accessor :shipment
    
     class RadioInvalid < StandardError
     end
 
     def set_up_default_shipment(frequencies = params['shipment']['frequencies'], shipment_priority = params['shipment']['shipment_priority'])
 
-      if !@order.nil?
-        find_order(@shipment)
+      if !@shipment.order_id.nil? || !@order.nil?
+        @order = Order.find(shipment.order_id)
       else
         # Make sure there's a country code
         @order = Order.new(country: 'US')
@@ -165,42 +148,33 @@ class ShipmentsController < ApplicationController
       # Create tracking number and label_url
       if @shipment.tracking_number.nil?
         Rails.logger.info('No tracking number provided for new shipment')
-        @shipment.tracking_number = shipping_tracking_number
+        if @shipment.shippo_reference_id.nil? || @shipment.shippo_reference_id.try(:empty?)
+          Rails.logger.info('No Shippo shipment created. Creating shipment.')
+          if @order.country != 'US'
+            Rails.logger.debug('Creating international shipment')
+            response = ShippoHelper.create_international_shipment(@shipment)            
+          else
+            response = ShippoHelper.create_shipment(@shipment)
+          end
+          @shipment.shippo_reference_id = response.resource_id
+
+          # Check if warranty shipment and create a warranty label as well
+          if @order.order_source.eql?('warranty')
+            response = ShippoHelper.create_shipment_with_return(@shipment)
+            # rate_reference_id will be overridden below
+            # Shippo api makes you make a new Shippo Shipment for a return label. We're making two here, one for the return and one for the new radio 
+            # TODO: Make this more generic and find a way to not reuse this field. It causes loss of visbility into what's happening.
+            @shipment.rate_reference_id = ShippoHelper.choose_rate(response.rates, usps_service_level)
+            create_warranty_label_response = ShippoHelper.create_label(@shipment)            
+            @shipment.return_label_url = create_warranty_label_response.label_url
+          end
+          @shipment.rate_reference_id = ShippoHelper.choose_rate(response.rates, usps_service_level)
+        end
+        response = ShippoHelper.create_label(@shipment)
+        @shipment.tracking_number = response.tracking_number
+        @shipment.label_url = response.label_url
         @shipment.shipment_status = 'label_created'
-        @shipment.label_url = shipping_label_url
       end
-    end
-
-    def find_order(shipment)
-      @order = Order.find(shipment.order_id)
-    end
-
-    def create_shipping_label(shipment)
-      find_order(shipment)
-      Rails.logger.info("Creating shipping label for shipment #{shipment.id}")
-
-      Shippo::API.token = ENV['SHIPPO_TOKEN']
-
-      shippo_options = {
-        :shipment => @order.country != 'US' ? international_shipment_options : shipment_options,
-        :carrier_account => 'd2ed2a63bef746218a32e15450ece9d9',
-        :servicelevel_token => usps_service_level,
-      }
-      Rails.logger.debug("Shipping label create options: #{shippo_options}")
-
-      begin
-        transaction = Shippo::Transaction.create(shippo_options)
-      rescue RestClient::BadRequest => e
-        Rails.logger.error("Bad request to the Shippo api: #{e}")
-        Rails.logger.error("Returned transaction: #{transaction}")
-      end
-
-      if transaction["status"] != "SUCCESS"
-        Rails.logger.error(transaction.messages)
-        raise ShippoError
-      end
-
-      transaction
     end
 
     def usps_service_level
@@ -210,7 +184,7 @@ class ShipmentsController < ApplicationController
         case @shipment.shipment_priority.downcase
         when nil || 'economy'
           # If under 1 lb (16oz) the shipment can go first class, > 1lb it has to go priority
-          @shipment_size > 1 ? 'usps_priority' : 'usps_first'
+          @shipment.radio.count > 1 ? 'usps_priority' : 'usps_first'
         when 'priority'
           'usps_priority'
         when 'express'
@@ -225,135 +199,6 @@ class ShipmentsController < ApplicationController
     def usps_service_level_international
       # Has to go priority mail due to it being a package and not flat
       'usps_first_class_package_international_service'
-    end
-
-    def shipment_options
-      {
-        :address_from => address_from,
-        :address_to => address_to,
-        :parcels => parcel
-      }
-    end
-
-    def international_shipment_options
-      {
-        address_from: address_from,
-        address_to: address_to,
-        parcels: parcel,
-        customs_declaration: customs_declaration
-      }
-    end
-
-    def address_to
-      {
-        :name => @order.name,
-        :company => '',
-        :street1 => @order.street_address_1,
-        :street2 => @order.street_address_2,
-        :city => @order.city,
-        :state => @order.state,
-        :zip => @order.postal_code,
-        :country => @order.country,
-        :phone => @order.phone.nil? ? '' : @order.phone,
-        :email => @order.email
-      }
-    end
-
-    def address_from
-      {
-        :name => 'Centerline Labs',
-        :company => '',
-        :street1 => '814 Lincoln Pl',
-        :street2 => '#2',
-        :city => 'Brooklyn',
-        :state => 'NY',
-        :zip => '11216',
-        :country => 'US',
-        :phone => ENV['FROM_ADDRESS_PHONE_NUMBER'],
-        :email => 'info@thepublicrad.io'
-    }
-    end
-
-    def shipment_size
-      @shipment_size ||= @shipment.radio.count
-    end
-
-    def parcel
-      if shipment_size == 2
-        {
-          :length => 6,
-          :width => 5,
-          :height => 4,
-          :distance_unit => :in,
-          :weight => 1.75,
-          :mass_unit => :lb
-        }
-      elsif shipment_size == 3
-        {
-          :length => 9,
-          :width => 5,
-          :height => 4,
-          :distance_unit => :in,
-          :weight => 2.60,
-          :mass_unit => :lb
-        }
-      else
-        {
-          :length => 5,
-          :width => 4,
-          :height => 3,
-          :distance_unit => :in,
-          :weight => 12,
-          :mass_unit => :oz
-        }
-      end
-    end
-
-    def customs_declaration
-      customs_declaration_options = {
-        :contents_type => "MERCHANDISE",
-        :contents_explanation => "Single station FM radio",
-        :non_delivery_option => "ABANDON",
-        :certify => true,
-        :certify_signer => "Spencer Wright",
-        :items => [customs_item]
-      }
-
-      Shippo::CustomsDeclaration.create(customs_declaration_options)
-    end
-
-    def customs_item
-      if shipment_size == 1
-        {
-          :description => "Single station FM radio",
-          :quantity => 1,
-          :net_weight => "12",
-          :mass_unit => "oz",
-          :value_amount => "18.21",
-          :value_currency => "USD",
-          :origin_country => "US"
-        }
-      elsif shipment_size == 2
-        {
-          :description => "Single station FM radio",
-          :quantity => 2,
-          :net_weight => "1.75",
-          :mass_unit => "lb",
-          :value_amount => "80",
-          :value_currency => "USD",
-          :origin_country => "US"
-        }
-      elsif shipment_size == 3
-        {
-          :description => "Single station FM radio",
-          :quantity => 3,
-          :net_weight => "2.60",
-          :mass_unit => "lb",
-          :value_amount => "120",
-          :value_currency => "USD",
-          :origin_country => "US"
-        }
-      end
     end
 
     # Use callbacks to share common setup or constraints between actions.
@@ -381,6 +226,6 @@ class ShipmentsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def shipment_params
-      params.require(:shipment).permit(:tracking_number, :ship_date, :shipment_status, :order_id, :frequencies, :priority, :label_url, :shipment_priority)
+      params.require(:shipment).permit(:tracking_number, :ship_date, :shipment_status, :order_id, :frequencies, :priority, :label_url, :return_label_url, :shipment_priority, :shippo_reference_id, :rate_reference_id)
     end
 end

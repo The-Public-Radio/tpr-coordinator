@@ -90,6 +90,7 @@ RSpec.configure do |config|
   config.infer_rake_task_specs_from_file_location!
 
   config.before(:suite) do
+    DatabaseCleaner.clean    
     begin
       DatabaseCleaner.start
       FactoryGirl.lint
@@ -102,6 +103,11 @@ RSpec.configure do |config|
     Timecop.return
   end
 
+  config.after(:suite) do
+    if File.exists?('./failed_orders.csv')
+      FileUtils.rm('./failed_orders.csv')
+    end
+  end    
 end
 
 RspecApiDocumentation.configure do |config|
