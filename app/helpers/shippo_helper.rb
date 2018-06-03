@@ -177,9 +177,10 @@ module ShippoHelper
         Rails.logger.debug("Shipment create options: #{shipment_params}")    
         Shippo::API.token = ENV['SHIPPO_TOKEN']            
         response = Shippo::Shipment.create(shipment_params)
+        Rails.logger.debug("Shippo response: #{response}")
         if response["status"] != "SUCCESS"
             Rails.logger.error(response.messages)
-            raise ShippoError.new(response.messages)
+            raise ShippoError.new(response)
         end
         response
     end
