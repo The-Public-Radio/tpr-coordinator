@@ -89,7 +89,7 @@ RSpec.describe OrdersController, type: :controller do
         expect(ShipmentsController).to receive(:new).and_return(shipments_controller_double).exactly(4).times
         expect(shipments_controller_double).to receive(:create_shipment_from_order).exactly(4).times
       end
-
+      
       it "creates a shipment for each set of 3 radios, tracking numbers, and label data" do
        frequencies = {
           'US': ['98.3', '79.5', '79.5', '98.3'],
