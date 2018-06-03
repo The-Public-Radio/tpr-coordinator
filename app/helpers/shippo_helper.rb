@@ -177,11 +177,21 @@ module ShippoHelper
         Rails.logger.debug("Shipment create options: #{shipment_params}")    
         Shippo::API.token = ENV['SHIPPO_TOKEN']            
         response = Shippo::Shipment.create(shipment_params)
-        Rails.logger.debug("Shippo response: #{response}")
-        if response["status"] != "SUCCESS"
-            Rails.logger.error(response.messages)
-            raise ShippoError.new(response)
+        # Check response for error
+        check_shippo_response(response)
+
+        # Wait for the rates to be determined by shippo
+        shippo_resource_id = response        
+        while response["status"] = "QUEUED"
+            # This is bad and really syncronous
+            # TODO: make label on get_next_shipment
+            Rails.logger.debug("Waiting for shipment to move out of queue")            
+            sleep(10)
+            response = Shippo::Shipment.get(shippo_resource_id)
         end
+
+        # Check response status again to make sure it completed
+        check_shippo_response(response)
         response
     end
 
@@ -199,6 +209,17 @@ module ShippoHelper
     def self.create_label(shipment)
         rate_id = shipment.rate_reference_id
         Shippo::API.token = ENV['SHIPPO_TOKEN']
-        transaction = Shippo::Transaction.create(rate: rate_id)
+        response = Shippo::Transaction.create(rate: rate_id)
+        check_shippo_response(response)
+    end
+
+    def check_shippo_response(response)
+        Rails.logger.debug("Checking shippo response for error. Status: #{response["status"]}")
+        Rails.logger.debug("Shippo response: #{response}")                       
+        if response["status"] != "SUCCESS" || response["status"] != "QUEUED"
+            Rails.logger.error(response.messages)
+            raise ShippoError.new(response)
+        end
+        response
     end
 end
