@@ -142,7 +142,7 @@ describe "orders:import_orders_from_email", type: :rake do
 
         it 'has an invalid address' do
             expect_any_instance_of(TaskHelper).to receive(:create_order).exactly(6).times
-                .and_raise(ShippoError)
+                .and_raise(ShippoHelper::ShippoError)
             expect_any_instance_of(TaskHelper).to receive(:clean_up_order).exactly(6).times
             task.execute
         end
