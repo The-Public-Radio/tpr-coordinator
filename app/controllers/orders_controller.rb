@@ -96,7 +96,7 @@ class OrdersController < ApplicationController
       shipment_priority = @shipment_priority.nil? ? params['shipment_priority'] : @shipment_priority
 
       frequencies_by_shipment.each do |frequencies|
-        controller = ShipmentsController.new.create_shipment_from_order(@order, frequencies, shipment_priority)
+        ShipmentsController.new.create_shipment_from_order(@order, frequencies, shipment_priority)
       end
     end
 
