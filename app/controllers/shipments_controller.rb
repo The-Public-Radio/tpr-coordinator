@@ -26,7 +26,6 @@ class ShipmentsController < ApplicationController
   # POST /shipments.json
   def create
     @shipment = Shipment.new(shipment_params)
-
     set_up_default_shipment
 
     if @shipment.save
@@ -124,7 +123,7 @@ class ShipmentsController < ApplicationController
 
     def set_up_default_shipment(frequencies = params['shipment']['frequencies'], shipment_priority = params['shipment']['shipment_priority'])
 
-      if !@order.nil?
+      if !@shipment.order_id.nil? || !@order.nil?
         @order = Order.find(shipment.order_id)
       else
         # Make sure there's a country code
@@ -151,7 +150,12 @@ class ShipmentsController < ApplicationController
         Rails.logger.info('No tracking number provided for new shipment')
         if @shipment.shippo_reference_id.empty? 
           Rails.logger.info('No Shippo shipment created. Creating shipment.')
-          response = ShippoHelper.create_shipment(@shipment)
+          if @order.country != 'US'
+            Rails.logger.debug('Creating international shipment')
+            response = ShippoHelper.create_international_shipment(@shipment)            
+          else
+            response = ShippoHelper.create_shipment(@shipment)
+          end
           @shipment.shippo_reference_id = response.resource_id
           @shipment.rate_reference_id = ShippoHelper.choose_rate(response.rates, usps_service_level)
         end
