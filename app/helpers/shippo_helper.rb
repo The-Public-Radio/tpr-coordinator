@@ -178,7 +178,11 @@ module ShippoHelper
         Shippo::API.token = ENV['SHIPPO_TOKEN']            
         response = Shippo::Shipment.create(shipment_params)
         # Check response for error
-        check_shippo_response(response)
+        Rails.logger.debug("Shippo response: #{response}")        
+        if response["status"] != "QUEUED"
+            Rails.logger.error(response.messages)
+            raise ShippoError.new(response)
+        end
 
         # Wait for the rates to be determined by shippo
         shippo_resource_id = response        
@@ -215,7 +219,7 @@ module ShippoHelper
 
     def self.check_shippo_response(response)
         Rails.logger.debug("Checking shippo response for error. Status: #{response["status"]}")
-        Rails.logger.debug("Shippo response: #{response}")                       
+        Rails.logger.debug("Shippo response: #{response}")
         if response["status"] != "SUCCESS" || response["status"] != "QUEUED"
             Rails.logger.error(response.messages)
             raise ShippoError.new(response)
