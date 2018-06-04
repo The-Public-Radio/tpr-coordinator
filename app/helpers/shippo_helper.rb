@@ -185,7 +185,7 @@ module ShippoHelper
         end
 
         # Wait for the rates to be determined by shippo
-        shippo_resource_id = response.resource_id
+        shippo_resource_id = response["object_id"]
         while response["status"] = "QUEUED"
             # This is bad and really syncronous
             # TODO: make label on get_next_shipment
@@ -207,7 +207,7 @@ module ShippoHelper
                 choosen_rate = rate
             end
         end
-        choosen_rate.resource_id
+        choosen_rate["object_id"]
     end
 
     def self.create_label(shipment)
