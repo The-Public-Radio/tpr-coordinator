@@ -193,10 +193,13 @@ RSpec.describe ShippoHelper, type: :helper do
         let(:customs_declaration_object) { double(Shippo::CustomsDeclaration) }
 
         # Shippo API doubles
-        let(:shippo_shipment) { double('shippo_shipment', "status": "SUCCESS", "rates": [
-            {"resource_id": "test_rate_id", "servicelevel": { "token": "usps_priority" }},
-            {"resource_id": "test_rate_id2", "servicelevel": { "token": "usps_first_priority" }}
+        let(:shippo_shipment) { double('shippo_shipment', "status": "QUEUED", "object_id": "test_object_id",
+            "rates": [{"object_id": "test_rate_id", "servicelevel": { "token": "usps_priority" }}, 
+            {"object_id": "test_rate_id2", "servicelevel": { "token": "usps_first_priority" }}
             ])
+        }
+        
+        let(:success_shippo_shipment) { double('success_shippo_shipment', "status": "SUCCESS",)
         }
 
         let(:failed_shippo_shipment) { double('failed_shippo_shipment', "status": "FAILURE", "messages": 'this is a test error message')
@@ -267,36 +270,45 @@ RSpec.describe ShippoHelper, type: :helper do
         end
 
         describe 'api operations' do
+            def successful_shipment_creation_mock
+                expect(shippo_shipment).to receive(:[]).with("status").and_return("QUEUED").at_least(2).times
+                expect(shippo_shipment).to receive(:[]).with("object_id").and_return("test_object_id")
+                expect(Shippo::Shipment).to receive(:get).with("test_object_id").and_return(success_shippo_shipment).once
+                expect(success_shippo_shipment).to receive(:[]).with("status").and_return("SUCCESS").exactly(3).times
+            end
+            
             it 'creates a shipment' do
-                expect(shippo_shipment).to receive(:[]).with("status").and_return("SUCCESS")
-                expect(Shippo::Shipment).to receive(:create).with(create_shipment_params).and_return(shippo_shipment).once            
-                expect(ShippoHelper.create_shipment(shipment)).to be (shippo_shipment)
+                successful_shipment_creation_mock
+                expect(Shippo::Shipment).to receive(:create).with(create_shipment_params).and_return(shippo_shipment).once
+                expect(ShippoHelper.create_shipment(shipment)).to be (success_shippo_shipment)
             end
 
             it 'creates a international shipment' do
-                expect(shippo_shipment).to receive(:[]).with("status").and_return("SUCCESS")
+                successful_shipment_creation_mock
                 expect(Shippo::CustomsDeclaration).to receive(:create).with(customs_declaration_options).and_return(customs_declaration_object)
                 expect(Shippo::Shipment).to receive(:create).with(create_international_shipment_params).and_return(shippo_shipment).once            
-                expect(ShippoHelper.create_international_shipment(shipment)).to be (shippo_shipment)
+                expect(ShippoHelper.create_international_shipment(shipment)).to be (success_shippo_shipment)
             end
 
             it 'handles a create shipment failure' do
-                expect(failed_shippo_shipment).to receive(:[]).with("status").and_return("FAILURE")                
+                expect(failed_shippo_shipment).to receive(:[]).with("status").and_return("FAILURE")
+                expect(failed_shippo_shipment).to receive(:[]).with("messages").and_return(failed_shippo_shipment.messages)
                 expect(Shippo::Shipment).to receive(:create).with(create_shipment_params).and_return(failed_shippo_shipment).once            
-                expect{ ShippoHelper.create_shipment(shipment) }.to raise_error(ShippoHelper::ShippoError, 'this is a test error message')
+                expect{ ShippoHelper.create_shipment(shipment) }.to raise_error(ShippoHelper::ShippoError, failed_shippo_shipment.messages)
             end
 
             it 'creates a shipment with a return label' do
-                expect(shippo_shipment_with_return).to receive(:[]).with("status").and_return("SUCCESS")
-                expect(Shippo::Shipment).to receive(:create).with(create_shipment_with_return_params).and_return(shippo_shipment_with_return).once            
+                successful_shipment_creation_mock
+                expect(Shippo::Shipment).to receive(:create).with(create_shipment_with_return_params).and_return(shippo_shipment).once            
                 # Make sure the shipment object is returned
-                expect(ShippoHelper.create_shipment_with_return(shipment)).to be shippo_shipment_with_return
+                expect(ShippoHelper.create_shipment_with_return(shipment)).to be success_shippo_shipment
             end
 
             it 'creates a transaction to make a label' do
                 shipment.rate_reference_id = 'test_rate_id'
                 shipment.save
                 expect(Shippo::Transaction).to receive(:create).with(create_transaction_params).and_return(shippo_transaction)
+                expect(shippo_transaction).to receive(:[]).with("status").and_return("SUCCESS").twice
                 expect(ShippoHelper.create_label(shipment)).to be shippo_transaction
             end
 
