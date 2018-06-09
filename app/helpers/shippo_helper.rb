@@ -180,34 +180,44 @@ module ShippoHelper
         # Check response for error
         Rails.logger.debug("Shippo response: #{response}")        
         if response["status"] != "QUEUED"
-            Rails.logger.error(response.messages)
-            raise ShippoError.new(response)
+            Rails.logger.error(response)
+            raise ShippoError.new(response["messages"])
         end
 
         # Wait for the rates to be determined by shippo
         shippo_resource_id = response["object_id"]
-        while response["status"] = "QUEUED"
+        # Max retry count waiting for a successfully rate allotment
+        # 1 * 30 = 60 seconds
+        shippo_max_retry_count = 60
+        shippo_retry_count = 0
+        while response["status"] == "QUEUED"
+            # retry counter
+            if shippo_retry_count > shippo_max_retry_count
+                break
+            else
+                shippo_retry_count += 1
+            end
             # This is bad and really syncronous
             # TODO: make label on get_next_shipment
-            Rails.logger.debug("Waiting for shipment to move out of queue")            
-            sleep(10)
+            Rails.logger.debug("Waiting for shipment to move out of queue")                        
+            sleep(1)
             response = Shippo::Shipment.get(shippo_resource_id)
         end
 
-        # Check response status again to make sure it completed
+        # Check response status again to make sure it completed succesfully
         check_shippo_response(response)
         response
     end
 
     def self.choose_rate(shippo_rates, service_level)
         # Choose the rate which maps to a shipment's priority
-        choosen_rate = ''        
+        choosen_rate = ''
         shippo_rates.select do |rate|
             if rate[:servicelevel][:token] == service_level
                 choosen_rate = rate
             end
         end
-        choosen_rate["object_id"]
+        choosen_rate[:object_id]
     end
 
     def self.create_label(shipment)
@@ -220,7 +230,7 @@ module ShippoHelper
     def self.check_shippo_response(response)
         Rails.logger.debug("Checking shippo response for error. Status: #{response["status"]}")
         Rails.logger.debug("Shippo response: #{response}")
-        if response["status"] != "SUCCESS" || response["status"] != "QUEUED"
+        if response["status"] != "SUCCESS"
             Rails.logger.error(response.messages)
             raise ShippoError.new(response)
         end
