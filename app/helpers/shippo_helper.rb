@@ -94,6 +94,7 @@ module ShippoHelper
         number_of_items = shipment.radio.count
         {
             address_from: from_address,
+            address_return: return_address,            
             address_to: to_address(order),
             parcels: parcel(number_of_items),
             carrier_accounts: ["d2ed2a63bef746218a32e15450ece9d9"]
@@ -105,6 +106,7 @@ module ShippoHelper
         number_of_items = shipment.radio.count
         {
             address_from: from_address,
+            address_return: return_address,            
             address_to: to_address(order),
             parcels: parcel(number_of_items),
             carrier_accounts: ["d2ed2a63bef746218a32e15450ece9d9"],
@@ -127,7 +129,8 @@ module ShippoHelper
         }
     end
   
-    def self.from_address
+    def self.return_address
+        # Send back for non-deliveries
         {
           :name => 'Centerline Labs',
           :company => '',
@@ -136,6 +139,22 @@ module ShippoHelper
           :city => 'Brooklyn',
           :state => 'NY',
           :zip => '11216',
+          :country => 'US',
+          :phone => ENV['FROM_ADDRESS_PHONE_NUMBER'],
+          :email => 'info@thepublicrad.io'
+        }
+    end
+
+    def self.from_address
+        # Shipment processing facilities
+        {
+          :name => 'Centerline Labs',
+          :company => '',
+          :street1 => '14 Industrial Dr. E',
+          :street2 => '',
+          :city => 'South Deerfield',
+          :state => 'MA',
+          :zip => '01373',
           :country => 'US',
           :phone => ENV['FROM_ADDRESS_PHONE_NUMBER'],
           :email => 'info@thepublicrad.io'
