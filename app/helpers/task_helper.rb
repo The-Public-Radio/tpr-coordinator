@@ -88,12 +88,11 @@ module TaskHelper
     # Check if order has already been created
     if order_params[:reference_number].nil?
       unless Order.find_by_name(order_params[:name]).nil?
-        Rails.logger.warn("Order already created for #{order_params[:name]}. Skipping.")
-        raise TPROrderAlreadyCreated
+        Rails.logger.warn("Order already created for #{order_params[:name]}.")
       end
     else
       unless Order.find_by_reference_number(order_params[:reference_number]).nil?
-        Rails.logger.warn("Order already created for #{order_params[:name]}. Skipping.")
+        Rails.logger.warn("Skipping order import. Order already created for #{order_params[:name]}.")
         raise TPROrderAlreadyCreated
       end
     end
