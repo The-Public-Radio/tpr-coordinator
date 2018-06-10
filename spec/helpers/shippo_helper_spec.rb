@@ -11,38 +11,10 @@ RSpec.describe ShippoHelper, type: :helper do
         
         let(:create_shipment_params)  { 
             {
-                address_from: {
-                    :name => 'Centerline Labs',
-                    :company => '',
-                    :street1 => '814 Lincoln Pl',
-                    :street2 => '#2',
-                    :city => 'Brooklyn',
-                    :state => 'NY',
-                    :zip => '11216',
-                    :country => 'US',
-                    :phone => '123-456-7890',
-                    :email => 'info@thepublicrad.io'
-                },
-                address_to: {
-                    :name => order.name,
-                    :company => '',
-                    :street1 => '123 West 9th St.',
-                    :street2 => 'Apt 4',
-                    :city => 'Brooklyn',
-                    :state => 'NY',
-                    :zip => '11221',
-                    :country => 'US',
-                    :phone => '123-321-1231',
-                    :email => order.email
-                },
-                parcels: {
-                    :length => 5,
-                    :width => 4,
-                    :height => 3,
-                    :distance_unit => :in,
-                    :weight => 12,
-                    :mass_unit => :oz
-                },
+                address_return: return_address,
+                address_from: from_address,
+                address_to: to_address,
+                parcels: one_radio_parcel,
                 carrier_accounts: ["d2ed2a63bef746218a32e15450ece9d9"]              
             } 
         }
@@ -134,7 +106,7 @@ RSpec.describe ShippoHelper, type: :helper do
             }
         }
         
-        let(:from_address) {
+        let(:return_address) {
             {
                 :name => 'Centerline Labs',
                 :company => '',
@@ -147,6 +119,21 @@ RSpec.describe ShippoHelper, type: :helper do
                 :phone => '123-456-7890',
                 :email => 'info@thepublicrad.io'
               }
+        }
+
+        let(:from_address) {
+            {
+                :name => 'Centerline Labs',
+                :company => '',
+                :street1 => '14 Industrial Dr. E',
+                :street2 => '',
+                :city => 'South Deerfield',
+                :state => 'MA',
+                :zip => '01373',
+                :country => 'US',
+                :phone => ENV['FROM_ADDRESS_PHONE_NUMBER'],
+                :email => 'info@thepublicrad.io'
+            }
         }
 
         let(:warranty_return_address) {
@@ -223,6 +210,10 @@ RSpec.describe ShippoHelper, type: :helper do
             describe 'addresses' do
                 it 'from' do
                     expect(ShippoHelper.from_address).to eq from_address
+                end
+
+                it 'return' do
+                    expect(ShippoHelper.return_address).to eq return_address
                 end
 
                 it 'warranty return' do 
