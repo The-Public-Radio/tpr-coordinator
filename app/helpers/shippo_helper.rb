@@ -220,11 +220,11 @@ module ShippoHelper
             # TODO: make label on get_next_shipment
             Rails.logger.debug("Waiting for shipment to move out of queue")                        
             sleep(1)
-            response = Shippo::Shipment.get(shippo_resource_id)
+            get_response = Shippo::Shipment.get(shippo_resource_id)
         end
 
         # Check response status again to make sure it completed succesfully
-        check_shippo_response(response)
+        check_shippo_response(get_response)
         response
     end
 
