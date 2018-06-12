@@ -263,8 +263,8 @@ RSpec.describe ShippoHelper, type: :helper do
         describe 'api operations' do
             def successful_shipment_creation_mock
                 expect(shippo_shipment).to receive(:[]).with("status").and_return("QUEUED").at_least(2).times
-                expect(shippo_shipment).to receive(:[]).with("object_id").and_return("test_object_id")
-                expect(Shippo::Shipment).to receive(:get).with("test_object_id").and_return(success_shippo_shipment).once
+                expect(shippo_shipment).to receive(:[]).with("object_id").and_return("test_object_id").once
+                expect(Shippo::Shipment).to receive(:get).with("test_object_id").and_return(success_shippo_shipment).at_least(2).times
                 expect(success_shippo_shipment).to receive(:[]).with("status").and_return("SUCCESS").exactly(3).times
             end
             
