@@ -237,13 +237,13 @@ module ShippoHelper
         # TODO: make label on get_next_shipment
         while response["status"] == "QUEUED"
             # retry counter
-            Rails.logger.debug("Checking shipment status in Shippo. Retry count: #{shippo_retry_count}")
+            Rails.logger.debug("Checking status in Shippo. Retry count: #{shippo_retry_count}")
             if shippo_retry_count > shippo_max_retry_count
                 break
             else
                 shippo_retry_count += 1
             end
-            Rails.logger.debug("Waiting for shipment to move out of queue")                        
+            Rails.logger.debug("Waiting for Shippo resource to move out of queue")                        
             sleep(1)
             # TODO: Find a better way of checking if this is a shipment or transaction response
             if response.label_url.nil?
