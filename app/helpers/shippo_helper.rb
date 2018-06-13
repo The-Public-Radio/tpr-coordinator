@@ -196,41 +196,7 @@ module ShippoHelper
         Rails.logger.debug("Shipment create options: #{shipment_params}")    
         Shippo::API.token = ENV['SHIPPO_TOKEN']            
         response = Shippo::Shipment.create(shipment_params)
-        # Check response for error
-        Rails.logger.debug("Shippo create shipment response: #{response}")        
-        if response["status"] != "QUEUED"
-            Rails.logger.error("Response status not QUEUED. Something went wrong with Shippo shipment creation")             
-            Rails.logger.error(response)
-            raise ShippoError.new(response["messages"])
-        end
-
-        # Wait for the rates to be determined by shippo
-        shippo_resource_id = response["object_id"]
-        # Max retry count waiting for a successfully rate allotment
-        # 1 * 30 = 60 seconds
-        shippo_max_retry_count = 60
-        shippo_retry_count = 0
-        Rails.logger.debug("Waiting for shippo shipment to move out of queue. Shippo object_id: #{shippo_resource_id}")        
-        # This is bad and really syncronous but works
-        # TODO: make label on get_next_shipment
-        while response["status"] == "QUEUED"
-            # retry counter
-            Rails.logger.debug("Checking shipment status in Shippo. Retry count: #{shippo_retry_count}")
-            if shippo_retry_count > shippo_max_retry_count
-                break
-            else
-                shippo_retry_count += 1
-            end
-            Rails.logger.debug("Waiting for shipment to move out of queue")                        
-            sleep(1)
-            response = Shippo::Shipment.get(shippo_resource_id)
-            Rails.logger.debug("Shippo get shipment response for #{shippo_resource_id}: #{response}")                                    
-        end
-
-        # FIXME: This is sloppy and we have to make the get call twice.
-        response = Shippo::Shipment.get(shippo_resource_id)
-        # Check response status again to make sure it completed succesfully and did not error
-        check_shippo_response(response)
+        wait_for_shipoo_queue(response)
     end
 
     def self.choose_rate(shippo_rates, service_level)
@@ -249,10 +215,46 @@ module ShippoHelper
         Rails.logger.debug("Creating Shippo label for shipment #{shipment.id} with rate #{rate_id}")
         Shippo::API.token = ENV['SHIPPO_TOKEN']
         response = Shippo::Transaction.create(rate: rate_id)
-        check_shippo_response(response)
+        wait_for_shipoo_queue(response)
     end
 
-    def self.check_shippo_response(response)
+    def self.wait_for_shipoo_queue(response)
+        # Check response for error
+        Rails.logger.debug("Shippo response: #{response}")        
+        if response["status"] != "QUEUED"
+            Rails.logger.error("Response status not QUEUED. Something went wrong with Shippo shipment creation")             
+            Rails.logger.error(response)
+            raise ShippoError.new(response["messages"])
+        end
+        # Wait for the shipment or transation to be processed by shippo
+        shippo_resource_id = response["object_id"]
+        # Max retry count waiting for a successfully rate allotment
+        # 1 * 30 = 60 seconds
+        shippo_max_retry_count = 60
+        shippo_retry_count = 0
+        Rails.logger.debug("Waiting for to move out of queue. Shippo object_id: #{shippo_resource_id}")        
+        # This is bad and really syncronous but works
+        # TODO: make label on get_next_shipment
+        while response["status"] == "QUEUED"
+            # retry counter
+            Rails.logger.debug("Checking shipment status in Shippo. Retry count: #{shippo_retry_count}")
+            if shippo_retry_count > shippo_max_retry_count
+                break
+            else
+                shippo_retry_count += 1
+            end
+            Rails.logger.debug("Waiting for shipment to move out of queue")                        
+            sleep(1)
+            # TODO: Find a better way of checking if this is a shipment or transaction response
+            if response.label_url.nil?
+                response = Shippo::Shipment.get(shippo_resource_id)
+                Rails.logger.debug("Shippo Shipment get response for #{shippo_resource_id}: #{response}")
+            else
+                response = Shippo::Transaction.get(shippo_resource_id)
+                Rails.logger.debug("Shippo Transaction get response for #{shippo_resource_id}: #{response}")
+            end                
+        end
+        # Check response status again to make sure it completed succesfully and did not error
         Rails.logger.debug("Checking shippo response for error. Status: #{response["status"]}")
         Rails.logger.debug("Shippo response: #{response}")
         if response["status"] != "SUCCESS"
