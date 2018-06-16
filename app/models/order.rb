@@ -9,7 +9,7 @@ class Order < ApplicationRecord
 
 	validates_presence_of :name
 	validates_inclusion_of :order_source, in: order_sources
-	validates_email_format_of :email, message: 'formated incorrectly', allow_nil: true
+	validates_email_format_of :email, message: 'formated incorrectly', allow_nil: true, allow_blank: true
 	after_initialize :init
 
   def init
