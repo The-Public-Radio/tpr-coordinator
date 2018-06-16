@@ -57,8 +57,8 @@ class OrdersController < ApplicationController
     @shipment_priority = working_order_params.delete(:shipment_priority)
     @order = Order.new(@working_order_params)
     @order.country = 'US' if @working_order_params[:country].nil?
-
     unless @order.save
+      Rails.logger.error("Order is invalid: #{@order.errors}")
       raise OrderInvalid(@order.errors)
     end
 
