@@ -58,8 +58,8 @@ class OrdersController < ApplicationController
     @order = Order.new(@working_order_params)
     @order.country = 'US' if @working_order_params[:country].nil?
     unless @order.save
-      Rails.logger.error("Order is invalid: #{@order.errors}")
-      raise OrderInvalid(@order.errors)
+      Rails.logger.error("Order is invalid: #{@order.errors.messages}")
+      raise OrderInvalid(@order.errors.messages)
     end
 
     make_shipments_for_queue_order(frequencies)
