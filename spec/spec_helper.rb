@@ -39,7 +39,7 @@ ENV['EMAILS_TO_NOTIFY_OF_IMPORT'] = 'testnotify@foo.com'
 ENV['EMAILS_TO_NOTIFY_OF_ORDERS'] = 'testnotify@foo.com'
 ENV['SQUARESPACE_API_KEY'] = 'test-key'
 ENV['SQUARESPACE_APP_NAME'] = 'test-app'
-ENV['TPR_ORDER_SOURCES'] = 'squarespace,kickstarter,uncommon_goods,other,WBEZ,warranty,KUER,LGA,WFAE,KERA,KXT,WMFE'
+ENV['TPR_ORDER_SOURCES'] = 'test_order_source'
 
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate
