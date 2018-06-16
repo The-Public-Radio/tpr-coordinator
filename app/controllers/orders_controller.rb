@@ -59,7 +59,7 @@ class OrdersController < ApplicationController
     @order.country = 'US' if @working_order_params[:country].nil?
 
     unless @order.save
-      raise TPRCoordinatorError::OrderInvalid(@order.errors)
+      raise OrderInvalid(@order.errors)
     end
 
     make_shipments_for_queue_order(frequencies)
