@@ -131,6 +131,18 @@ module ShippoHelper
         }
     end
 
+    def self.create_international_warranty_shipment_params(shipment)
+        order = Order.find(shipment.order_id)
+        number_of_items = shipment.radio.count
+        {
+            address_from: warranty_return_address,
+            address_to: to_address(order),
+            parcels: parcel(number_of_items),
+            carrier_accounts: ["d2ed2a63bef746218a32e15450ece9d9"],
+            customs_declaration: customs_declaration(number_of_items)
+        }
+    end
+
     def self.to_address(order)
         {
           :name => order.name,
@@ -205,6 +217,12 @@ module ShippoHelper
 
     def self.create_shipment_with_return(shipment)   
         shipment_params = create_warranty_shipment_params(shipment)
+        shipment_params[:extra] = { is_return: true }
+        create_shippo_shipment(shipment_params)
+    end
+
+    def self.create_international_shipment_with_return(shipment)   
+        shipment_params = create_international_warranty_shipment_params(shipment)
         shipment_params[:extra] = { is_return: true }
         create_shippo_shipment(shipment_params)
     end
