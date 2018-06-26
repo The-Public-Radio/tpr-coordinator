@@ -40,7 +40,7 @@ namespace :orders do
           city: shipping_address['city'],
           state: shipping_address['state'],
           postal_code: shipping_address['postalCode'],
-          country: shipping_address['countryCode'], # they only ship to US
+          country: shipping_address['countryCode'],
           phone: shipping_address['phone'],
           reference_number: "#{order['id']},#{order['orderNumber']}", # Squarespace order number
           shipment_priority: 'economy',
@@ -57,7 +57,7 @@ namespace :orders do
         TaskHelper.clean_up_order(order_params)
         row += ['Order inputs are malformed. Check frequency, name, and address fields']
         failed_orders << row
-      rescue ShippoError => e
+      rescue ShippoHelper::ShippoError => e
         Rails.logger.error("Shipping address is invalid!: #{order_params}")
         TaskHelper.clean_up_order(order_params)
         row += ['Shipping address failed USPS validation']
