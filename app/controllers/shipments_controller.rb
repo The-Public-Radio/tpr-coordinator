@@ -156,7 +156,7 @@ class ShipmentsController < ApplicationController
           else
             response = ShippoHelper.create_shipment(@shipment)
           end
-          @shipment.shippo_reference_id = response.resource_id
+          @shipment.shippo_reference_id = response['object_id']
 
           # Check if warranty shipment and create a warranty label as well
           if @order.order_source.eql?('warranty')
