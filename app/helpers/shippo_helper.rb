@@ -87,6 +87,7 @@ module ShippoHelper
         }
         Rails.logger.debug("Creating Customs Declaration with options: #{customs_declaration_options}")
         begin
+            Shippo::API.token = ENV['SHIPPO_TOKEN']
             response = Shippo::CustomsDeclaration.create(customs_declaration_options)
         rescue Shippo::Exceptions => e
             Rails.logger.error("Creating Customs Declaration failed! #{response}")
