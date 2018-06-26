@@ -85,8 +85,14 @@ module ShippoHelper
             :certify_signer => "Spencer Wright",
             :items => [customs_item(number_of_items)]
         }
-    
-        Shippo::CustomsDeclaration.create(customs_declaration_options)
+        Rails.logger.debug("Creating Customs Declaration with options: #{customs_declaration_options}")
+        begin
+            response = Shippo::CustomsDeclaration.create(customs_declaration_options)
+        rescue Shippo::Exceptions => e
+            Rails.logger.error("Creating Customs Declaration failed! #{response}")
+            raise ShippoError.new(response["messages"])
+        end
+        response
     end
 
     def self.create_shipment_params(shipment)
@@ -101,12 +107,35 @@ module ShippoHelper
         }
     end 
 
+    def self.create_warranty_shipment_params(shipment)
+        order = Order.find(shipment.order_id)
+        number_of_items = shipment.radio.count
+        {
+            address_from: warranty_return_address,
+            address_to: to_address(order),
+            parcels: parcel(number_of_items),
+            carrier_accounts: ["d2ed2a63bef746218a32e15450ece9d9"]
+        }
+    end 
+
     def self.create_international_shipment_params(shipment)
         order = Order.find(shipment.order_id)
         number_of_items = shipment.radio.count
         {
             address_from: from_address,
             address_return: return_address,            
+            address_to: to_address(order),
+            parcels: parcel(number_of_items),
+            carrier_accounts: ["d2ed2a63bef746218a32e15450ece9d9"],
+            customs_declaration: customs_declaration(number_of_items)
+        }
+    end
+
+    def self.create_international_warranty_shipment_params(shipment)
+        order = Order.find(shipment.order_id)
+        number_of_items = shipment.radio.count
+        {
+            address_from: warranty_return_address,
             address_to: to_address(order),
             parcels: parcel(number_of_items),
             carrier_accounts: ["d2ed2a63bef746218a32e15450ece9d9"],
@@ -187,7 +216,13 @@ module ShippoHelper
     end
 
     def self.create_shipment_with_return(shipment)   
-        shipment_params = create_shipment_params(shipment)
+        shipment_params = create_warranty_shipment_params(shipment)
+        shipment_params[:extra] = { is_return: true }
+        create_shippo_shipment(shipment_params)
+    end
+
+    def self.create_international_shipment_with_return(shipment)   
+        shipment_params = create_international_warranty_shipment_params(shipment)
         shipment_params[:extra] = { is_return: true }
         create_shippo_shipment(shipment_params)
     end
