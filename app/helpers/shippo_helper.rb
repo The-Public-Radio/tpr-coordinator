@@ -85,8 +85,14 @@ module ShippoHelper
             :certify_signer => "Spencer Wright",
             :items => [customs_item(number_of_items)]
         }
-    
-        Shippo::CustomsDeclaration.create(customs_declaration_options)
+        Rails.logger.debug("Creating Customs Declaration with options: #{customs_declaration_options}")
+        begin
+            response = Shippo::CustomsDeclaration.create(customs_declaration_options)
+        rescue Shippo::Exceptions => e
+            Rails.logger.error("Creating Customs Declaration failed! #{response}")
+            raise ShippoError.new(response["messages"])
+        end
+        response
     end
 
     def self.create_shipment_params(shipment)
