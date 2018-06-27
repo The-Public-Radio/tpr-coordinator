@@ -42,11 +42,11 @@ namespace :orders do
             
   		response = client.fulfill_order(id, shipments, send_notification)
   		if response.success?
-  			Rails.logger.debug("Fulfill order succeded. Marking as notified/")
+  			Rails.logger.debug("Fulfill order succeded. Marking as notified")
   			order.notified = true
   			order.save!
   		else
-  			Rails.logger.error("Fulfill order failed: #{response.status}")
+				Rails.logger.error("Fulfill order failed: #{response.status}, #{response.body}")			
   		end
   	end
   end
