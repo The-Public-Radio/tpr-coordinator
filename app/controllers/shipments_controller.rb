@@ -162,15 +162,15 @@ class ShipmentsController < ApplicationController
           if @order.order_source.eql?('warranty')
             if @order.country != 'US'
               Rails.logger.debug('Creating international return shipment')
-              response = ShippoHelper.create_international_shipment_with_return(@shipment)          
+              warranty_response = ShippoHelper.create_international_shipment_with_return(@shipment)          
             else
-              response = ShippoHelper.create_shipment_with_return(@shipment)
+              warranty_response = ShippoHelper.create_shipment_with_return(@shipment)
             end
 
             # rate_reference_id will be overridden below
             # Shippo api makes you make a new Shippo Shipment for a return label. We're making two here, one for the return and one for the new radio 
             # TODO: Make this more generic and find a way to not reuse this field. It causes loss of visbility into what's happening.
-            @shipment.rate_reference_id = ShippoHelper.choose_rate(response.rates, usps_service_level)
+            @shipment.rate_reference_id = ShippoHelper.choose_rate(warranty_response.rates, usps_service_level)
             create_warranty_label_response = ShippoHelper.create_label(@shipment)            
             @shipment.return_label_url = create_warranty_label_response.label_url
           end

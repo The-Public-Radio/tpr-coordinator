@@ -190,6 +190,7 @@ RSpec.describe ShipmentsController, type: :controller do
           def expect_rate_and_label
             expect(ShippoHelper).to receive(:choose_rate).and_return(choosen_shippo_rate).once
             expect(ShippoHelper).to receive(:create_label).and_return(shippo_create_transaction_response).once
+            expect(shippo_create_shipment_response).to receive(:[]).with('object_id').and_return('test_object_id')
           end
 
           def expect_shipment_object_params
@@ -221,6 +222,7 @@ RSpec.describe ShipmentsController, type: :controller do
             expect(ShippoHelper).to receive(:create_shipment).and_return(shippo_create_shipment_response).once
             expect(ShippoHelper).to receive(:choose_rate).and_return(choosen_shippo_rate).twice
             expect(ShippoHelper).to receive(:create_label).and_return(shippo_create_transaction_response).twice
+            expect(shippo_create_shipment_response).to receive(:[]).with('object_id').and_return('test_object_id')
             
             valid_shipping_attributes[:order_id] = warranty_order_id
             post :create, params: { order_id: warranty_order_id, shipment: valid_shipping_attributes }, session: valid_session

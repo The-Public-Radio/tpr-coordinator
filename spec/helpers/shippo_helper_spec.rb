@@ -25,8 +25,13 @@ RSpec.describe ShippoHelper, type: :helper do
         end
 
         let(:create_shipment_with_return_params) do
-            create_shipment_params[:extra] = { is_return: true }
-            create_shipment_params
+            {
+                address_from: warranty_return_address,
+                address_to: to_address,
+                parcels: one_radio_parcel,
+                carrier_accounts: ["d2ed2a63bef746218a32e15450ece9d9"],
+                extra: { is_return: true }
+            } 
         end
   
         let(:create_transaction_params)  { {
@@ -264,8 +269,9 @@ RSpec.describe ShippoHelper, type: :helper do
             def successful_shipment_creation_mock
                 expect(shippo_shipment).to receive(:[]).with("status").and_return("QUEUED").at_least(2).times
                 expect(shippo_shipment).to receive(:[]).with("object_id").and_return("test_object_id").once
-                expect(Shippo::Shipment).to receive(:get).with("test_object_id").and_return(success_shippo_shipment).at_least(2).times
+                expect(Shippo::Shipment).to receive(:get).with("test_object_id").and_return(success_shippo_shipment).at_least(1).times
                 expect(success_shippo_shipment).to receive(:[]).with("status").and_return("SUCCESS").exactly(3).times
+                expect(shippo_shipment).to receive(:label_url).and_return(nil).once
             end
             
             it 'creates a shipment' do
@@ -299,7 +305,9 @@ RSpec.describe ShippoHelper, type: :helper do
                 shipment.rate_reference_id = 'test_rate_id'
                 shipment.save
                 expect(Shippo::Transaction).to receive(:create).with(create_transaction_params).and_return(shippo_transaction)
-                expect(shippo_transaction).to receive(:[]).with("status").and_return("SUCCESS").twice
+                expect(shippo_transaction).to receive(:[]).with("status").and_return("QUEUED").ordered
+                expect(shippo_transaction).to receive(:[]).with("object_id").and_return("test_object_id").ordered
+                expect(shippo_transaction).to receive(:[]).with("status").and_return("SUCCESS").ordered
                 expect(ShippoHelper.create_label(shipment)).to be shippo_transaction
             end
 
