@@ -81,7 +81,7 @@ RSpec.describe ShippoHelper, type: :helper do
                 :quantity => 1,
                 :net_weight => "12",
                 :mass_unit => "oz",
-                :value_amount => "40",
+                :value_amount => "15",
                 :value_currency => "USD",
                 :origin_country => "US"
             }
@@ -93,7 +93,7 @@ RSpec.describe ShippoHelper, type: :helper do
                 :quantity => 2,
                 :net_weight => "1.75",
                 :mass_unit => "lb",
-                :value_amount => "80",
+                :value_amount => "30",
                 :value_currency => "USD",
                 :origin_country => "US"
             }
@@ -105,7 +105,7 @@ RSpec.describe ShippoHelper, type: :helper do
                 :quantity => 3,
                 :net_weight => "2.60",
                 :mass_unit => "lb",
-                :value_amount => "120",
+                :value_amount => "45",
                 :value_currency => "USD",
                 :origin_country => "US"
             }
