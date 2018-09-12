@@ -45,17 +45,17 @@ RSpec.describe TaskHelper, type: :helper do
 
 	  	specify '1 radio' do
 	  		cost = helper.calculate_shipping_and_handling(1, shipment_priority)
-	  		expect(cost).to be 25.95
+	  		expect(cost).to be 38.45
 	  	end
 
 	  	specify '2 radios' do
 	  		cost = helper.calculate_shipping_and_handling(2, shipment_priority)
-	  		expect(cost).to be 27.95
+	  		expect(cost).to be 38.45
 	  	end
 
 	  	specify '3 radios' do
 	  		cost = helper.calculate_shipping_and_handling(3, shipment_priority)
-	  		expect(cost).to be 29.95
+	  		expect(cost).to be 44.05
 	  	end
 	  end
   end

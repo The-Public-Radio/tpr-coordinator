@@ -5,9 +5,9 @@ module TaskHelper
 
 	def calculate_shipping_and_handling(number_of_radios, shipment_priority)
 	#        first class   priority  priority express
-	# 1-pack    5.95         12.95      25.95
-	# 2-pack                 7.95       27.95
-	# 3-pack                 8.95       29.95
+	# 1-pack    5.95         12.95      38.45
+	# 2-pack                 7.95       38.45
+	# 3-pack                 8.95       44.05
 
 	  case shipment_priority
 	  when 'economy'
@@ -32,11 +32,11 @@ module TaskHelper
 	  when 'express'
 	    case number_of_radios
 	    when 1
-	      25.95
+	      38.45
 	    when 2
-	      27.95
+	      38.45
 	    when 3
-	      29.95
+	      44.05
 	    end
 	  end
 	end
