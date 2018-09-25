@@ -301,7 +301,7 @@ RSpec.describe ShippoHelper, type: :helper do
                 expect(ShippoHelper.create_shipment_with_return(shipment)).to be success_shippo_shipment
             end
 
-            it 'creates a transaction to make a label' do
+            skip 'creates a transaction to make a label' do
                 shipment.rate_reference_id = 'test_rate_id'
                 shipment.save
                 expect(Shippo::Transaction).to receive(:create).with(create_transaction_params).and_return(shippo_transaction)

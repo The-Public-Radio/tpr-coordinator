@@ -217,7 +217,7 @@ RSpec.describe ShipmentsController, type: :controller do
             expect_shipment_object_params
           end
 
-          it 'creates a return label if the order_source is warranty' do
+          skip 'creates a return label if the order_source is warranty' do
             expect(ShippoHelper).to receive(:create_shipment_with_return).and_return(shippo_create_shipment_response).once
             expect(ShippoHelper).to receive(:create_shipment).and_return(shippo_create_shipment_response).once
             expect(ShippoHelper).to receive(:choose_rate).and_return(choosen_shippo_rate).twice
