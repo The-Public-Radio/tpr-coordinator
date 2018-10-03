@@ -3,10 +3,6 @@ require 'gmail'
 module TaskHelper
   attr_reader :gmail_client
 
-  def calculate_shipping_and_handling(number_of_radios, shipment_priority)
-    ShippingCalculator.calculate_shipping_and_handling(number_of_radios, shipment_priority)
-  end
-
   def shipment_priority_mapping(priority_string)
     priority_string = priority_string.downcase
     if priority_string.include?('economy') || priority_string.include?('standard')
