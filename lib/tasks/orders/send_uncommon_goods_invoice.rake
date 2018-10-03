@@ -26,7 +26,7 @@ namespace :orders do
           ucg_order_id, ucg_shipment_id = order.reference_number.split(',')
           num_radios = shipment.radio.count
           shipping_and_handling = TaskHelper.calculate_shipping_and_handling(num_radios, shipment.shipment_priority)
-          csv << [ucg_order_id, ucg_shipment_id, shipment.tracking_number, num_radios,  33.75 * num_radios, shipping_and_handling]
+          csv << [ucg_order_id, ucg_shipment_id, shipment.tracking_number, num_radios,  Radio::PRICE * num_radios, shipping_and_handling]
         end
       end
     end

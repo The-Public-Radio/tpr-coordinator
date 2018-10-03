@@ -29,7 +29,7 @@ describe "orders:send_uncommon_goods_invoice", type: :rake do
                     order.shipments.each do |shipment|
                         ucg_order_id, ucg_shipment_id = order.reference_number.split(',')
                         num_radios = shipment.radio.count
-                        csv << [ucg_order_id, ucg_shipment_id, shipment.tracking_number, num_radios, 33.75 * num_radios, 0]
+                        csv << [ucg_order_id, ucg_shipment_id, shipment.tracking_number, num_radios, Radio::PRICE * num_radios, 0]
                     end
                 end
             end

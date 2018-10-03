@@ -9,7 +9,7 @@ class Shipment < ApplicationRecord
   belongs_to :order
   # use tracking_number gem for validation
   validates :tracking_number, tracking_number: true, allow_nil: true  #, uniqueness: true
-  validates_inclusion_of :shipment_status, in: %w(created label_created label_printed shipped boxed transit delivered failure returned unknown), 
+  validates_inclusion_of :shipment_status, in: %w(created label_created label_printed shipped boxed transit delivered failure returned unknown),
     allow_nil: true, allow_blank: true
   validates_inclusion_of :shipment_priority, in: %w(economy priority express), allow_nil: true
 
