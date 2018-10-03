@@ -16,4 +16,16 @@ class Shipment < ApplicationRecord
   def next_unboxed_radio
     self.radio.order(:created_at).select{ |r| r.boxed == false }[0]
   end
+
+  def radio_count
+    radio.count
+  end
+
+  def cost_of_goods
+    radio_count * Radio::PRICE
+  end
+
+  def shipping_and_handling
+    ShippingCalculator.calculate_shipping_and_handling(radio_count, shipment_priority)
+  end
 end

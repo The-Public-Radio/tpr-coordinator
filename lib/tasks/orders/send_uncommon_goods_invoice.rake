@@ -19,14 +19,28 @@ namespace :orders do
     Rails.logger.info("Creating CSV")
     CSV.open(invoice_file_name, "w") do |csv|
       # Add headers to invoice csv
-      csv << ['order_id', 'shipment_id', 'usps_tracking_number', 'quantity','cost_of_goods', 'shipping_handling_costs']
+      csv << [
+        'order_id',
+        'shipment_id',
+        'usps_tracking_number',
+        'quantity',
+        'cost_of_goods',
+        'shipping_handling_costs',
+      ]
+
       # Add each shipment to order
       orders.each do |order|
         order.shipments.each do |shipment|
           ucg_order_id, ucg_shipment_id = order.reference_number.split(',')
-          num_radios = shipment.radio.count
-          shipping_and_handling = TaskHelper.calculate_shipping_and_handling(num_radios, shipment.shipment_priority)
-          csv << [ucg_order_id, ucg_shipment_id, shipment.tracking_number, num_radios,  Radio::PRICE * num_radios, shipping_and_handling]
+
+          csv << [
+            ucg_order_id,
+            ucg_shipment_id,
+            shipment.tracking_number,
+            shipment.radio_count,
+            shipment.cost_of_goods,
+            shipment.shipping_and_handling,
+          ]
         end
       end
     end

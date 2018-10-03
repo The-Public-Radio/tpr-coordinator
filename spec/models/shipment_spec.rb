@@ -60,4 +60,22 @@ RSpec.describe Shipment, type: :model do
       expect(model).to_not be_valid
     end
   end
+
+  describe 'calculated totals' do
+    before do
+      @shipment = create(:boxed)
+    end
+
+    it 'counts the number of radios' do
+      expect(@shipment.radio_count).to eq 3
+    end
+
+    it 'computes the cost of goods' do
+      expect(@shipment.cost_of_goods).to eq (Radio::PRICE * 3)
+    end
+
+    it 'computes the shipping and handling' do
+      expect(@shipment.shipping_and_handling).to eq 8.95
+    end
+  end
 end
