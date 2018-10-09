@@ -4,7 +4,7 @@ class QuickbooksAdapter
 
   def create_invoice(retailer, invoice, csv)
     created_invoice = upload_invoice(retailer, invoice)
-    upload_and_attach_csv(retailer, created_invoice.id)
+    upload_and_attach_csv(retailer, created_invoice.id, csv)
   end
 
   private
@@ -43,9 +43,9 @@ class QuickbooksAdapter
     line_item
   end
 
-  def upload_and_attach_csv(retailer, invoice_id)
+  def upload_and_attach_csv(retailer, invoice_id, csv)
     tmp = Tempfile.new('invoice')
-    tmp.write('first, second, third')
+    tmp.write(csv.generate)
     tmp.close
 
     meta = Quickbooks::Model::Attachable.new
