@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181009031854) do
+ActiveRecord::Schema.define(version: 20181009034825) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -35,9 +35,9 @@ ActiveRecord::Schema.define(version: 20181009031854) do
   end
 
   create_table "quickbooks_credentials", force: :cascade do |t|
-    t.string "access_token", limit: 1024
-    t.string "refresh_token"
-    t.string "realm_id"
+    t.string "access_token", limit: 1024, null: false
+    t.string "refresh_token", null: false
+    t.string "realm_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -55,6 +55,14 @@ ActiveRecord::Schema.define(version: 20181009031854) do
     t.string "country_code"
     t.string "firmware_version"
     t.string "quality_control_status"
+  end
+
+  create_table "retailers", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "source", null: false
+    t.integer "quickbooks_customer_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "shipments", force: :cascade do |t|
