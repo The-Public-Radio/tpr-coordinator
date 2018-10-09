@@ -4,10 +4,10 @@ class QuickbooksCredential < ApplicationRecord
   validates :realm_id, presence: true
 
   def refresh!
-    oauth_client.refresh!
+    result = oauth_client.refresh!
 
-    self.access_token = oauth_client.token
-    self.refresh_token = oauth_client.refresh_token
+    self.access_token = result.token
+    self.refresh_token = result.refresh_token
 
     save!
   end
