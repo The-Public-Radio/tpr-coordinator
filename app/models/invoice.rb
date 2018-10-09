@@ -1,16 +1,12 @@
 class Invoice
 
-  attr_reader :orders
+  attr_reader :orders, :radio_total, :shipping_total
 
-  # TODO: The query here should be something on `Order` or a specialized query object
-  def self.for_source(source)
+  # TODO: This method is a mess.
+  def self.for_retailer(retailer)
     orders = []
 
-    # TODO: Pull orders that are order_source: 'uncommon_goods' and invoiced: false in the same query
-    Order.where(order_source: source).each do |o|
-      # Skip invoiced orders
-      next if o.invoiced
-
+    Order.uninvoiced.for_retailer(retailer).each do |o|
       # Only invoice orders where all shipments are in a 'boxed' state
       all_shipments_boxed = true
 
@@ -25,17 +21,12 @@ class Invoice
     end
 
     if !orders.any?
-      Rails.logger.info("No orders found to invoice. Exiting.")
+      Rails.logger.info("No orders found to invoice.")
+      return nil
     else
       Rails.logger.info("Found #{orders.count} orders to invoice")
-    end
 
-    self.new(orders)
-  end
-
-  def mark_orders_as_invoiced!
-    orders.each do |order|
-      order.update_attributes(invoiced: true)
+      return self.new(orders)
     end
   end
 
@@ -43,5 +34,21 @@ class Invoice
 
   def initialize(orders)
     @orders = orders
+    calculate_totals
+  end
+
+  def calculate_totals
+    radio_total = 0
+    shipping_total = 0
+
+    orders.each do |order|
+      order.shipments.each do |shipment|
+        radio_total += shipment.cost_of_goods
+        shipping_total += shipment.shipping_and_handling
+      end
+    end
+
+    @radio_total = radio_total
+    @shipping_total = shipping_total
   end
 end

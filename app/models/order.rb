@@ -2,6 +2,7 @@ class Order < ApplicationRecord
   has_many :shipments
 
   scope :uninvoiced, -> { where(invoiced: false) }
+  scope :for_retailer, -> (retailer) { where(order_source: retailer.source) }
 
   if ENV['TPR_ORDER_SOURCES'].nil?
     order_sources = []
@@ -20,14 +21,18 @@ class Order < ApplicationRecord
     self.notified ||= false
   end
 
-  def self.num_radios_in_order(order_id)
-    order = Order.find(order_id)
+  def num_radios
     radio_count = 0
 
-    order.shipments.each do |shipment|
+    shipments.each do |shipment|
       radio_count += shipment.radio.count
     end
 
     radio_count
+  end
+
+  def self.num_radios_in_order(order_id)
+    order = Order.find(order_id)
+    order.num_radios
   end
 end

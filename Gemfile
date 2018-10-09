@@ -19,62 +19,63 @@ gem 'pg', '~> 0.18'
 gem 'puma', '~> 3.7'
 # Use ActiveModel has_secure_password
 gem 'bcrypt', '~> 3.1.7'
-gem 'uuidtools'
-gem 'useragent'
-gem 'active_model_serializers'
-gem 'httparty'
-gem 'json'
-gem 'validates_email_format_of'
+gem 'uuidtools', '2.1.5'
+gem 'useragent', '0.16.9'
+gem 'active_model_serializers', '0.10.7'
+gem 'httparty', '0.15.6'
+gem 'json', '1.8.6'
+gem 'validates_email_format_of', '1.6.3'
 gem 'gmail'
 
 # Because of the change in type casting in ruby 2.4.x
-gem 'bigdecimal'
+gem 'bigdecimal', '1.3.4'
 
 # API Documentation Engine
-gem "apitome"
+gem 'apitome', '0.1.0'
 
 # Monitoring
 # gem 'skylight'
-gem 'bugsnag'
+gem 'bugsnag', '6.6.1'
 
 # Shipstation API gem
 gem 'shippo', '~> 3.0', '>= 3.0.1'
-gem 'tracking_number'
+gem 'tracking_number', '0.10.3'
 
 # paaaaaaaaaagination
-gem 'api-pagination'
-gem 'kaminari'
+gem 'api-pagination', '4.7.0'
+gem 'kaminari', '1.1.1'
 
-gem 'faker'
+gem 'faker', '1.8.7'
 
-gem 'rack-attack'
+gem 'rack-attack', '5.0.1'
 
 # Squarespace
-gem 'squarespace'
+gem 'squarespace', '0.0.3'
 
 # QBO APIs
-gem 'oauth2'
-gem 'quickbooks-ruby'
+# NOTE: Full OAuth2 support is still in development: https://github.com/ruckus/quickbooks-ruby/issues/389
+gem 'quickbooks-ruby', git: 'git@github.com:ruckus/quickbooks-ruby.git', branch: '389-oauth2'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem 'pry'
-  gem 'pry-nav'
-  gem 'rspec_api_documentation'
+  gem 'pry', '0.10.4'
+  gem 'pry-nav', '0.2.4'
+  gem 'rspec_api_documentation', '5.1.0'
   gem 'rspec-rails', '~> 3.5'
   gem 'factory_girl_rails', '~> 4.0'
-  gem 'database_cleaner'
-  gem 'webmock'
-  gem 'timecop'
-  gem 'simplecov'
-  gem 'fantaskspec'
-  gem 'shoulda-matchers'
+  gem 'database_cleaner', '1.6.2'
+  gem 'webmock', '3.2.1'
+  gem 'timecop', '0.9.1'
+  gem 'simplecov', '0.15.1'
+  gem 'fantaskspec', '1.1.0'
+  gem 'shoulda-matchers', '3.1.2'
+  gem 'table_print'
 end
 
 group :development do
   gem 'listen', '>= 3.0.5', '< 3.2'
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
-  gem 'spring'
+  gem 'spring', '~> 2.0.0'
   gem 'spring-watcher-listen', '~> 2.0.0'
 end
 

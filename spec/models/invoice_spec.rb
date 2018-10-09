@@ -3,7 +3,8 @@ require 'rails_helper'
 RSpec.describe Invoice, type: :model do
   before do
     create_list(:uncommon_goods, 3)
-    @invoice = Invoice.for_source('uncommon_goods') # TODO: Define this string elsewhere
+    retailer = Retailer.create!(name: 'Uncommon Goods', source: 'uncommon_goods', quickbooks_customer_id: 0)
+    @invoice = Invoice.for_retailer(retailer)
   end
 
   describe '#initialize' do
