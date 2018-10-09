@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180520004536) do
+ActiveRecord::Schema.define(version: 20181009031854) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -32,6 +32,14 @@ ActiveRecord::Schema.define(version: 20180520004536) do
     t.string "reference_number"
     t.string "comments"
     t.boolean "notified"
+  end
+
+  create_table "quickbooks_credentials", force: :cascade do |t|
+    t.string "access_token", limit: 1024
+    t.string "refresh_token"
+    t.string "realm_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "radios", force: :cascade do |t|

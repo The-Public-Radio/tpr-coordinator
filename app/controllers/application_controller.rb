@@ -1,13 +1,10 @@
 require 'api-pagination'
 
-class ApplicationController < ActionController::API
+class ApplicationController < ActionController::Base
   include ActionController::Serialization
   include Rails::Pagination
-  before_action :authorize
 
-  def http
-    api_response([], 400, 'derp')
-  end
+  before_action :authorize
 
   def api_response(data, status = :ok, errors = [])
     serializer = ActiveModel::Serializer.serializer_for(data)

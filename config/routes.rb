@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  get 'qbo_auth', to: 'qbo_auth#index'
+  get 'qbo_auth/callback'
+
   resources :orders
   resources :users
 

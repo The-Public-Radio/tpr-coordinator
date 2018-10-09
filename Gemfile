@@ -10,6 +10,8 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
+gem 'dotenv-rails', groups: [:development, :test]
+
 gem 'rails', '~> 5.1.2'
 # Use postgresql as the database for Active Record
 gem 'pg', '~> 0.18'
@@ -50,6 +52,10 @@ gem 'rack-attack'
 # Squarespace
 gem 'squarespace'
 
+# QBO APIs
+gem 'oauth2'
+gem 'quickbooks-ruby'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'pry'
@@ -62,6 +68,7 @@ group :development, :test do
   gem 'timecop'
   gem 'simplecov'
   gem 'fantaskspec'
+  gem 'shoulda-matchers'
 end
 
 group :development do

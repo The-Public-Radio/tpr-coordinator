@@ -17,3 +17,6 @@
 .rspec
 coverage
 .DS_store
+
+# Ignore developer-specific configuration
+.env
