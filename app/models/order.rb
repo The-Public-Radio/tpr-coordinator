@@ -1,6 +1,8 @@
 class Order < ApplicationRecord
   has_many :shipments
 
+  scope :uninvoiced, -> { where(invoiced: false) }
+
   if ENV['TPR_ORDER_SOURCES'].nil?
     order_sources = []
   else

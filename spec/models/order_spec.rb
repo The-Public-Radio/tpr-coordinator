@@ -84,6 +84,18 @@ RSpec.describe Order, type: :model do
     end
   end
 
+  describe 'scopes' do
+    describe '#uninvoiced' do
+      it 'returns only uninvoiced orders' do
+        create(:order, invoiced: true)
+        uninvoiced = create(:order)
+
+        expect(Order.uninvoiced.count).to eq 1
+        expect(Order.uninvoiced.first.id).to eq uninvoiced.id
+      end
+    end
+  end
+
   describe '#num_radios_in_order' do
     it 'counts the number of radios in an order' do
       order_id = create(:uncommon_goods).id
