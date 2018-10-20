@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe "orders:send_uncommon_goods_notification", type: :rake do
+describe "orders:send_uncommon_goods_invoice", type: :rake do
 
     it "preloads the Rails environment" do
         expect(task.prerequisites).to include "environment"
@@ -10,23 +10,23 @@ describe "orders:send_uncommon_goods_notification", type: :rake do
         # Stub gmail client
         let(:stub_gmail_client) { double('gmail', deliver: false ) }
 
-        it 'sends an emails with the shipments csv to uncommon_goods' do
+        it 'sends an emails with an invoice csv to uncommon_goods' do
             # We only want to send orders that are in a 'boxed', 'transit', 'delivered'
             email_to_send_invoice_to = ENV['UNCOMMON_GOODS_INVOICING_EMAILS'].split(',')
 
             retailer = create(:retailer, name: 'Uncommon Goods', source: 'uncommon_goods')
-            orders_not_to_notify = create_list(:invoiced_true, 2)
-            orders_not_to_notify += create_list(:invoiced_boxed_false, 2)
-            orders_to_notify = create_list(:uncommon_goods, 3)
+            orders_not_to_invoice = create_list(:invoiced_true, 2)
+            orders_to_invoice = create_list(:uncommon_goods, 3)
+            orders_not_to_invoice += create_list(:invoiced_boxed_false, 2)
 
-            invoice_name = "Centerline Labs LLC Shipments #{Date.today}.csv"
+            invoice_name = "Centerline Labs LLC Invoice #{Date.today}.csv"
 
             # Add each order to invoice csv
             CSV.open(invoice_name, "w") do |csv|
                 # Add headers to invoice csv
                 csv <<  ['order_id', 'shipment_id', 'usps_tracking_number', 'quantity', 'cost_of_goods', 'shipping_handling_costs']
                 # Add each shipment to order
-                orders_to_notify.each do |order|
+                orders_to_invoice.each do |order|
                     order.shipments.each do |shipment|
                         ucg_order_id, ucg_shipment_id = order.reference_number.split(',')
                         num_radios = shipment.radio.count
@@ -39,7 +39,7 @@ describe "orders:send_uncommon_goods_notification", type: :rake do
 
                 email_params = {
                     to: email,
-                    subject: "Centerline Labs LLC Shipments #{Date.today}",
+                    subject: "Centerline Labs LLC Invoice #{Date.today}",
                     add_file: invoice_name
                 }
 
@@ -48,13 +48,13 @@ describe "orders:send_uncommon_goods_notification", type: :rake do
 
             task.execute
 
-            # make sure all send orders are marked as notified: true
-            orders_to_notify.each do |order|
-                expect{ order.reload }.to change{ order.notified }.from(false).to(true)
+            # make sure all send orders are marked as invoiced: true
+            orders_to_invoice.each do |order|
+                expect{ order.reload }.to change{ order.invoiced }.from(false).to(true)
             end
 
-            orders_not_to_notify.each do |order|
-                expect{ order.reload }.to_not change{ order.notified }
+            orders_not_to_invoice.each do |order|
+                expect{ order.reload }.to_not change{ order.invoiced }
             end
 
             File.delete(invoice_name)

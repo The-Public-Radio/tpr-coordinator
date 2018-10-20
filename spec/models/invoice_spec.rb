@@ -38,14 +38,4 @@ RSpec.describe Invoice, type: :model do
       end
     end
   end
-
-  describe '#mark_orders_as_notified!' do
-    it 'sets Order#notified to true' do
-      @invoice.mark_orders_as_notified!
-
-      Order.all.each do |order|
-        expect(order.notified).to be true
-      end
-    end
-  end
 end
