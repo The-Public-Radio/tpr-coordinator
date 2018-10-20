@@ -27,6 +27,14 @@ class Invoice
     end
   end
 
+  def mark_orders_as_notified!
+    ActiveRecord::Base.transaction do
+      orders.each do |order|
+        order.update_attributes(notified: true)
+      end
+    end
+  end
+
   def to_csv
     ShipmentsCSV.new(self.orders).generate
   end
