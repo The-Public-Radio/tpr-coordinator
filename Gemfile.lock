@@ -1,5 +1,5 @@
 GIT
-  remote: git@github.com:ruckus/quickbooks-ruby.git
+  remote: git://github.com/ruckus/quickbooks-ruby.git
   revision: 38a729d59d29e4f99e2d48fdfd4b416b2c1e85bd
   branch: 389-oauth2
   specs:

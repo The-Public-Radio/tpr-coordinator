@@ -54,7 +54,7 @@ gem 'squarespace', '0.0.3'
 
 # QBO APIs
 # NOTE: Full OAuth2 support is still in development: https://github.com/ruckus/quickbooks-ruby/issues/389
-gem 'quickbooks-ruby', git: 'git@github.com:ruckus/quickbooks-ruby.git', branch: '389-oauth2'
+gem 'quickbooks-ruby', git: 'git://github.com/ruckus/quickbooks-ruby.git', branch: '389-oauth2'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
