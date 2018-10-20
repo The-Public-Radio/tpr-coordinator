@@ -9,6 +9,8 @@ class QuickbooksCredential < ApplicationRecord
     self.access_token = result.token
     self.refresh_token = result.refresh_token
 
+    @oauth_client = nil # clear this out so it reloads with new tokens
+
     save!
   end
 

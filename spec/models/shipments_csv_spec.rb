@@ -1,9 +1,9 @@
 require 'rails_helper'
 
-RSpec.describe InvoiceCSV, type: :model do
+RSpec.describe ShipmentsCSV, type: :model do
   before do
     orders_to_invoice = create_list(:uncommon_goods, 3)
-    @csv = InvoiceCSV.new(orders_to_invoice)
+    @csv = ShipmentsCSV.new(orders_to_invoice)
   end
 
   describe '#initialize' do
@@ -22,7 +22,7 @@ RSpec.describe InvoiceCSV, type: :model do
     it 'includes the headers at the top' do
       headers = output.lines.first.chomp
 
-      expect(headers).to eq InvoiceCSV::HEADERS.join(',')
+      expect(headers).to eq ShipmentsCSV::HEADERS.join(',')
     end
 
     it 'includes a line for each shipment' do

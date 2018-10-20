@@ -1,4 +1,4 @@
-class InvoiceCSV
+class ShipmentsCSV
   HEADERS = [
     'order_id',
     'shipment_id',

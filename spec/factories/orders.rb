@@ -12,6 +12,16 @@ FactoryGirl.define do
     email { "#{name.split(' ').join}@gmail.com" }
     invoiced false
 
+    trait :with_shipments do
+      transient do
+        shipment_count { 1 }
+      end
+
+      after(:create) do |order, evaluator|
+        create_list(:boxed, evaluator.shipment_count, order: order)
+      end
+    end
+
     factory :warranty, class: Order do
       order_source "warranty"
 

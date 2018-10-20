@@ -2,9 +2,9 @@ class QuickbooksAdapter
   RADIO_DESCRIPTION = 'Radios'
   SHIP_DESCRIPTION = 'Shipping & Handling'
 
-  def create_invoice(retailer, invoice, csv)
-    created_invoice = upload_invoice(retailer, invoice)
-    upload_and_attach_csv(retailer, created_invoice.id, csv)
+  def create_invoice(invoice)
+    qbo_invoice = upload_invoice(invoice)
+    upload_and_attach_csv(qbo_invoice.id, invoice)
   end
 
   private
@@ -17,12 +17,12 @@ class QuickbooksAdapter
                      end
   end
 
-  def upload_invoice(retailer, invoice)
+  def upload_invoice(invoice)
     qbo_invoice = Quickbooks::Model::Invoice.new
-    qbo_invoice.customer_id = retailer.quickbooks_customer_id
+    qbo_invoice.customer_id = invoice.retailer.quickbooks_customer_id
     qbo_invoice.txn_date = Date.today
 
-    qbo_invoice.line_items << build_line_item(ENV['QBO_RADIO_ITEM_ID'], RADIO_DESCRIPTION, 1, invoice.radio_total)
+    qbo_invoice.line_items << build_line_item(ENV['QBO_RADIO_ITEM_ID'], RADIO_DESCRIPTION, invoice.radio_count, Radio::PRICE)
     qbo_invoice.line_items << build_line_item(ENV['QBO_SHIP_ITEM_ID'], SHIP_DESCRIPTION, 1, invoice.shipping_total)
 
     service = Quickbooks::Service::Invoice.new
@@ -43,16 +43,16 @@ class QuickbooksAdapter
     line_item
   end
 
-  def upload_and_attach_csv(retailer, invoice_id, csv)
+  def upload_and_attach_csv(qbo_invoice_id, invoice)
     tmp = Tempfile.new('invoice')
-    tmp.write(csv.generate)
+    tmp.write(invoice.to_csv)
     tmp.close
 
     meta = Quickbooks::Model::Attachable.new
     today = Date.today
-    meta.file_name = "#{retailer.source}_#{today.strftime('%Y_%m_%d')}.csv"
+    meta.file_name = "#{invoice.retailer.source}_#{today.strftime('%Y_%m_%d')}.csv"
     meta.content_type = 'text/csv'
-    entity = Quickbooks::Model::BaseReference.new(invoice_id, type: 'Invoice')
+    entity = Quickbooks::Model::BaseReference.new(qbo_invoice_id, type: 'Invoice')
     meta.attachable_ref = Quickbooks::Model::AttachableRef.new(entity)
     meta.attachable_ref.include_on_send = true
 

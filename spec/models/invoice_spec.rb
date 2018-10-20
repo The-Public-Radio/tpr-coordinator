@@ -3,13 +3,29 @@ require 'rails_helper'
 RSpec.describe Invoice, type: :model do
   before do
     create_list(:uncommon_goods, 3)
-    retailer = Retailer.create!(name: 'Uncommon Goods', source: 'uncommon_goods', quickbooks_customer_id: 0)
-    @invoice = Invoice.for_retailer(retailer)
+    @retailer = Retailer.create!(name: 'Uncommon Goods', source: 'uncommon_goods', quickbooks_customer_id: 0)
+    @invoice = Invoice.for_retailer(@retailer)
   end
 
-  describe '#initialize' do
+  describe 'for_retailer' do
     it 'sets orders' do
       expect(@invoice.orders.count).to eq 3
+    end
+
+    it 'set the retailer attribute' do
+      expect(@invoice.retailer).to be @retailer
+    end
+
+    it 'sets the radio_count' do
+      expect(@invoice.radio_count).to eq 18
+    end
+
+    it 'sets the radio total' do
+      expect(@invoice.radio_total).to eq 607.50
+    end
+
+    it 'sets the shipping total' do
+      expect(@invoice.shipping_total).to eq 53.70
     end
   end
 

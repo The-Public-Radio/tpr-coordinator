@@ -7,7 +7,8 @@ namespace :orders do
 
     Rails.logger.info("Preparing and sending Uncommon Goods invoice")
 
-    invoice = Invoice.for_source('uncommon_goods')
+    retailer = Retailer.for_source('uncommon_goods')
+    invoice = Invoice.for_retailer(retailer)
 
     Rails.logger.info("Creating CSV")
 
@@ -15,7 +16,7 @@ namespace :orders do
     invoice_file_name = "Centerline Labs LLC Invoice #{today}.csv"
 
     File.open(invoice_file_name, 'w') do |file|
-      invoice_csv = InvoiceCSV.new(invoice.orders)
+      invoice_csv = ShipmentsCSV.new(invoice.orders)
 
       file.write(invoice_csv.generate)
     end

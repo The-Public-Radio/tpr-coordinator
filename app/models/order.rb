@@ -2,6 +2,8 @@ class Order < ApplicationRecord
   has_many :shipments
 
   scope :uninvoiced, -> { where(invoiced: false) }
+  scope :unnotified, -> { where(notified: false) }
+  scope :with_shipments, -> { includes(:shipments) }
   scope :for_retailer, -> (retailer) { where(order_source: retailer.source) }
 
   if ENV['TPR_ORDER_SOURCES'].nil?
@@ -29,6 +31,14 @@ class Order < ApplicationRecord
     end
 
     radio_count
+  end
+
+  def all_radios_shipped?
+    shipments.each do |shipment|
+      return false if !%w{boxed transit delivered}.include?(shipment.shipment_status)
+    end
+
+    true
   end
 
   def self.num_radios_in_order(order_id)

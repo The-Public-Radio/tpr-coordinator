@@ -14,6 +14,7 @@ describe "orders:send_uncommon_goods_invoice", type: :rake do
             # We only want to send orders that are in a 'boxed', 'transit', 'delivered'
             email_to_send_invoice_to = ENV['UNCOMMON_GOODS_INVOICING_EMAILS'].split(',')
 
+            retailer = create(:retailer, name: 'Uncommon Goods', source: 'uncommon_goods')
             orders_not_to_invoice = create_list(:invoiced_true, 2)
             orders_to_invoice = create_list(:uncommon_goods, 3)
             orders_not_to_invoice += create_list(:invoiced_boxed_false, 2)
