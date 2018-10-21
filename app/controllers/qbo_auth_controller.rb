@@ -2,7 +2,7 @@ class QboAuthController < ApplicationController
   skip_before_action :authorize
 
   def index
-    redirect_uri = 'http://localhost:3000/qbo_auth/callback'
+    redirect_uri = qbo_auth_callback_url
     @grant_url = ::QB_OAUTH2_CONSUMER.auth_code.authorize_url(redirect_uri: redirect_uri,
                                                               response_type: 'code',
                                                               state: 'none',
@@ -10,7 +10,7 @@ class QboAuthController < ApplicationController
   end
 
   def callback
-    redirect_uri = 'http://localhost:3000/qbo_auth/callback'
+    redirect_uri = qbo_auth_callback_url
 
     if result = ::QB_OAUTH2_CONSUMER.auth_code.get_token(params[:code], :redirect_uri => redirect_uri)
       access_token = result.token
