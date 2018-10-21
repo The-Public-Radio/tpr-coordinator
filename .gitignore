@@ -20,3 +20,6 @@ coverage
 
 # Ignore developer-specific configuration
 .env
+
+# Ignore the generated CSVs
+*.csv

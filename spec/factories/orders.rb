@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :order do
-    name random_name
+    name { random_name }
     street_address_1 "123 West 9th St."
     street_address_2 'Apt 4'
     city 'Brooklyn'
@@ -11,6 +11,7 @@ FactoryGirl.define do
     order_source 'other'
     email { "#{name.split(' ').join}@gmail.com" }
     invoiced false
+    notified false
 
     trait :with_shipments do
       transient do
@@ -54,7 +55,7 @@ FactoryGirl.define do
 
     factory :uncommon_goods, class: Order do
       order_source "uncommon_goods"
-      reference_number random_reference_number
+      reference_number { random_reference_number }
 
       factory :invoiced_true, class: Order do
         invoiced true
@@ -68,7 +69,7 @@ FactoryGirl.define do
     factory :invoiced_boxed_false, class: Order do
       invoiced false
       order_source "uncommon_goods"
-      reference_number random_reference_number
+      reference_number { random_reference_number }
 
       after :create do |order|
         create_list(:boxed_false, 2, :order => order)

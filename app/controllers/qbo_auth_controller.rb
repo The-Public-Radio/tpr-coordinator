@@ -17,10 +17,6 @@ class QboAuthController < ApplicationController
       refresh_token = result.refresh_token
       realm_id = params[:realmId]
 
-      puts access_token
-      puts refresh_token
-      puts realm_id
-
       if creds = QuickbooksCredential.first
         creds.update_attributes(
           access_token: access_token,
