@@ -53,7 +53,7 @@ orders_params = [
 		email: 'Person.McPersonson@gmail.com'
 	},
 	{
-    name: 'Francois Royer Mireault',
+    name: 'Frank Person',
 		order_source: 'kickstarter',
 		street_address_1: "5124 avenue casgrain",
     street_address_2: '',
@@ -64,9 +64,9 @@ orders_params = [
 		email: 'Person.McPersonson@gmail.com'
 	},
   {
-    name: 'Thos Niles',
+    name: 'John Person',
     order_source: 'other',
-    street_address_1: "152 pleasant st apt b",
+    street_address_1: "100 main st",
     street_address_2: '',
     city: 'arlington',
     state: 'MA',
@@ -76,9 +76,9 @@ orders_params = [
     email: 'Person.McPersonson@gmail.com'
   },
   {
-    name: 'Tarik Saleh',
+    name: 'Sarah Person',
     order_source: 'other',
-    street_address_1: "1470 42nd st",
+    street_address_1: "1200 40th st",
     street_address_2: '',
     city: 'los alamos',
     state: 'NM',
@@ -88,9 +88,9 @@ orders_params = [
     email: 'Person.McPersonson@gmail.com'
   },
   {
-    name: 'kevin dunham',
+    name: 'Jane Person',
     order_source: 'other',
-    street_address_1: "19 sills ct",
+    street_address_1: "15 Maple St",
     street_address_2: '',
     city: 'centerport',
     state: 'NY',
@@ -103,7 +103,7 @@ orders_params = [
     name: random_name,
 		order_source: 'other',
 		street_address_1: "123 West 9th St.",
-    street_address_2: 'Apt 4',
+    street_address_2: 'Apt 2',
     city: 'Brooklyn',
     state: 'NY',
     postal_code: '11221',
@@ -128,7 +128,7 @@ shipments_params = [
 		ship_date: Time.now,
 		order_id: created_orders[0].id
 	},
-  # this is Francois' order - shipment 2
+  # 
 	{
 		tracking_number: 'LZ780632087US',
 		shipment_status: 'label_created',
@@ -147,21 +147,21 @@ shipments_params = [
 		ship_date: Time.now,
 		order_id: created_orders[2].id
 	},
-  # this is thos's order - shipment 5
+  # 
 	{
 		tracking_number: '92055901755477000027167920',
 		shipment_status: 'label_created',
 		ship_date: Time.now,
 		order_id: created_orders[2].id
 	},
-  # this is tarik's order - shipment 6
+  # 
   {
     tracking_number: '92001901755477000008242445',
     shipment_status: 'label_created',
     ship_date: Time.now,
     order_id: created_orders[3].id
   },
-  # this is kevin's order - shipment 7
+  # t
 	{
 		tracking_number: '92055901755477000027167937',
 		shipment_status: 'label_created',
