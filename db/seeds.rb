@@ -25,7 +25,6 @@ def random_tracking_number
   chars.reverse.each_with_index do |c, i|
     x = c.to_i
     x *= 3 if i.even?
-
     total += x
   end
 
@@ -41,76 +40,42 @@ end
 
 orders_params = [
 	{
-    name: random_name,
+	    name: random_name,
 		order_source: 'kickstarter',
 		street_address_1: "123 West 9th St.",
-    street_address_2: 'Apt 4',
-    city: 'Brooklyn',
-    state: 'NY',
-    postal_code: '11221',
-    country: 'US',
-    phone: '123-321-1231',
+	    street_address_2: 'Apt 4',
+	    city: 'Brooklyn',
+	    state: 'NY',
+	    postal_code: '11221',
+	    country: 'US',
+	    phone: '123-321-1231',
 		email: 'Person.McPersonson@gmail.com'
 	},
 	{
-    name: 'Frank Person',
-		order_source: 'kickstarter',
-		street_address_1: "5124 avenue casgrain",
-    street_address_2: '',
-    city: 'montreal',
-    state: 'QC',
-    postal_code: 'h2t 17w',
-    country: 'CA',
-		email: 'Person.McPersonson@gmail.com'
+	    name: 'John Person',
+	    order_source: 'other',
+	    street_address_1: "100 main st",
+	    street_address_2: '',
+	    city: 'arlington',
+	    state: 'MA',
+	    postal_code: '02476',
+	    country: 'US',
+	    phone: '123-321-1231',
+	    email: 'Person.McPersonson@gmail.com'
 	},
-  {
-    name: 'John Person',
-    order_source: 'other',
-    street_address_1: "100 main st",
-    street_address_2: '',
-    city: 'arlington',
-    state: 'MA',
-    postal_code: '02476',
-    country: 'US',
-    phone: '123-321-1231',
-    email: 'Person.McPersonson@gmail.com'
-  },
-  {
-    name: 'Sarah Person',
-    order_source: 'other',
-    street_address_1: "1200 40th st",
-    street_address_2: '',
-    city: 'los alamos',
-    state: 'NM',
-    postal_code: '87544',
-    country: 'US',
-    phone: '123-321-1231',
-    email: 'Person.McPersonson@gmail.com'
-  },
-  {
-    name: 'Jane Person',
-    order_source: 'other',
-    street_address_1: "15 Maple St",
-    street_address_2: '',
-    city: 'centerport',
-    state: 'NY',
-    postal_code: '11721',
-    country: 'US',
-    phone: '123-321-1231',
-    email: 'Person.McPersonson@gmail.com'
-  },
 	{
-    name: random_name,
+	    name: random_name,
 		order_source: 'other',
 		street_address_1: "123 West 9th St.",
-    street_address_2: 'Apt 2',
-    city: 'Brooklyn',
-    state: 'NY',
-    postal_code: '11221',
-    country: 'US',
-    phone: '123-321-1231',
+	    street_address_2: 'Apt 2',
+	    city: 'Brooklyn',
+	    state: 'NY',
+	    postal_code: '11221',
+	    country: 'US',
+	    phone: '123-321-1231',
 		email: 'Person.McPersonson@gmail.com'
-	}]
+	}
+]
 
 created_orders = []
 orders_params.each{ |params| created_orders << Order.create(params) }
@@ -122,13 +87,12 @@ shipments_params = [
 		ship_date: Time.now,
 		order_id: created_orders[0].id
 	},
-  {
+	{
 		tracking_number: random_tracking_number,
 		shipment_status: 'label_printed',
 		ship_date: Time.now,
 		order_id: created_orders[0].id
 	},
-  # 
 	{
 		tracking_number: 'LZ780632087US',
 		shipment_status: 'label_created',
@@ -143,31 +107,29 @@ shipments_params = [
 	},
 	{
 		tracking_number: random_tracking_number,
-		shipment_status: 'shipped',
+		shipment_status: 'boxed',
 		ship_date: Time.now,
 		order_id: created_orders[2].id
 	},
-  # 
 	{
 		tracking_number: '92055901755477000027167920',
 		shipment_status: 'label_created',
 		ship_date: Time.now,
 		order_id: created_orders[2].id
 	},
-  # 
-  {
-    tracking_number: '92001901755477000008242445',
-    shipment_status: 'label_created',
-    ship_date: Time.now,
-    order_id: created_orders[3].id
-  },
-  # t
+	{
+	    tracking_number: '92001901755477000008242445',
+	    shipment_status: 'label_created',
+	    ship_date: Time.now,
+	    order_id: created_orders[3].id
+	},
 	{
 		tracking_number: '92055901755477000027167937',
 		shipment_status: 'label_created',
 		ship_date: Time.now,
 		order_id: created_orders[4].id
-	},]
+	}
+]
 
 created_shipments = []
 shipments_params.each{ |params| created_shipments << Shipment.create(params) }
@@ -176,11 +138,11 @@ radios_params = [
 	# Radios created from orders params / customer orders
 	#
 	# shipment 2 should have one radio
-  # shipment 5 should have two radios
-  # shipment 6 should have one radio
-  # shipment 7 should have three radios
-  #
-  {
+  	# shipment 5 should have two radios
+ 	# shipment 6 should have one radio
+  	# shipment 7 should have three radios
+  	#
+	{
 		frequency: '91.5',
 		shipment_id: created_shipments[2].id,
 		country_code: 'US',
@@ -205,7 +167,7 @@ radios_params = [
 		boxed: false
 	},
 	{
-    frequency: '97.1',
+    	frequency: '97.1',
 		shipment_id: created_shipments[7].id,
 		country_code: 'US',
 		boxed: false
@@ -256,55 +218,55 @@ radios_params = [
 		serial_number: 'TPRv2.0_1_63297',
 		assembly_date: Time.now,
 		operator: 'Person McPersonson',
-    quality_control_status: 'passed',
-    firmware_version: 'a10fde1a52063d7022efb00924f25e9d915fc66c'
+	    quality_control_status: 'passed',
+	    firmware_version: 'a10fde1a52063d7022efb00924f25e9d915fc66c'
 	},
 	{
 		pcb_version: 'PR9026',
 		serial_number: random_tpr_serial_number,
 		assembly_date: Time.now,
 		operator: 'Person McPersonson',
-    quality_control_status: 'passed',
-    firmware_version: 'a10fde1a52063d7022efb00924f25e9d915fc66c'
+	    quality_control_status: 'passed',
+	    firmware_version: 'a10fde1a52063d7022efb00924f25e9d915fc66c'
 	},
 	{
 		pcb_version: 'PR9026',
 		serial_number: random_tpr_serial_number,
 		assembly_date: Time.now,
 		operator: 'Person McPersonson',
-    quality_control_status: 'passed',
-    firmware_version: 'a10fde1a52063d7022efb00924f25e9d915fc66c'
+	    quality_control_status: 'passed',
+	    firmware_version: 'a10fde1a52063d7022efb00924f25e9d915fc66c'
 	},
 	{
 		pcb_version: 'PR9026',
 		serial_number: random_tpr_serial_number,
 		assembly_date: Time.now,
 		operator: 'Person McPersonson',
-    quality_control_status: 'passed',
-    firmware_version: 'a10fde1a52063d7022efb00924f25e9d915fc66c'
+	    quality_control_status: 'passed',
+	    firmware_version: 'a10fde1a52063d7022efb00924f25e9d915fc66c'
 	},
 	{
 		pcb_version: 'PR9026',
 		serial_number: random_tpr_serial_number,
 		assembly_date: Time.now,
 		operator: 'Person McPersonson',
-    quality_control_status: 'failed_mech',
+	    quality_control_status: 'failed_mech',
 	},
 	{
 		pcb_version: 'PR9026',
 		serial_number: random_tpr_serial_number,
 		assembly_date: Time.now,
 		operator: 'Person McPersonson',
-    quality_control_status: 'failed_software',
-    firmware_version: 'a10fde1a52063d7022efb00924f25e9d915fc66c'
+	    quality_control_status: 'failed_software',
+	    firmware_version: 'a10fde1a52063d7022efb00924f25e9d915fc66c'
 	},
 	{
 		pcb_version: 'PR9026',
 		serial_number: random_tpr_serial_number,
 		assembly_date: Time.now,
 		operator: 'Person McPersonson',
-    quality_control_status: 'failed_software',
-    firmware_version: 'a10fde1a52063d7022efb00924f25e9d915fc66c'
+	    quality_control_status: 'failed_software',
+	    firmware_version: 'a10fde1a52063d7022efb00924f25e9d915fc66c'
 	},
 
 	# Boxed Radios, assigned to a shipment and frequency
@@ -317,8 +279,8 @@ radios_params = [
 		shipment_id: created_shipments[4].id,
 		country_code: 'US',
 		boxed: true,
-    quality_control_status: 'passed',
-    firmware_version: 'a10fde1a52063d7022efb00924f25e9d915fc66c'
+	    quality_control_status: 'passed',
+	    firmware_version: 'a10fde1a52063d7022efb00924f25e9d915fc66c'
 	},
 	{
 		frequency: random_frequency,
@@ -329,8 +291,8 @@ radios_params = [
 		shipment_id: created_shipments[4].id,
 		country_code: 'US',
 		boxed: true,
-    quality_control_status: 'passed',
-    firmware_version: 'a10fde1a52063d7022efb00924f25e9d915fc66c'
+	    quality_control_status: 'passed',
+	    firmware_version: 'a10fde1a52063d7022efb00924f25e9d915fc66c'
 	},
 	{
 		frequency: random_frequency,
@@ -341,8 +303,8 @@ radios_params = [
 		shipment_id: created_shipments[4].id,
 		country_code: 'US',
 		boxed: true,
-    quality_control_status: 'passed',
-    firmware_version: 'a10fde1a52063d7022efb00924f25e9d915fc66c'
+	    quality_control_status: 'passed',
+	    firmware_version: 'a10fde1a52063d7022efb00924f25e9d915fc66c'
 	}
 ]
 
