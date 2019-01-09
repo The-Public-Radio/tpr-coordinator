@@ -113,47 +113,47 @@ shipments_params = [
 	# Order 0 gets 1 shipment
 	{
 		tracking_number: random_tracking_number,
-		shipment_status: 'label_created',
+		shipment_status: 'boxed',
 		ship_date: Time.now,
 		order_id: created_orders[0].id
 	},
 	# Order 1 gets 1 shipment
 	{
 		tracking_number: random_tracking_number,
-		shipment_status: 'label_created',
+		shipment_status: 'boxed',
 		ship_date: Time.now,
 		order_id: created_orders[1].id
 	},
 	# Order 2 gets 1 shipment
 	{
 		tracking_number: random_tracking_number,
-		shipment_status: 'label_created',
+		shipment_status: 'boxed',
 		ship_date: Time.now,
 		order_id: created_orders[2].id
 	},
 	# Order 3 gets 3 shipments (two 3-packs, one single)
 	{
 		tracking_number: random_tracking_number,
-		shipment_status: 'label_created',
+		shipment_status: 'boxed',
 		ship_date: Time.now,
 		order_id: created_orders[3].id
 	},
 	{
 		tracking_number: random_tracking_number,
-		shipment_status: 'label_created',
+		shipment_status: 'boxed',
 		ship_date: Time.now,
 		order_id: created_orders[3].id
 	},
 	{
 		tracking_number: random_tracking_number,
-		shipment_status: 'label_created',
+		shipment_status: 'boxed',
 		ship_date: Time.now,
 		order_id: created_orders[3].id
 	},
 	# Order 4 gets 1 shipment
 	{
 		tracking_number: random_tracking_number,
-		shipment_status: 'label_created',
+		shipment_status: 'boxed',
 		ship_date: Time.now,
 		order_id: created_orders[4].id
 	}
@@ -170,106 +170,250 @@ radios_params = [
 	# Shipment 2 gets 3 radios
 	# Shipment 3 gets 7 radios
 	# Shipment 4 gets 1 radio
-  	#
-	{
-		frequency: '91.5',
-		shipment_id: created_shipments[0].id,
-		country_code: 'US',
-		boxed: false
-	},
-	{
-		frequency: '107.5',
-		shipment_id: created_shipments[1].id,
-		country_code: 'US',
-		boxed: false
-	},
-	{
-		frequency: '97.1',
-		shipment_id: created_shipments[1].id,
-		country_code: 'US',
-		boxed: false
-	},
-	{
-		frequency: '107.5',
-		shipment_id: created_shipments[2].id,
-		country_code: 'US',
-		boxed: false
-	},
-	{
-    	frequency: '97.1',
-		shipment_id: created_shipments[2].id,
-		country_code: 'US',
-		boxed: false
-	},
-	{
-		frequency: '97.1',
-		shipment_id: created_shipments[2].id,
-		country_code: 'US',
-		boxed: false
-	},
-	{
-		frequency: random_frequency,
-		shipment_id: created_shipments[3].id,
-		country_code: 'US',
-		boxed: false
-	},
-	{
-		frequency: random_frequency,
-		shipment_id: created_shipments[3].id,
-		country_code: 'US',
-		boxed: false
-	},
-	{
-		frequency: random_frequency,
-		shipment_id: created_shipments[3].id,
-		country_code: 'US',
-		boxed: false
-	},
-	{
-		frequency: random_frequency,
-		shipment_id: created_shipments[3].id,
-		country_code: 'US',
-		boxed: false
-	},
-	{
-		frequency: random_frequency,
-		shipment_id: created_shipments[3].id,
-		country_code: 'US',
-		boxed: false
-	},
-	{
-		frequency: random_frequency,
-		shipment_id: created_shipments[3].id,
-		country_code: 'US',
-		boxed: false
-	},
-	{
-		frequency: random_frequency,
-		shipment_id: created_shipments[3].id,
-		country_code: 'US',
-		boxed: false
-	},
-	{
-		frequency: random_frequency,
-		shipment_id: created_shipments[4].id,
-		country_code: 'US',
-		boxed: false
-	},
+
+#	{
+#		frequency: '91.5',
+#		shipment_id: created_shipments[0].id,
+#		country_code: 'US',
+#		boxed: false
+#	},
+#	{
+#		frequency: '107.5',
+#		shipment_id: created_shipments[1].id,
+#		country_code: 'US',
+#		boxed: false
+#	},
+#	{
+#		frequency: '97.1',
+#		shipment_id: created_shipments[1].id,
+#		country_code: 'US',
+#		boxed: false
+#	},
+#	{
+#		frequency: '107.5',
+#		shipment_id: created_shipments[2].id,
+#		country_code: 'US',
+#		boxed: false
+#	},
+#	{
+#    	frequency: '97.1',
+#		shipment_id: created_shipments[2].id,
+#		country_code: 'US',
+#		boxed: false
+#	},
+#	{
+#		frequency: '97.1',
+#		shipment_id: created_shipments[2].id,
+#		country_code: 'US',
+#		boxed: false
+#	},
+#	{
+#		frequency: random_frequency,
+#		shipment_id: created_shipments[3].id,
+#		country_code: 'US',
+#		boxed: false
+#	},
+#	{
+#		frequency: random_frequency,
+#		shipment_id: created_shipments[3].id,
+#		country_code: 'US',
+#		boxed: false
+#	},
+#	{
+#		frequency: random_frequency,
+#		shipment_id: created_shipments[3].id,
+#		country_code: 'US',
+#		boxed: false
+#	},
+#	{
+#		frequency: random_frequency,
+#		shipment_id: created_shipments[3].id,
+#		country_code: 'US',
+#		boxed: false
+#	},
+#	{
+#		frequency: random_frequency,
+#		shipment_id: created_shipments[3].id,
+#		country_code: 'US',
+#		boxed: false
+#	},
+#	{
+#		frequency: random_frequency,
+#		shipment_id: created_shipments[3].id,
+#		country_code: 'US',
+#		boxed: false
+#	},
+#	{
+#		frequency: random_frequency,
+#		shipment_id: created_shipments[3].id,
+#		country_code: 'US',
+#		boxed: false
+#	},
+#	{
+#		frequency: random_frequency,
+#		shipment_id: created_shipments[4].id,
+#		country_code: 'US',
+#		boxed: false
+#	},
 
 
 	# Boxed Radios, assigned to a shipment and frequency
-#	{
-#		frequency: random_frequency,
-#		pcb_version: 'PR9026',
-#		serial_number: random_tpr_serial_number,
-#		assembly_date: Time.now,
-#		operator: 'Person McPersonson',
-#		shipment_id: created_shipments[4].id,
-#		country_code: 'US',
-#		boxed: true,
-#	    quality_control_status: 'passed',
-#	    firmware_version: 'a10fde1a52063d7022efb00924f25e9d915fc66c'
-#	},
+	{
+		frequency: random_frequency,
+		pcb_version: 'PR9026',
+		serial_number: random_tpr_serial_number,
+		assembly_date: Time.now,
+		operator: 'Person McPersonson',
+		shipment_id: created_shipments[0].id,
+		country_code: 'US',
+		boxed: true,
+	    quality_control_status: 'passed',
+	    firmware_version: 'a10fde1a52063d7022efb00924f25e9d915fc66c'
+	},
+	{
+		frequency: random_frequency,
+		pcb_version: 'PR9026',
+		serial_number: random_tpr_serial_number,
+		assembly_date: Time.now,
+		operator: 'Person McPersonson',
+		shipment_id: created_shipments[1].id,
+		country_code: 'US',
+		boxed: true,
+	    quality_control_status: 'passed',
+	    firmware_version: 'a10fde1a52063d7022efb00924f25e9d915fc66c'
+	},
+	{
+		frequency: random_frequency,
+		pcb_version: 'PR9026',
+		serial_number: random_tpr_serial_number,
+		assembly_date: Time.now,
+		operator: 'Person McPersonson',
+		shipment_id: created_shipments[1].id,
+		country_code: 'US',
+		boxed: true,
+	    quality_control_status: 'passed',
+	    firmware_version: 'a10fde1a52063d7022efb00924f25e9d915fc66c'
+	},
+	{
+		frequency: random_frequency,
+		pcb_version: 'PR9026',
+		serial_number: random_tpr_serial_number,
+		assembly_date: Time.now,
+		operator: 'Person McPersonson',
+		shipment_id: created_shipments[2].id,
+		country_code: 'US',
+		boxed: true,
+	    quality_control_status: 'passed',
+	    firmware_version: 'a10fde1a52063d7022efb00924f25e9d915fc66c'
+	},
+	{
+		frequency: random_frequency,
+		pcb_version: 'PR9026',
+		serial_number: random_tpr_serial_number,
+		assembly_date: Time.now,
+		operator: 'Person McPersonson',
+		shipment_id: created_shipments[2].id,
+		country_code: 'US',
+		boxed: true,
+	    quality_control_status: 'passed',
+	    firmware_version: 'a10fde1a52063d7022efb00924f25e9d915fc66c'
+	},
+	{
+		frequency: random_frequency,
+		pcb_version: 'PR9026',
+		serial_number: random_tpr_serial_number,
+		assembly_date: Time.now,
+		operator: 'Person McPersonson',
+		shipment_id: created_shipments[3].id,
+		country_code: 'US',
+		boxed: true,
+	    quality_control_status: 'passed',
+	    firmware_version: 'a10fde1a52063d7022efb00924f25e9d915fc66c'
+	},
+	{
+		frequency: random_frequency,
+		pcb_version: 'PR9026',
+		serial_number: random_tpr_serial_number,
+		assembly_date: Time.now,
+		operator: 'Person McPersonson',
+		shipment_id: created_shipments[3].id,
+		country_code: 'US',
+		boxed: true,
+	    quality_control_status: 'passed',
+	    firmware_version: 'a10fde1a52063d7022efb00924f25e9d915fc66c'
+	},
+	{
+		frequency: random_frequency,
+		pcb_version: 'PR9026',
+		serial_number: random_tpr_serial_number,
+		assembly_date: Time.now,
+		operator: 'Person McPersonson',
+		shipment_id: created_shipments[3].id,
+		country_code: 'US',
+		boxed: true,
+	    quality_control_status: 'passed',
+	    firmware_version: 'a10fde1a52063d7022efb00924f25e9d915fc66c'
+	},
+	{
+		frequency: random_frequency,
+		pcb_version: 'PR9026',
+		serial_number: random_tpr_serial_number,
+		assembly_date: Time.now,
+		operator: 'Person McPersonson',
+		shipment_id: created_shipments[3].id,
+		country_code: 'US',
+		boxed: true,
+	    quality_control_status: 'passed',
+	    firmware_version: 'a10fde1a52063d7022efb00924f25e9d915fc66c'
+	},
+	{
+		frequency: random_frequency,
+		pcb_version: 'PR9026',
+		serial_number: random_tpr_serial_number,
+		assembly_date: Time.now,
+		operator: 'Person McPersonson',
+		shipment_id: created_shipments[3].id,
+		country_code: 'US',
+		boxed: true,
+	    quality_control_status: 'passed',
+	    firmware_version: 'a10fde1a52063d7022efb00924f25e9d915fc66c'
+	},
+	{
+		frequency: random_frequency,
+		pcb_version: 'PR9026',
+		serial_number: random_tpr_serial_number,
+		assembly_date: Time.now,
+		operator: 'Person McPersonson',
+		shipment_id: created_shipments[3].id,
+		country_code: 'US',
+		boxed: true,
+	    quality_control_status: 'passed',
+	    firmware_version: 'a10fde1a52063d7022efb00924f25e9d915fc66c'
+	},
+	{
+		frequency: random_frequency,
+		pcb_version: 'PR9026',
+		serial_number: random_tpr_serial_number,
+		assembly_date: Time.now,
+		operator: 'Person McPersonson',
+		shipment_id: created_shipments[3].id,
+		country_code: 'US',
+		boxed: true,
+	    quality_control_status: 'passed',
+	    firmware_version: 'a10fde1a52063d7022efb00924f25e9d915fc66c'
+	},
+	{
+		frequency: random_frequency,
+		pcb_version: 'PR9026',
+		serial_number: random_tpr_serial_number,
+		assembly_date: Time.now,
+		operator: 'Person McPersonson',
+		shipment_id: created_shipments[4].id,
+		country_code: 'US',
+		boxed: true,
+	    quality_control_status: 'passed',
+	    firmware_version: 'a10fde1a52063d7022efb00924f25e9d915fc66c'
+	},
 
 
 	# Assembled Radios in inventory
