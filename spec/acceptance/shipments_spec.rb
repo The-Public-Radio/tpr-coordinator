@@ -7,12 +7,8 @@ resource "Shipments" do
     header('Content-Type', 'application/json')
   end
 
-  let(:created_shipment) { create :created }
-  let(:label_created_shipment) { create :label_created }
-  let(:shipped_shipment) { create :shipped }
-  let(:order) { create(:squarespace) }
-
   get "/shipments/:id" do
+    let(:shipped_shipment) { create :shipped }
     let(:id) { shipped_shipment.id }
     example "Looking up a single shipment" do
       do_request
@@ -25,6 +21,10 @@ resource "Shipments" do
   end
 
   get "/shipments" do
+    let(:label_created_shipment) { create :label_created }
+    let(:shipped_shipment) { create :shipped }
+    let(:created_shipment) { create :created }
+
     example "All shipments" do
       shipped_shipment
       created_shipment
@@ -69,6 +69,9 @@ resource "Shipments" do
   end
 
   get "/next_shipment_to_print" do
+    let(:order) { create(:squarespace) }
+    let(:shipments) { create_list(:label_created, 2) }
+    let(:priority_shipment) { create(:priority_processing) }
     example "Look the next shipments with an unprinted label from order_source kickstarter, squarespace, or other" do
       explanation "This endpoint also respects the priority field on a shipment; returning those shipments with priority: true first."
       
@@ -111,6 +114,8 @@ resource "Shipments" do
   end
 
   put "/shipments/:id" do
+    let(:created_shipment) { create(:created) }
+    let(:id) { created_shipment.id }
     let(:tracking_number) { created_shipment.tracking_number }
     let(:shipment_status) { 'label_created' }
     let(:before_shipment_status) { created_shipment.shipment_status }
@@ -119,6 +124,9 @@ resource "Shipments" do
     parameter :shipment_status, 'String, shipment status', required: true
 
     example "Update a shipment's status" do
+      # tracking_number = created_shipment.tracking_number
+      # shipment_status = "label_created"
+      # before_shipment_status = created_shipment.shipment_status
 
       expect(before_shipment_status).to eq('created')
 
@@ -133,20 +141,23 @@ resource "Shipments" do
   end
 
   get "/shipments?order_id=:order_id" do
+    let(:order) { create(:squarespace) }
     let(:order_id) { order.id }
+    # let(:kickstarter) { create(:kickstarter) }
+
     example "Find shipments that are attached to an order" do
-      create(:kickstarter)
       do_request
       expect(status).to eq 200
       data = JSON.parse(response_body)['data']
       expect(data.count).to eq(4)
       data.each do |shipment|
-        expect(shipment['order_id']).to eq(order.id)
+        expect(shipment['order_id']).to eq(order_id)
       end
     end
   end
 
   get "/shipments/:id/next_radio" do
+    let(:label_created_shipment) { create :label_created }
     let(:id) { label_created_shipment.id }
 
     parameter :tracking_number, 'String, shipment tracking number', required: true
