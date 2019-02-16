@@ -14,7 +14,7 @@ class Order < ApplicationRecord
 
   validates :name, presence: true
   validates :order_source, inclusion: { in: order_sources }
-  validates :email, email_format: { message: 'formatted incorrectly' }, allow_blank: true, allow_nil: false
+  validates :email, format: { with: /@/ }, length: { minimum: 3, maximum: 254 }, allow_blank: true, allow_nil: false
 
   after_initialize :init
 

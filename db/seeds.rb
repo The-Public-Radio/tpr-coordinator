@@ -31,6 +31,7 @@ def random_tracking_number
   check_digit = total % 10
   check_digit = 10 - check_digit unless (check_digit.zero?)
   # TrackingNumber.new("#{number}#{check_digit}")
+  binding.pry
   "#{number}#{check_digit}"
 end
 

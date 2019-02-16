@@ -3,12 +3,10 @@ require 'rails_helper'
 
 RSpec.describe ShippoHelper, type: :helper do
     context 'with the shippo_api' do
-        # Order
-        let(:order) { create(:order) }
-
         # Shipment creation params
         let(:shipment) { create(:created) }
-        
+        let(:order) { Order.find(shipment.order_id) }
+
         let(:create_shipment_params)  { 
             {
                 address_return: return_address,

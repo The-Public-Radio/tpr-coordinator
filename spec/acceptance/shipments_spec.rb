@@ -69,9 +69,6 @@ resource "Shipments" do
   end
 
   get "/next_shipment_to_print" do
-    let(:order) { create(:squarespace) }
-    let(:shipments) { create_list(:label_created, 2) }
-    let(:priority_shipment) { create(:priority_processing) }
     example "Look the next shipments with an unprinted label from order_source kickstarter, squarespace, or other" do
       explanation "This endpoint also respects the priority field on a shipment; returning those shipments with priority: true first."
       
