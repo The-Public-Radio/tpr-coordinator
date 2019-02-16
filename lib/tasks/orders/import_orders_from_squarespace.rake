@@ -64,6 +64,9 @@ namespace :orders do
         failed_orders << row
       end
     end
-    TaskHelper.notify_of_import('squarespace', failed_orders) if ENV['SEND_IMPORT_NOTIFICATION_EMAILS_SQUARESPACE'] == true
+    
+    if failed_orders.any? || ENV['SEND_IMPORT_NOTIFICATION_EMAILS_SQUARESPACE'] == true
+      TaskHelper.notify_of_import('squarespace', failed_orders)
+    end
   end
 end
