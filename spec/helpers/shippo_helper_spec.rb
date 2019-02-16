@@ -265,7 +265,7 @@ RSpec.describe ShippoHelper, type: :helper do
 
         describe 'api operations' do
             def successful_shipment_creation_mock
-                expect(shippo_shipment).to receive(:[]).with("status").and_return("QUEUED").at_least(2).times
+                expect(shippo_shipment).to receive(:[]).with("status").and_return("QUEUED").once
                 expect(shippo_shipment).to receive(:[]).with("object_id").and_return("test_object_id").once
                 expect(Shippo::Shipment).to receive(:get).with("test_object_id").and_return(success_shippo_shipment).at_least(1).times
                 expect(success_shippo_shipment).to receive(:[]).with("status").and_return("SUCCESS").exactly(3).times
@@ -300,13 +300,17 @@ RSpec.describe ShippoHelper, type: :helper do
             end
 
             skip 'creates a transaction to make a label' do
-                shipment.rate_reference_id = 'test_rate_id'
-                shipment.save
+                test_shipment = create(:created)
+                test_shipment.rate_reference_id = 'test_rate_id'
+                test_shipment.save
+
+                expect(success_shippo_shipment).to receive(:[]).with("status").and_return("SUCCESS")
                 expect(Shippo::Transaction).to receive(:create).with(create_transaction_params).and_return(shippo_transaction)
+                expect(Shippo::Transaction).to receive(:get).with(shippo_shipment.object_id).and_return(success_shippo_shipment)
                 expect(shippo_transaction).to receive(:[]).with("status").and_return("QUEUED").ordered
                 expect(shippo_transaction).to receive(:[]).with("object_id").and_return("test_object_id").ordered
                 expect(shippo_transaction).to receive(:[]).with("status").and_return("SUCCESS").ordered
-                expect(ShippoHelper.create_label(shipment)).to be shippo_transaction
+                expect(ShippoHelper.create_label(test_shipment)).to be shippo_transaction
             end
 
             it 'chooses a rate' do

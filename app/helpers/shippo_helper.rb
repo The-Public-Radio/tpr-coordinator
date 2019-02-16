@@ -256,8 +256,10 @@ module ShippoHelper
 
     def self.wait_for_shipoo_queue(response)
         # Check response for error
-        Rails.logger.debug("Shippo response: #{response}")        
-        if response["status"] != "QUEUED"
+        Rails.logger.debug("Shippo response: #{response}")
+        status = response["status"]
+
+        if status != "QUEUED"
             Rails.logger.error("Response status not QUEUED. Something went wrong with Shippo shipment creation")             
             Rails.logger.error(response)
             raise ShippoError.new(response["messages"])
@@ -271,7 +273,7 @@ module ShippoHelper
         Rails.logger.debug("Waiting for to move out of queue. Shippo object_id: #{shippo_resource_id}")        
         # This is bad and really syncronous but works
         # TODO: make label on get_next_shipment
-        while response["status"] == "QUEUED"
+        while status == "QUEUED"
             # retry counter
             Rails.logger.debug("Checking status in Shippo. Retry count: #{shippo_retry_count}")
             if shippo_retry_count > shippo_max_retry_count
@@ -288,7 +290,8 @@ module ShippoHelper
             else
                 response = Shippo::Transaction.get(shippo_resource_id)
                 Rails.logger.debug("Shippo Transaction get response for #{shippo_resource_id}: #{response}")
-            end                
+            end
+            status = response["status"]
         end
         # Check response status again to make sure it completed succesfully and did not error
         Rails.logger.debug("Checking shippo response for error. Status: #{response["status"]}")
