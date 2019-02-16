@@ -24,7 +24,6 @@ gem 'useragent', '0.16.9'
 gem 'active_model_serializers', '0.10.7'
 gem 'httparty', '0.15.6'
 gem 'json', '1.8.6'
-gem 'validates_email_format_of', '1.6.3'
 gem 'gmail'
 
 # Because of the change in type casting in ruby 2.4.x
@@ -70,6 +69,7 @@ group :development, :test do
   gem 'fantaskspec', '1.1.0'
   gem 'shoulda-matchers', '3.1.2'
   gem 'table_print'
+  gem 'rb-readline'
 end
 
 group :development do

@@ -1,3 +1,5 @@
+require 'uri'
+
 class Order < ApplicationRecord
   has_many :shipments
 
@@ -14,7 +16,7 @@ class Order < ApplicationRecord
 
   validates :name, presence: true
   validates :order_source, inclusion: { in: order_sources }
-  validates :email, email_format: { message: 'formatted incorrectly' }, allow_blank: true, allow_nil: false
+  validates :email, format: { with: URI::MailTo::EMAIL_REGEXP, message: "only allows valid emails" }, allow_blank: true, allow_nil: false
 
   after_initialize :init
 

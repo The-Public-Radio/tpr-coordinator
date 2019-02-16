@@ -7,10 +7,10 @@ resource "Orders" do
     header 'Content-Type', 'application/json' 
   end
 
-  let(:kickstarter_order) { create :kickstarter }
-  let(:squarespace_order) { create :squarespace }
 
   get "/orders" do
+    let(:squarespace_order) { create :squarespace }
+    let(:kickstarter_order) { create :kickstarter }
     example "All orders" do
       kickstarter_order
       squarespace_order
@@ -22,8 +22,10 @@ resource "Orders" do
   end
 
   get "/orders/:id" do
+    let(:kickstarter_order) { create :kickstarter }
     let(:id) { kickstarter_order.id }
     example "Looking up a single order" do
+      puts kickstarter_order
       do_request
       expect(status).to eq 200
       data = JSON.parse(response_body)
