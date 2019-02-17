@@ -30,7 +30,7 @@ class OrdersController < ApplicationController
     frequency_hash = params['frequencies']
 
     if @order.save
-      make_shipments_for_internet_order(frequency_hash) unless frequency_hash.nil?
+      split_frequencies_into_shipments(frequency_hash) unless frequency_hash.nil?
       render json: @order, status: :created, location: @order
     else
       render json: @order.errors, status: :unprocessable_entity
@@ -53,50 +53,40 @@ class OrdersController < ApplicationController
 
   def make_queue_order_with_radios(working_order_params)
     @working_order_params = working_order_params
-    frequencies = working_order_params.delete(:frequencies)
+    frequency_hash = working_order_params.delete(:frequencies)
     @shipment_priority = working_order_params.delete(:shipment_priority)
-    @order = Order.new(@working_order_params)
-    @order.country = 'US' if @working_order_params[:country].nil?
+    @order = Order.new(working_order_params)
+    @order.conutry = 'US' if @working_order_params[:country].nil?
     unless @order.save
       Rails.logger.error("Order is invalid: #{@order.errors.messages}")
       raise OrderInvalid(@order.errors.messages)
     end
 
-    make_shipments_for_queue_order(frequencies)
+    split_frequencies_into_shipments(frequency_hash)
   end
 
   private
 
-    def make_shipments_for_queue_order(frequency_hash)
-      frequency_hash.each do |country_code, frequencies|
-        split_frequencies_into_shipments(country_code,frequencies)
-      end
-    end
-
-    def make_shipments_for_internet_order(frequency_hash)
+    def split_frequencies_into_shipments(frequency_hash)
       frequency_hash.each do |country_code,frequencies|
-        split_frequencies_into_shipments(country_code,frequencies) if !params['frequencies'].nil?
-      end
-    end
+        frequencies_by_shipment = []
 
-    def split_frequencies_into_shipments(country_code, frequencies)
-      frequencies_by_shipment = []
+        if frequencies.count > 3
+          num_radios_in_last_shipment = frequencies.count % 3
+          frequencies_by_shipment << frequencies.pop(num_radios_in_last_shipment)
 
-      if frequencies.count > 3
-        num_radios_in_last_shipment = frequencies.count % 3
-        frequencies_by_shipment << frequencies.pop(num_radios_in_last_shipment)
-
-        (frequencies.count / 3 ).times do
-          frequencies_by_shipment << frequencies.pop(3)
+          (frequencies.count / 3 ).times do
+            frequencies_by_shipment << frequencies.pop(3)
+          end
+        else
+          frequencies_by_shipment << frequencies
         end
-      else
-        frequencies_by_shipment << frequencies
-      end
 
-      shipment_priority = @shipment_priority.nil? ? params['shipment_priority'] : @shipment_priority
+        shipment_priority = @shipment_priority.nil? ? params['shipment_priority'] : @shipment_priority
 
-      frequencies_by_shipment.each do |frequencies|
-        ShipmentsController.new.create_shipment_from_order(@order, frequencies, shipment_priority)
+        frequencies_by_shipment.each do |frequencies|
+          ShipmentsController.new.create_shipment_from_order(@order, frequencies, shipment_priority)
+        end
       end
     end
 

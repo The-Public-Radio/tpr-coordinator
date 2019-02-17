@@ -46,6 +46,23 @@ module TaskHelper
   end
 
   def create_order(order_params)
+    # Sample order params
+    # order_params = {
+    #   name: "John Doe",
+    #   order_source: "squarespace",
+    #   email: "john.doe@email.com",
+    #   street_address_1: shipping_address['address1'],
+    #   street_address_2: shipping_address['address2'],
+    #   city: shipping_address['city'],
+    #   state: shipping_address['state'],
+    #   postal_code: shipping_address['postalCode'],
+    #   country: shipping_address['countryCode'],
+    #   phone: shipping_address['phone'],
+    #   reference_number: "#{order['id']},#{order['orderNumber']}", # Squarespace order number
+    #   shipment_priority: 'economy',
+    #   frequencies: { radio_country_code => frequency_list.compact }
+    # }
+
     Rails.logger.info("Creating order with params: #{order_params}.")
     # Check if order has already been created
     if order_params[:reference_number].nil?
