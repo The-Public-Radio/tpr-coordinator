@@ -157,5 +157,41 @@ RSpec.describe TaskHelper, type: :helper do
 
       expect{ helper.create_order(order_params) }.to raise_error(TaskHelper::TPROrderAlreadyCreated)
     end
-  end
+	end
+	
+	it 'converts a country and radio map into an arrya with country and radio pairs' do
+		input = {
+			'US': ['98.3', '79.5', '79.5', '98.3'],
+			'FR': ['79.5', '89.9']
+		}
+
+		output = [
+			{
+				'frequency': "98.3",
+				'country': 'US'
+			},
+			{
+				'frequency': "79.5",
+				'country': 'US'
+			},
+			{
+				'frequency': "79.5",
+				'country': 'US'
+			},
+			{
+				'frequency': "98.3",
+				'country': 'US'
+			},
+			{
+				'frequency': "79.5",
+				'country': 'FR'
+			},
+			{
+				'frequency': "89.9",
+				'country': 'FR'
+			}
+		]
+
+		output = TaskHelper.convert_radio_map_to_array(input)
+	end
 end

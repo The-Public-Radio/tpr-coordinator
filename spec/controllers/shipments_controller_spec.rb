@@ -173,7 +173,7 @@ RSpec.describe ShipmentsController, type: :controller do
 
         let(:valid_shipping_attributes) do
           valid_attributes.delete('tracking_number')
-          valid_attributes['frequencies'] = ['98.1']
+          valid_attributes['frequencies'] = [{'frequency': '98.1', 'country': 'CA'}]
           valid_attributes
         end
 
@@ -254,8 +254,6 @@ RSpec.describe ShipmentsController, type: :controller do
             expect_shipment_object_params
             expect(Shipment.last.shipment_priority).to eq('priority')
           end
-
-          it 'creates radios with a country code'
         end
       end
     end

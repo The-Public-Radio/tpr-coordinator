@@ -102,11 +102,11 @@ class ShipmentsController < ApplicationController
     render json: response, status: :ok
   end
 
-  def create_shipment_from_order(order, frequencies, shipment_priority = nil)
+  def create_shipment_from_order(order, radios, shipment_priority = nil)
     @shipment = Shipment.new(order_id: order.id)
     @order = order
 
-    set_up_default_shipment(frequencies, shipment_priority)
+    set_up_default_shipment(radios, shipment_priority)
 
     Rails.logger.debug("Saving new shipment for order #{order.id}: #{@shipment.attributes}")
     unless @shipment.save
@@ -121,8 +121,7 @@ class ShipmentsController < ApplicationController
     class RadioInvalid < StandardError
     end
 
-    def set_up_default_shipment(frequencies = params['shipment']['frequencies'], shipment_priority = params['shipment']['shipment_priority'])
-
+    def set_up_default_shipment(radios = params['shipment']['frequencies'], shipment_priority = params['shipment']['shipment_priority'])       
       if !@shipment.order_id.nil? || !@order.nil?
         @order = Order.find(shipment.order_id)
       else
@@ -131,10 +130,11 @@ class ShipmentsController < ApplicationController
       end
 
       # Create radios for shipment
-      if !frequencies.nil?
+      if !radios.nil?
         @shipment.save # must save shipment to have an id to associate radios to
-        frequencies.each do |frequency|
-          radio = Radio.create(frequency: frequency, boxed: false, country_code: @order.country, shipment_id: @shipment.id)
+        radios.each do |radio|
+          country = radio['country'].empty? ? @order.country : radio['country']
+          radio = Radio.create(frequency: radio['frequency'], boxed: false, country_code: country, shipment_id: @shipment.id)
           unless radio.save
             Rails.logger.error(radio.errors)
             raise RadioInvalid(radio.errors)

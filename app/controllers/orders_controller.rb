@@ -68,14 +68,11 @@ class OrdersController < ApplicationController
   private
 
     def split_frequencies_into_shipments(frequency_hash, shipment_priority)
-      frequency_hash.each do |country_code,frequencies|
-        # If there is more than 3 frequencies, break them up into sets of 3 due to packaging requirements
-        while frequencies.count > 3
-          ShipmentsController.new.create_shipment_from_order(@order, frequencies.pop(3), shipment_priority)
-        end
-        # Make any remaining radios in a shipment with less than 3 radios
-        ShipmentsController.new.create_shipment_from_order(@order, frequencies, shipment_priority)
+      radios = TaskHelper.convert_radio_map_to_array(frequency_hash)
+      while radios.count > 3
+        ShipmentsController.new.create_shipment_from_order(@order, radios.pop(3), shipment_priority)
       end
+      ShipmentsController.new.create_shipment_from_order(@order, radios, shipment_priority)
     end
 
     # Use callbacks to share common setup or constraints between actions.

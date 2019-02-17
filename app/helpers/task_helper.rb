@@ -130,4 +130,18 @@ module TaskHelper
 
   class TPROrderAlreadyCreated < Exception
   end
+
+  def self.convert_radio_map_to_array(input)
+    output = []
+    input.each do |country, frequencies|
+      frequencies.each do |frequency|
+        output << {
+          'frequency': frequency,
+          'country': country
+        }
+      end
+    end
+
+    output
+  end
 end
