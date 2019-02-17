@@ -8,10 +8,11 @@ describe "orders:import_orders_from_squarespace", type: :rake do
   end
 
   context 'from squarespace' do
+    let(:api_key) { ENV['SQUARESPACE_API_KEY'] }
+    let(:app_name) { ENV['SQUARESPACE_APP_NAME'] }
+    
     it 'import all pendings orders' do
         ENV['SEND_IMPORT_NOTIFICATION_EMAILS_SQUARESPACE'] = 'true'
-        api_key = ENV['SQUARESPACE_API_KEY']
-        app_name = ENV['SQUARESPACE_APP_NAME']
 
         squarespace_order_fixture = JSON.parse(load_fixture('spec/fixtures/squarespace_orders.json'))
         stub_client = instance_double(Squarespace::Client, :get_orders)
@@ -43,10 +44,11 @@ describe "orders:import_orders_from_squarespace", type: :rake do
                 shipment_priority: 'economy',
                 frequencies: { radio_country => ['82.7','82.7','82.7','82.7'] }
             }
-
             expect_any_instance_of(TaskHelper).to receive(:create_order).with(order_params)
+            # expect().to 
         end
         task.execute
+        # created_order = Order.find_by_email(test_order['customerEmail'])
     end
   end
 end

@@ -173,7 +173,7 @@ RSpec.describe ShipmentsController, type: :controller do
 
         let(:valid_shipping_attributes) do
           valid_attributes.delete('tracking_number')
-          valid_attributes['frequencies'] = ['98.1']
+          valid_attributes['frequencies'] = [{'frequency': '98.1', 'country': 'CA'}]
           valid_attributes
         end
 

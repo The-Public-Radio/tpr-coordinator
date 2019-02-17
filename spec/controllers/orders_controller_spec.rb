@@ -86,8 +86,8 @@ RSpec.describe OrdersController, type: :controller do
 
       before(:each) do
         shipments_controller_double = object_double('shipments_controller', :create_shipment_from_order)
-        expect(ShipmentsController).to receive(:new).and_return(shipments_controller_double).exactly(4).times
-        expect(shipments_controller_double).to receive(:create_shipment_from_order).exactly(4).times
+        expect(ShipmentsController).to receive(:new).and_return(shipments_controller_double).exactly(3).times
+        expect(shipments_controller_double).to receive(:create_shipment_from_order).exactly(3).times
       end
       
       it "creates a shipment for each set of 3 radios, tracking numbers, and label data" do
