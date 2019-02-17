@@ -50,13 +50,5 @@ describe "orders:import_orders_from_squarespace", type: :rake do
         task.execute
         # created_order = Order.find_by_email(test_order['customerEmail'])
     end
-
-    skip 'sets the country code of the radio to the one the user requested' do 
-
-    end
-
-    skip 'sends an email when orders are formated incorrectly' do
-      expect(true).to eq true
-    end
   end
 end
