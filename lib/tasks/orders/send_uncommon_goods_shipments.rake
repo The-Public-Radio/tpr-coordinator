@@ -15,6 +15,11 @@ namespace :orders do
       .with_shipments
       .find_all(&:all_radios_shipped?)
 
+    if orders.empty? 
+      Rails.logger.info("No orders shipped today. Not sending email to retailer.")
+      next
+    end
+
     Rails.logger.info("Creating CSV")
 
     today = Date.today.to_s
