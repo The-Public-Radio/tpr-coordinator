@@ -30,7 +30,7 @@ class OrdersController < ApplicationController
     frequency_hash = params['frequencies']
 
     if @order.save
-      split_frequencies_into_shipments(frequency_hash) unless frequency_hash.nil?
+      split_frequencies_into_shipments(frequency_hash, params['shipment_priority']) unless frequency_hash.nil?
       render json: @order, status: :created, location: @order
     else
       render json: @order.errors, status: :unprocessable_entity
@@ -54,7 +54,7 @@ class OrdersController < ApplicationController
   def make_queue_order_with_radios(working_order_params)
     @working_order_params = working_order_params
     frequency_hash = working_order_params.delete(:frequencies)
-    @shipment_priority = working_order_params.delete(:shipment_priority)
+    shipment_priority = working_order_params.delete(:shipment_priority)
     @order = Order.new(working_order_params)
     @order.conutry = 'US' if @working_order_params[:country].nil?
     unless @order.save
@@ -62,31 +62,19 @@ class OrdersController < ApplicationController
       raise OrderInvalid(@order.errors.messages)
     end
 
-    split_frequencies_into_shipments(frequency_hash)
+    split_frequencies_into_shipments(frequency_hash, shipment_priority)
   end
 
   private
 
-    def split_frequencies_into_shipments(frequency_hash)
+    def split_frequencies_into_shipments(frequency_hash, shipment_priority)
       frequency_hash.each do |country_code,frequencies|
-        frequencies_by_shipment = []
-
-        if frequencies.count > 3
-          num_radios_in_last_shipment = frequencies.count % 3
-          frequencies_by_shipment << frequencies.pop(num_radios_in_last_shipment)
-
-          (frequencies.count / 3 ).times do
-            frequencies_by_shipment << frequencies.pop(3)
-          end
-        else
-          frequencies_by_shipment << frequencies
+        # If there is more than 3 frequencies, break them up into sets of 3 due to packaging requirements
+        while frequencies.count > 3
+          ShipmentsController.new.create_shipment_from_order(@order, frequencies.pop(3), shipment_priority)
         end
-
-        shipment_priority = @shipment_priority.nil? ? params['shipment_priority'] : @shipment_priority
-
-        frequencies_by_shipment.each do |frequencies|
-          ShipmentsController.new.create_shipment_from_order(@order, frequencies, shipment_priority)
-        end
+        # Make any remaining radios in a shipment with less than 3 radios
+        ShipmentsController.new.create_shipment_from_order(@order, frequencies, shipment_priority)
       end
     end
 
