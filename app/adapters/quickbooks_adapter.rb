@@ -53,6 +53,8 @@ class QuickbooksAdapter
     qbo_invoice.bill_email = customer.email_address
     qbo_invoice.txn_date = Date.today
 
+    qbo_invoice.allow_online_credit_card_payment = true
+
     qbo_invoice.line_items << build_line_item(ENV['QBO_RADIO_ITEM_ID'], RADIO_DESCRIPTION, tpr_invoice.radio_count, Radio::PRICE)
     qbo_invoice.line_items << build_line_item(ENV['QBO_SHIP_ITEM_ID'], SHIP_DESCRIPTION, 1, tpr_invoice.shipping_total)
 
