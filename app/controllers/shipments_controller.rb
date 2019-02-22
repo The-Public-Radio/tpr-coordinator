@@ -133,7 +133,11 @@ class ShipmentsController < ApplicationController
       if !radios.nil?
         @shipment.save # must save shipment to have an id to associate radios to
         radios.each do |radio|
-          country = radio['country'].empty? ? @order.country : radio['country']
+          if radio['country'].nil? || radio['country'].try(:empty?)
+            country = @order.country
+          else
+            country = radio['country']
+          end
           radio = Radio.create(frequency: radio['frequency'], boxed: false, country_code: country, shipment_id: @shipment.id)
           unless radio.save
             Rails.logger.error(radio.errors)
