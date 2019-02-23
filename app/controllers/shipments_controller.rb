@@ -106,7 +106,7 @@ class ShipmentsController < ApplicationController
     @shipment = Shipment.new(order_id: order.id)
     @order = order
 
-    Rails.logger.debug("Creating shipments with radios: #{radios} for order: #{order}")
+    Rails.logger.debug("Creating shipments with radios: #{radios} for order: #{order.id}")
     set_up_default_shipment(radios, shipment_priority)
 
     Rails.logger.debug("Saving new shipment for order #{order.id}: #{@shipment.attributes}")
@@ -134,13 +134,13 @@ class ShipmentsController < ApplicationController
       if !radios.nil?
         @shipment.save # must save shipment to have an id to associate radios to
         radios.each do |r|
-          if r['country'].nil? || r['country'].try(:empty?)
+          if r[:country].nil? || r[:country].try(:empty?)
             country = @order.country
           else
-            country = r['country']
+            country = r[:country]
           end
           radio = Radio.create(
-            frequency: r['frequency'], 
+            frequency: r[:frequency], 
             boxed: false, 
             country_code: country, 
             shipment_id: @shipment.id
