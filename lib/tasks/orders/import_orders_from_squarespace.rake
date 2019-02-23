@@ -5,9 +5,12 @@ namespace :orders do
   task import_orders_from_squarespace: :environment do
     include TaskHelper
   	Rails.logger.info('Starting Squarespace import')
-  	client = Squarespace::Client.new(app_name: ENV['SQUARESPACE_APP_NAME'], api_key: ENV['SQUARESPACE_API_KEY'])
+  	client = Squarespace::Client.new(
+      app_name: ENV['SQUARESPACE_APP_NAME'], 
+      api_key: ENV['SQUARESPACE_API_KEY']
+      )
 
-  	orders = client.get_orders('pending')
+  	orders = client.get_fulfilled_orders()
   	Rails.logger.info("Importing #{orders[:result].count} orders")
 
     failed_orders = []
