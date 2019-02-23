@@ -10,7 +10,7 @@ namespace :orders do
       api_key: ENV['SQUARESPACE_API_KEY']
       )
 
-  	orders = client.get_fulfilled_orders()
+  	orders = client.get_pending_orders()
   	Rails.logger.info("Importing #{orders[:result].count} orders")
 
     failed_orders = []
