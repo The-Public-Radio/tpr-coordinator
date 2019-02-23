@@ -49,7 +49,7 @@ gem 'faker', '1.8.7'
 gem 'rack-attack', '5.0.1'
 
 # Squarespace
-gem 'squarespace', '0.0.3'
+gem 'squarespace', '0.0.4'
 
 # QBO APIs
 # NOTE: Full OAuth2 support is still in development: https://github.com/ruckus/quickbooks-ruby/issues/389

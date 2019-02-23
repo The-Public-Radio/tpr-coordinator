@@ -264,7 +264,7 @@ GEM
       actionpack (>= 4.0)
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
-    squarespace (0.0.3)
+    squarespace (0.0.4)
       faraday
       json
     table_print (1.5.6)
@@ -324,7 +324,7 @@ DEPENDENCIES
   simplecov (= 0.15.1)
   spring (~> 2.0.0)
   spring-watcher-listen (~> 2.0.0)
-  squarespace (= 0.0.3)
+  squarespace (= 0.0.4)
   table_print
   timecop (= 0.9.1)
   tracking_number (= 0.10.3)
@@ -337,4 +337,4 @@ RUBY VERSION
    ruby 2.4.1p111
 
 BUNDLED WITH
-   1.16.5
+   2.0.1
