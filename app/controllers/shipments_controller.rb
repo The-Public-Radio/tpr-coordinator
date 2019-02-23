@@ -106,6 +106,7 @@ class ShipmentsController < ApplicationController
     @shipment = Shipment.new(order_id: order.id)
     @order = order
 
+    Rails.logger.debug("Creating shipments with radios: #{radios} for order: #{order}")
     set_up_default_shipment(radios, shipment_priority)
 
     Rails.logger.debug("Saving new shipment for order #{order.id}: #{@shipment.attributes}")

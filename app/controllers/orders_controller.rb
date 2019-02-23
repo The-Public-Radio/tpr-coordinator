@@ -68,7 +68,9 @@ class OrdersController < ApplicationController
   private
 
     def split_frequencies_into_shipments(frequency_hash, shipment_priority)
+      Rails.logger.debug("Splitting frequencies into shipments: #{frequency_hash}")
       radios = TaskHelper.convert_radio_map_to_array(frequency_hash)
+      Rails.logger.debug("Creating shipments for radios: #{radios}")
       while radios.count > 3
         ShipmentsController.new.create_shipment_from_order(@order, radios.pop(3), shipment_priority)
       end
