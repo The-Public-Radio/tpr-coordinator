@@ -58,13 +58,19 @@ namespace :orders do
       rescue ActiveRecord::RecordInvalid => e
         Rails.logger.error("Validation error!: #{order_params}")
         TaskHelper.clean_up_order(order_params)
-        row += ['Order inputs are malformed. Check frequency, name, and address fields']
-        failed_orders << row
+        failure_info = {
+          order: order,
+          reason: "Validation error: Order inputs are malformed. Check frequency, name, and address fields. #{e.message}"
+        }
+        failed_orders << failure_info
       rescue ShippoHelper::ShippoError => e
         Rails.logger.error("Shipping address is invalid!: #{order_params}")
         TaskHelper.clean_up_order(order_params)
-        row += ['Shipping address failed USPS validation']
-        failed_orders << row
+        failure_info = {
+          order: order,
+          reason: "Shipping address is invalid: #{e.message}"
+        }
+        failed_orders << failure_info
       end
     end
     
