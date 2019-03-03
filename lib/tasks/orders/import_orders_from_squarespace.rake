@@ -59,7 +59,7 @@ namespace :orders do
         Rails.logger.error("Validation error!: #{order_params}")
         TaskHelper.clean_up_order(order_params)
         failure_info = {
-          customer_email: order.email,
+          customer_email: order["customerEmail"],
           reason: "Validation error: Order inputs are malformed. Check frequency, name, and address fields. #{e.message}"
         }
         failed_orders << failure_info
@@ -67,7 +67,7 @@ namespace :orders do
         Rails.logger.error("Shipping address is invalid!: #{order_params}")
         TaskHelper.clean_up_order(order_params)
         failure_info = {
-          customer_email: order.email,
+          customer_email: order["customerEmail"],
           reason: "Shipping address is invalid: #{e.message}"
         }
         failed_orders << failure_info
