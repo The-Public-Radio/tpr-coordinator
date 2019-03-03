@@ -24,6 +24,10 @@ namespace :orders do
 
       shipments = []
       order.shipments.each do |shipment|
+        if shipment[:tracking_number].nil?
+          next
+        end
+        
         shipments << {
           tracking_number: shipment[:tracking_number],
           tracking_url: "https://tools.usps.com/go/TrackConfirmAction_input?qtc_tLabels1=#{shipment['tracking_number']}",
