@@ -11,7 +11,16 @@ namespace :orders do
 
     orders_to_fulfill.select do |o|
       o.shipments.each do |s|
-        %w{created label_created label_printed}.exclude?(s.shipment_status)
+        case s.shipment_status
+        when "boxed"
+          true
+        when "transit"
+          true
+        when "delivered"
+          true
+        else
+          false
+        end
       end
     end
 
@@ -27,7 +36,7 @@ namespace :orders do
         if shipment[:tracking_number].nil?
           next
         end
-        
+
         shipments << {
           tracking_number: shipment[:tracking_number],
           tracking_url: "https://tools.usps.com/go/TrackConfirmAction_input?qtc_tLabels1=#{shipment['tracking_number']}",
