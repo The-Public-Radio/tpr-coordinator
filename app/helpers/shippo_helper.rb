@@ -258,11 +258,17 @@ module ShippoHelper
         # Check response for error
         Rails.logger.debug("Shippo response: #{response}")
         status = response["status"]
+        Rails.logger.debug("Shippo status: #{status}")
+        
+        # Check if the shipment has already succeeded
+        if status == "SUCCESS"
+            return response
+        end
 
         if status != "QUEUED"
-            Rails.logger.error("Response status not QUEUED. Something went wrong with Shippo shipment creation")             
+            Rails.logger.error("Response status is #{status} not QUEUED or SUCCESS. Something went wrong with Shippo shipment creation")             
             Rails.logger.error(response)
-            raise ShippoError.new(response["messages"])
+            raise ShippoError
         end
         # Wait for the shipment or transation to be processed by shippo
         shippo_resource_id = response["object_id"]
@@ -297,8 +303,8 @@ module ShippoHelper
         Rails.logger.debug("Checking shippo response for error. Status: #{response["status"]}")
         Rails.logger.debug("Shippo response: #{response}")
         if response["status"] != "SUCCESS"
-            Rails.logger.error(response.messages)
-            raise ShippoError.new(response)
+            Rails.logger.error(response)
+            raise ShippoError
         end
         response
     end

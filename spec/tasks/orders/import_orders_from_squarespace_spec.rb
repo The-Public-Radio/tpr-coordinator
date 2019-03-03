@@ -22,7 +22,7 @@ describe "orders:import_orders_from_squarespace", type: :rake do
         expect(Squarespace::Client).to receive(:new).with(app_name: app_name, api_key: api_key)
             .and_return(stub_client)
 
-        expect(stub_client).to receive(:get_orders).with('pending').and_return(stub_orders)
+        expect(stub_client).to receive(:get_pending_orders).and_return(stub_orders)
 
         squarespace_order_fixture['result'].each do |test_order|
             shipping_address = test_order['shippingAddress']
