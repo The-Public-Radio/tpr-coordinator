@@ -42,7 +42,7 @@ gem 'tracking_number', '0.10.3'
 
 # paaaaaaaaaagination
 gem 'api-pagination', '4.7.0'
-gem 'kaminari', '1.1.1'
+gem 'kaminari', '1.2.1'
 
 gem 'faker', '1.8.7'
 
