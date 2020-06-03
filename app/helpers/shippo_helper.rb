@@ -164,11 +164,11 @@ module ShippoHelper
         {
           :name => 'Centerline Labs',
           :company => '',
-          :street1 => '814 Lincoln Pl',
-          :street2 => '#2',
+          :street1 => '544 Park Ave',
+          :street2 => 'Ste 332',
           :city => 'Brooklyn',
           :state => 'NY',
-          :zip => '11216',
+          :zip => '11205',
           :country => 'US',
           :phone => ENV['FROM_ADDRESS_PHONE_NUMBER'],
           :email => 'info@thepublicrad.io'
@@ -180,11 +180,11 @@ module ShippoHelper
         {
           :name => 'Centerline Labs',
           :company => '',
-          :street1 => '14 Industrial Dr. E',
-          :street2 => '',
-          :city => 'South Deerfield',
-          :state => 'MA',
-          :zip => '01373',
+          :street1 => '544 Park Ave',
+          :street2 => 'Ste 332',
+          :city => 'Brooklyn',
+          :state => 'NY',
+          :zip => '11205',
           :country => 'US',
           :phone => ENV['FROM_ADDRESS_PHONE_NUMBER'],
           :email => 'info@thepublicrad.io'
@@ -193,16 +193,16 @@ module ShippoHelper
 
     def self.warranty_return_address
         {
-            :name => 'Centerline Labs',
-            :company => '',
-            :street1 => '814 Lincoln Pl',
-            :street2 => '#2',
-            :city => 'Brooklyn',
-            :state => 'NY',
-            :zip => '11216',
-            :country => 'US',
-            :phone => ENV['FROM_ADDRESS_PHONE_NUMBER'],
-            :email => 'info@thepublicrad.io'
+          :name => 'Centerline Labs',
+          :company => '',
+          :street1 => '544 Park Ave',
+          :street2 => 'Ste 332',
+          :city => 'Brooklyn',
+          :state => 'NY',
+          :zip => '11205',
+          :country => 'US',
+          :phone => ENV['FROM_ADDRESS_PHONE_NUMBER'],
+          :email => 'info@thepublicrad.io'
         }
     end
 
