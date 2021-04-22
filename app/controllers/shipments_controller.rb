@@ -67,10 +67,10 @@ class ShipmentsController < ApplicationController
     # 1) priority_processing
     # 2) shipment_priority
     # 3) created_at
-  
+
     # This is known to put 'express' shipments after 'priority' shipments due alphabetical sorting
     # Currently it's priority -> express -> economy when it should be express -> priority -> economy
-    # TODO: Fix this to sort shipment_priority correctly. 
+    # TODO: Fix this to sort shipment_priority correctly.
     label_created_shipments = Shipment.where(shipment_status: 'label_created')
       .order(:priority_processing, shipment_priority: :desc, created_at: :asc)
 
@@ -118,11 +118,11 @@ class ShipmentsController < ApplicationController
 
   private
     attr_accessor :shipment
-   
+
     class RadioInvalid < StandardError
     end
 
-    def set_up_default_shipment(radios = params['shipment']['frequencies'], shipment_priority = params['shipment']['shipment_priority'])       
+    def set_up_default_shipment(radios = params['shipment']['frequencies'], shipment_priority = params['shipment']['shipment_priority'])
       if !@shipment.order_id.nil? || !@order.nil?
         @order = Order.find(shipment.order_id)
       else
@@ -140,12 +140,12 @@ class ShipmentsController < ApplicationController
             country = r[:country]
           end
           radio = Radio.create(
-            frequency: r[:frequency], 
-            boxed: false, 
-            country_code: country, 
+            frequency: r[:frequency],
+            boxed: false,
+            country_code: country,
             shipment_id: @shipment.id
           )
-          
+
           unless radio.save
             Rails.logger.error(radio.errors)
             raise RadioInvalid(radio.errors)
@@ -163,7 +163,7 @@ class ShipmentsController < ApplicationController
           Rails.logger.info('No Shippo shipment created. Creating shipment.')
           if @order.country != 'US'
             Rails.logger.debug('Creating international shipment')
-            response = ShippoHelper.create_international_shipment(@shipment)            
+            response = ShippoHelper.create_international_shipment(@shipment)
           else
             response = ShippoHelper.create_shipment(@shipment)
           end
@@ -173,16 +173,16 @@ class ShipmentsController < ApplicationController
           if @order.order_source.eql?('warranty')
             if @order.country != 'US'
               Rails.logger.debug('Creating international return shipment')
-              warranty_response = ShippoHelper.create_international_shipment_with_return(@shipment)          
+              warranty_response = ShippoHelper.create_international_shipment_with_return(@shipment)
             else
               warranty_response = ShippoHelper.create_shipment_with_return(@shipment)
             end
 
             # rate_reference_id will be overridden below
-            # Shippo api makes you make a new Shippo Shipment for a return label. We're making two here, one for the return and one for the new radio 
+            # Shippo api makes you make a new Shippo Shipment for a return label. We're making two here, one for the return and one for the new radio
             # TODO: Make this more generic and find a way to not reuse this field. It causes loss of visbility into what's happening.
             @shipment.rate_reference_id = ShippoHelper.choose_rate(warranty_response.rates, usps_service_level)
-            create_warranty_label_response = ShippoHelper.create_label(@shipment)            
+            create_warranty_label_response = ShippoHelper.create_label(@shipment)
             @shipment.return_label_url = create_warranty_label_response.label_url
           end
           @shipment.rate_reference_id = ShippoHelper.choose_rate(response.rates, usps_service_level)
@@ -195,21 +195,24 @@ class ShipmentsController < ApplicationController
     end
 
     def usps_service_level
-      if @order.country != 'US'
-         usps_service_level_international
-      else
+      case @order.country
+      when 'US':
         case @shipment.shipment_priority.downcase
-        when nil || 'economy'
-          # If under 1 lb (16oz) the shipment can go first class, > 1lb it has to go priority
-          @shipment.radio.count > 1 ? 'usps_priority' : 'usps_first'
-        when 'priority'
-          'usps_priority'
-        when 'express'
-          # express shipments also get priority_processing
-          @shipment.priority_processing = true
-          @shipment.save
-          'usps_priority_express'
-        end
+      when nil || 'economy'
+        # If under 1 lb (16oz) the shipment can go first class, > 1lb it has to go priority
+        @shipment.radio.count > 1 ? 'usps_priority' : 'usps_first'
+      when 'priority'
+        'usps_priority'
+      when 'express'
+        # express shipments also get priority_processing
+        @shipment.priority_processing = true
+        @shipment.save
+        'usps_priority_express'
+      end
+      when 'CA':
+        'usps_priority_mail_international'
+      else
+        usps_service_level_international
       end
     end
 
