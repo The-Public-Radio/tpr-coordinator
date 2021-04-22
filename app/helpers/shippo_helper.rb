@@ -101,12 +101,12 @@ module ShippoHelper
         number_of_items = shipment.radio.count
         {
             address_from: from_address,
-            address_return: return_address,            
+            address_return: return_address,
             address_to: to_address(order),
             parcels: parcel(number_of_items),
             carrier_accounts: ["d2ed2a63bef746218a32e15450ece9d9"]
         }
-    end 
+    end
 
     def self.create_warranty_shipment_params(shipment)
         order = Order.find(shipment.order_id)
@@ -117,14 +117,14 @@ module ShippoHelper
             parcels: parcel(number_of_items),
             carrier_accounts: ["d2ed2a63bef746218a32e15450ece9d9"]
         }
-    end 
+    end
 
     def self.create_international_shipment_params(shipment)
         order = Order.find(shipment.order_id)
         number_of_items = shipment.radio.count
         {
             address_from: from_address,
-            address_return: return_address,            
+            address_return: return_address,
             address_to: to_address(order),
             parcels: parcel(number_of_items),
             carrier_accounts: ["d2ed2a63bef746218a32e15450ece9d9"],
@@ -158,7 +158,7 @@ module ShippoHelper
           :email => order.email
         }
     end
-  
+
     def self.return_address
         # Send back for non-deliveries
         {
@@ -216,21 +216,21 @@ module ShippoHelper
         create_shippo_shipment(shipment_params)
     end
 
-    def self.create_shipment_with_return(shipment)   
+    def self.create_shipment_with_return(shipment)
         shipment_params = create_warranty_shipment_params(shipment)
         shipment_params[:extra] = { is_return: true }
         create_shippo_shipment(shipment_params)
     end
 
-    def self.create_international_shipment_with_return(shipment)   
+    def self.create_international_shipment_with_return(shipment)
         shipment_params = create_international_warranty_shipment_params(shipment)
         shipment_params[:extra] = { is_return: true }
         create_shippo_shipment(shipment_params)
     end
 
     def self.create_shippo_shipment(shipment_params)
-        Rails.logger.debug("Shipment create options: #{shipment_params}")    
-        Shippo::API.token = ENV['SHIPPO_TOKEN']            
+        Rails.logger.debug("Shipment create options: #{shipment_params}")
+        Shippo::API.token = ENV['SHIPPO_TOKEN']
         response = Shippo::Shipment.create(shipment_params)
         wait_for_shipoo_queue(response)
     end
@@ -243,11 +243,14 @@ module ShippoHelper
                 choosen_rate = rate
             end
         end
+
+        Rails.logger.debug(shippo_rates.inspect)
+
         choosen_rate[:object_id]
     end
 
     def self.create_label(shipment)
-        rate_id = shipment.rate_reference_id        
+        rate_id = shipment.rate_reference_id
         Rails.logger.debug("Creating Shippo label for shipment #{shipment.id} with rate #{rate_id}")
         Shippo::API.token = ENV['SHIPPO_TOKEN']
         response = Shippo::Transaction.create(rate: rate_id)
@@ -259,14 +262,14 @@ module ShippoHelper
         Rails.logger.debug("Shippo response: #{response}")
         status = response["status"]
         Rails.logger.debug("Shippo status: #{status}")
-        
+
         # Check if the shipment has already succeeded
         if status == "SUCCESS"
             return response
         end
 
         if status != "QUEUED"
-            Rails.logger.error("Response status is #{status} not QUEUED or SUCCESS. Something went wrong with Shippo shipment creation")             
+            Rails.logger.error("Response status is #{status} not QUEUED or SUCCESS. Something went wrong with Shippo shipment creation")
             Rails.logger.error(response)
             raise ShippoError.new(response["messages"][0]["text"])
         end
@@ -276,7 +279,7 @@ module ShippoHelper
         # 1 * 30 = 60 seconds
         shippo_max_retry_count = 60
         shippo_retry_count = 0
-        Rails.logger.debug("Waiting for to move out of queue. Shippo object_id: #{shippo_resource_id}")        
+        Rails.logger.debug("Waiting for to move out of queue. Shippo object_id: #{shippo_resource_id}")
         # This is bad and really syncronous but works
         # TODO: make label on get_next_shipment
         while status == "QUEUED"
@@ -287,7 +290,7 @@ module ShippoHelper
             else
                 shippo_retry_count += 1
             end
-            Rails.logger.debug("Waiting for Shippo resource to move out of queue")                        
+            Rails.logger.debug("Waiting for Shippo resource to move out of queue")
             sleep(1)
             # TODO: Find a better way of checking if this is a shipment or transaction response
             if response.label_url.nil?
