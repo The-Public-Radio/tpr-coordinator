@@ -244,7 +244,9 @@ module ShippoHelper
             end
         end
 
+        Rails.logger.debug('*' * 50)
         Rails.logger.debug(shippo_rates.inspect)
+        Rails.logger.debug('*' * 50)
 
         choosen_rate[:object_id]
     end
