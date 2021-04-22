@@ -196,20 +196,20 @@ class ShipmentsController < ApplicationController
 
     def usps_service_level
       case @order.country
-      when 'US':
+      when 'US'
         case @shipment.shipment_priority.downcase
-      when nil || 'economy'
-        # If under 1 lb (16oz) the shipment can go first class, > 1lb it has to go priority
-        @shipment.radio.count > 1 ? 'usps_priority' : 'usps_first'
-      when 'priority'
-        'usps_priority'
-      when 'express'
-        # express shipments also get priority_processing
-        @shipment.priority_processing = true
-        @shipment.save
-        'usps_priority_express'
-      end
-      when 'CA':
+        when nil || 'economy'
+          # If under 1 lb (16oz) the shipment can go first class, > 1lb it has to go priority
+          @shipment.radio.count > 1 ? 'usps_priority' : 'usps_first'
+        when 'priority'
+          'usps_priority'
+        when 'express'
+          # express shipments also get priority_processing
+          @shipment.priority_processing = true
+          @shipment.save
+          'usps_priority_express'
+        end
+      when 'CA'
         'usps_priority_mail_international'
       else
         usps_service_level_international
